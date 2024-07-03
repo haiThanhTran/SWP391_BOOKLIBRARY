@@ -1,0 +1,296 @@
+.manage-book-page-managebook {
+  padding-top: 100px;
+  display: flex;
+}
+
+.sidebar-managebook {
+  width: 250px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.sidebar-managebook h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.sidebar-managebook .category-managebook {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.category-managebook-categoryName{
+  text-align: left;
+}
+
+.sidebar-managebook .category-managebook:hover {
+  background-color: #e0e0e0;
+}
+
+.sidebar-managebook .category-managebook span {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+.sidebar-managebook .icon-managebook {
+  width: 20px;
+  height: 20px;
+}
+
+.book-grid-managebook {
+  flex: 1;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.book-item-managebook {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Add transition for smooth expansion */
+}
+
+.book-item-managebook.selected {
+  border: 2px solid #007bff;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-item-managebook img {
+  max-width: 100%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.book-item-managebook p {
+  font-size: 16px;
+  color: #333;
+}
+
+.book-name-managebook {
+  font-weight: 900;
+}
+
+.book-author-managebook {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.book-quantity-managebook {
+  font-weight: bold;
+}
+
+.book-quantity-managebook.available:before {
+  content: "Available: ";
+}
+
+.book-quantity-managebook.unavailable:before {
+  content: "";
+}
+
+.book-quantity-managebook.available {
+  color: #007bff;
+}
+
+.book-quantity-managebook.unavailable {
+  color: black;
+  content: "Unavailable";
+}
+
+.book-author-managebook,
+.book-published-managebook {
+  margin: 0;
+}
+
+/* ACTIONS */
+.book-actions-managebook {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 3px solid rgb(232, 232, 232);
+}
+
+.book-actions-top-managebook,
+.book-actions-bottom-managebook {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.book-actions-bottom-managebook {
+  margin-top: 5px;
+}
+
+.btn-add-managebook,
+.btn-detail-managebook,
+.btn-edit-managebook,
+.btn-delete-managebook {
+  min-width: 100px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: #333;
+  border: 2px solid transparent;
+}
+
+.btn-add-managebook {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-add-managebook:hover {
+  background-color: #0069d9;
+  color: white;
+}
+
+.btn-detail-managebook {
+  background-color: #90ee90;
+  border-color: #90ee90;
+}
+
+.btn-detail-managebook:hover {
+  background-color: #69db69;
+  color: white;
+  border-color: #28a745;
+}
+
+.btn-edit-managebook {
+  background-color: #ff9800;
+  border-color: #ff9800;
+}
+
+.btn-edit-managebook:hover {
+  background-color: #fb8c00;
+  color: white;
+}
+
+.btn-delete-managebook {
+  background-color: #f44336;
+  border-color: #f44336;
+}
+
+.btn-delete-managebook:hover {
+  background-color: #e53935;
+  color: white;
+}
+
+.btn-detail-managebook:disabled,
+.btn-edit-managebook:disabled,
+.btn-delete-managebook:disabled {
+  background-color: #ccc;
+  color: #666;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* SEARCH */
+.search-bar-managebook {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  flex-direction: column; /* Đổi hướng flex thành column */
+}
+
+.search-bar-managebook input {
+  width: 100%; /* Đảm bảo input chiếm toàn bộ chiều rộng */
+  padding: 5px 10px;
+  margin-bottom: 10px; /* Thêm khoảng cách giữa input và select */
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.search-bar-managebook select {
+  width: 100%; /* Đảm bảo select chiếm toàn bộ chiều rộng */
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.search-bar-managebook button {
+  width: 100%; /* Đảm bảo button chiếm toàn bộ chiều rộng */
+  margin-top: 10px; /* Thêm khoảng cách giữa select và button */
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.search-bar-managebook button:hover {
+  background-color: #0069d9;
+}
+/* END SEARCH */
+
+/* CSS for action buttons beside the selected book */
+.book-item-actions {
+display: flex;
+flex-direction: column;
+margin-top: 10px;
+}
+
+.book-item-actions button {
+padding: 5px 10px;
+border-radius: 5px;
+font-size: 14px;
+cursor: pointer;
+margin-bottom: 5px;
+border: 2px solid transparent;
+}
+
+.book-item-actions .btn-detail-managebook {
+background-color: #90ee90;
+border-color: #90ee90;
+}
+
+.book-item-actions .btn-detail-managebook:hover {
+background-color: #69db69;
+color: white;
+border-color: #28a745;
+}
+
+.book-item-actions .btn-edit-managebook {
+background-color: #ff9800;
+border-color: #ff9800;
+}
+
+.book-item-actions .btn-edit-managebook:hover {
+background-color: #fb8c00;
+color: white;
+}
+
+.book-item-actions .btn-delete-managebook {
+background-color: #f44336;
+border-color: #f44336;
+}
+
+.book-item-actions .btn-delete-managebook:hover {
+background-color: #e53935;
+color: white;
+}
+
+.book-item-actions .btn-detail-managebook:disabled,
+.book-item-actions .btn-edit-managebook:disabled,
+.book-item-actions .btn-delete-managebook:disabled {
+background-color: #ccc;
+color: #666;
+border-color: #ccc;
+cursor: not-allowed;
+}

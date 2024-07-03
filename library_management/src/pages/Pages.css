@@ -1,0 +1,179 @@
+.slideshow-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.header {
+  margin-bottom: 20px;
+  position: relative;
+  padding: 20px 0;
+}
+
+.header a {
+  font-weight: 600;
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prev, .next {
+  color: #fff !important;
+  background-color: #0069B6 !important;
+  border: none !important;
+  padding: 5px !important;
+  cursor: pointer !important;
+  border-radius: 50% !important;
+}
+
+.prev.disabled, .next.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.book-display {
+  display: flex;
+  overflow: hidden;
+  width: 80%;
+  justify-content: space-between;
+}
+
+.book {
+  flex: 1;
+  margin: 0 10px;
+  text-align: center;
+  position: relative; /* Added to position quantity */
+}
+
+.book img {
+  width: 131px;
+  height: 200px;
+  border-radius: 5px;
+  box-shadow: 1px 2px 5px 0 #c3b683;
+  transition: transform .2s ease-in-out;
+}
+
+.book img:hover {
+  border-radius: 5px;
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+.book button {
+  display: block;
+  margin: 10px auto;
+  padding: 5px 10px;
+  background-color: #0376b8;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.book button:hover {
+  transition: background-color .2s;
+  background-color: #013654;
+}
+
+.detail-book-quantity {
+  position: absolute;
+  bottom: 10px; /* Position it at the bottom */
+  right: 10px; /* Position it to the right */
+  background-color: yellow; /* Yellow background */
+  color: white; /* White text */
+  padding: 5px 10px; /* Padding for some space */
+  border-radius: 5px; /* Rounded corners */
+  font-weight: bold; /* Bold text */
+}
+
+.dropbtn {
+  background-color: #04AA6D;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 50%; /* Make the button circular */
+  width: 40px; /* Adjust the size as needed */
+  height: 40px;
+  padding: 0; /* Remove padding to keep it a perfect circle */
+  overflow: hidden; /* Ensure the image doesn't overflow the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropbtn img {
+  width: 100%; /* Make the image fill the button */
+  height: 100%; /* Make the image fill the button */
+  object-fit: cover; /* Ensure the image covers the entire button area */
+  border-radius: 50%; /* Make the image circular */
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+}
+
+/* Thang css */
+.star-rating .dv-star-rating-star {
+  font-size: 20px; /* Adjust star size */
+}
+
+/* Adjust star size display */
+.book-star img {
+  width: 20px; /* Adjust size */
+  height: auto;
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Align star and number on the same row */
+}
+
+.star-rating img {
+  width: 20px; /* Star size */
+  height: auto;
+  margin-right: 5px; /* Space between star and number */
+}
+
+.star-rating span {
+  margin-left: 0; /* Remove space between star and number */
+}

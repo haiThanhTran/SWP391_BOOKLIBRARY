@@ -1,0 +1,355 @@
+#root {
+  width: 100vw;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: #e1dcc5;
+}
+.service,
+.cbp-filter-item,
+.btn,
+.small-heading {
+  border-radius: 10px;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.body-page {
+  margin: 30px auto;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #babbae;
+  z-index: 1;
+  position: relative;
+  max-width: 1280px;
+  width: 100%;
+}
+
+.slideshow-container .slider {
+  padding: 20px 0;
+  background-color: #f3edd7;
+}
+
+.slideshow-container:last-child {
+  padding: 20px 0 0 0;
+}
+.our-services .service {
+  background-color: #fcfbe1;
+}
+
+h5 {
+  color: #002178;
+}
+
+.header-title {
+  left: 5%;
+  top: 0;
+  position: absolute;
+}
+/* SEARCH */
+
+.search-form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.input-field {
+  flex: 1;
+  margin: 0; /* Remove margin between elements */
+}
+
+.input-select select,
+.input-field.second-wrap input,
+.btn-search {
+  padding: 0; /* Remove padding */
+  border: 1px solid #ccc;
+  border-radius: 0; /* Remove border radius for the middle element */
+  box-sizing: border-box; /* Ensure padding doesn't affect total width */
+  height: 40px; /* Set a fixed height */
+  font-size: 12px; /* Smaller font size */
+  line-height: 40px; /* Ensure the line height matches the height for vertical alignment */
+}
+
+.input-select select {
+  /* border-right: none; Remove right border */
+  border-radius: 4px 0 0 4px; /* Adjust for rounded corners */
+  padding: 0 10px; /* Add padding inside the element */
+}
+
+.input-field.second-wrap input {
+  border-right: none; /* Remove right border */
+  padding: 0 10px; /* Add padding inside the element */
+}
+
+.btn-search {
+  background-color: #28a745; /* Green color */
+  padding: 0 15px; /* Add padding inside the element */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 4px 4px 0; /* Adjust for rounded corners */
+  height: 40px; /* Ensure the height matches other elements */
+}
+
+.btn-search svg {
+  color: white; /* White icon */
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* end search */
+
+/* PAGERESULTS */
+.search-results-page {
+  padding-top: 200px; /* Adjust this value to match the height of your header */
+  background-color:#e1dcc5;
+}
+
+.results-header {
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #646cff;
+}
+
+.book-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.book-item {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  padding: 5px 0px;
+  background-color: #e1dcc5;
+  max-width: fit-content;
+
+/* căn giữa */
+
+
+}
+
+.book-info {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  background-color: rgb(246, 243, 243);
+  border-radius: 10px;
+}
+
+.book-cover {
+  width: 150px;
+  height: auto;
+  border-radius: 30px;
+  padding: 20px;
+}
+
+
+.detail {
+  justify-items: left;
+  text-align: left;
+  max-width: 550px;
+  min-width: 420px;
+}
+
+.detail .book-name {
+  font-weight: 900;
+}
+
+.book-actions {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  padding-right: 10px;
+}
+
+.detail .book-author {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.detail .book-quantity {
+  font-weight: bold;
+}
+
+.detail .book-quantity.available:before {
+  content: "Available: ";
+}
+
+.detail .book-quantity.unavailable:before {
+  content: "";
+}
+
+.detail .book-quantity.available {
+  color: #007bff;
+}
+
+.detail .book-quantity.unavailable {
+  color: black;
+  content: "Unavailable";
+}
+
+.book-author,
+.book-published {
+  margin: 0;
+}
+
+.book-actions-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.book-additional-info {
+  text-align: right;
+  min-width: 150px;
+}
+
+.book-additional-info p {
+  margin: 5px 0;
+}
+
+.btn-borrow {
+  width: 150px;
+  background-color: #007bff; 
+  color: #ffffff;
+  border: 2px solid #007bff; 
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-bottom: 10px; /* Khoảng cách giữa hai nút */
+}
+
+.btn-borrow:hover {
+  background-color: #0069d9; 
+  color: white; 
+}
+
+.btn-borrow.disabled, 
+.btn-borrow:disabled {
+  background-color: #ccc;
+  color: #666;
+  border-color: #ccc;
+  cursor: default;
+}
+
+.btn-borrow:not(.disabled):hover { 
+  background-color: #0069d9; 
+  color: white; 
+}
+
+.btn-detail {
+  width: 150px;
+  background-color: #90ee90;
+  color: #333;
+  border: 2px solid #90ee90;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-detail:hover {
+  background-color: #69db69;
+  color: white;
+  border-color: #28a745;
+}
+
+
+/* PHÂN TRANG */
+.pagination {
+  display: flex; /* Sử dụng flexbox để căn giữa các nút */
+  justify-content: center; /* Căn giữa các nút phân trang */
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.pagination li {
+  margin: 0 5px; /* Khoảng cách giữa các nút */
+}
+
+.pagination a { /* Kiểu nút phân trang */
+  display: block;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination a:hover {
+  background-color: #f5f5f5; /* Màu nền khi hover */
+}
+
+.pagination .active a { /* Kiểu nút trang hiện tại */
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+/* END PHÂN TRANG */
+
+/* END PAGERESULTS */
+
+/* CSS HEADER */
+
+/*END CSS HEADER */

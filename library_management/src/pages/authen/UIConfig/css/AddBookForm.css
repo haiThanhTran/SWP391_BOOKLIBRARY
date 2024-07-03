@@ -1,0 +1,155 @@
+.formbold-main-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  /* padding-top: 50px; */
+  box-sizing: border-box;
+}
+
+.formbold-form-wrapper {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.add_book_form {
+  background-color: #f9fafd;
+  width: 100%;
+}
+
+.add_book_form_title {
+  color: cadetblue;
+}
+
+.formbold-input-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Ensure items are centered vertically */
+}
+
+.formbold-form-label,
+.formbold-form-input,
+.formbold-form-file,
+.description {
+  display: block;
+  width: 100%;
+  margin-bottom: 0px;
+
+}
+
+.formbold-form-input,
+.formbold-form-file,
+textarea {
+  width: calc(100% - 22px);
+  padding: 10px;
+}
+
+.description_book {
+  width: 100%;
+  height: 80px;
+}
+
+textarea {
+  width: 100%;
+}
+
+.formbold-btn {
+  margin-top: 20px;
+  margin-right: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel{
+  background-color: red;
+}
+
+.clear{
+  background-color: green;
+}
+
+.book_status_addform {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.book_status_addform label {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.book_status {
+  margin-top: 10px;
+  background-color: #e2e3e8;
+}
+
+.book_status_addform input {
+  margin-right: 5px;
+}
+
+.property-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items vertically */
+  justify-content: center;
+}
+
+.formbold-form-file-flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.upload-container {
+  width: 60%;
+}
+
+.image-preview {
+  width: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-img {
+  max-width: 100%;
+  max-height: 200px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.9em;
+  text-align: center; /* Center the text horizontally */
+  width: 100%; /* Ensure it takes the full width of the parent container */
+  display: block; /* Make sure it behaves as a block element */
+}

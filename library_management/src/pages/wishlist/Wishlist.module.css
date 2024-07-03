@@ -1,0 +1,51 @@
+.Wishlist {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    width: 90%; /* Điều chỉnh chiều rộng tùy theo nhu cầu */
+    min-width: 90vw;
+    }
+  
+  
+    #root {
+    width: 100vw;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+        background-color: #ffffff !important;
+        height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+      height: 100vh;
+    }
+  
+  
+  .Wishlist .container {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+  }
+  
+  
+  .Wishlist table {
+    width: 100%;
+  }
+  
+  
+  .Wishlist th, .Wishlist td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  
+  .text-center {
+    padding-top: 100px; /* Điều chỉnh khoảng cách khi không có sản phẩm */
+  }
+  
+  
+  h1 {
+    margin-top: 20px; /* Đảm bảo không bị đè bởi header */
+    padding-top: 60px; /* Thêm khoảng cách để không bị header đè */
+  }
+  

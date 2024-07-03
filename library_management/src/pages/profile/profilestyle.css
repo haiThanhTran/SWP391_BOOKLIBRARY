@@ -1,0 +1,66 @@
+body.viewprofile-body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-color: #ffd700;
+}
+
+.viewprofile-container {
+  max-width: 800px;
+  margin: auto;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.viewprofile-content-section {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.viewprofile-heading {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.viewprofile-form-label {
+  font-weight: bold;
+}
+
+.viewprofile-form-control {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.viewprofile-btn-edit {
+  margin-left: auto;
+}
+
+.viewprofile-btn-save {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.viewprofile-btn-save:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.image-preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.preview-img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}

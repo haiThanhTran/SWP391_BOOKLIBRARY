@@ -1,0 +1,58 @@
+.table-container {
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.table-striped {
+    border-radius: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.table-striped th,
+.table-striped td {
+    border: 1px solid #ddd;
+}
+
+.table-striped th:first-child,
+.table-striped td:first-child {
+    border-left: 1px solid #ddd;
+}
+
+.table-striped th:last-child,
+.table-striped td:last-child {
+    border-right: 1px solid #ddd;
+}
+
+.table-striped thead th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.table-striped thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.table-striped tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.table-striped tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.table-striped thead th {
+    background-color: #f8f9fa; /* Màu nền của hàng tiêu đề */
+}
+
+.table-striped tbody tr {
+    background-color: #ffffff; /* Màu nền của các hàng trong phần thân */
+}
+
+/* Loại bỏ hiệu ứng tô màu xen kẽ */
+.table-striped tbody tr:nth-of-type(odd),
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: #ffffff; /* Màu nền của các hàng trong phần thân */
+}

@@ -1,0 +1,94 @@
+/* BookDetail.css */
+.BookDetail {
+    min-height: 100vh; /* Chiều cao tối thiểu bằng chiều cao của cửa sổ trình duyệt */
+    padding-top: 100px; /* Thêm khoảng cách để tránh bị đè lên bởi header */
+  }
+  .detail-home{
+    background-color: white !important;
+    border-radius: 6px;
+  }
+  .col-md-3{
+    align-items: center;
+  }
+  .left-detail img {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .left-detail {
+    border-color: #d3d3d3; /* Light gray border color */
+  }
+  
+  
+  .right-detail {
+    border-color: #d3d3d3; /* Light gray border color */
+   
+  }
+  
+  
+  .rating {
+    font-size: 16px;
+    color: #755409;
+  }
+  
+  
+  .stars {
+    margin-left: 10px;
+    color: #a6780d;
+  }
+  
+  
+  .right-detail h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  
+  .detailBook {
+    font-size: 18px;
+    color: #333;
+  }
+  .book-info-buttons .btn-outline-secondary:nth-child(1){
+    font-weight: 500;
+  }
+  .book-info-buttons .btn-outline-secondary {
+    font-weight: 500;
+    color: #333;
+    border-color: #d3d3d3;
+    background-color: transparent;
+    padding: 10px 20px;
+    margin-right: 30px !important;
+    margin-bottom: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.3s, color 0.3s;
+    border-radius: 5px;
+  }
+  
+  
+  .book-info-buttons .btn-outline-secondary:hover {
+    border-color: #a9a9a9; /* Darker gray border on hover */
+    color: #000;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .book-detail {
+      flex-direction: column;
+    }
+  
+  
+    .col-md-3, .col-md-9 {
+      width: 100%;
+    }
+  
+  
+    .btn-outline-secondary {
+      width: 100%;
+    }
+  
+  
+    .book-info-buttons .btn-outline-secondary {
+      width: 100%;
+    }
+  }
+  
