@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/auth/**", "/register/**","/api/categories/**","/api/publishers/**", "/api/books/**", "/images/**", "/categories/**","/api/orders/search/**,","/api/books/votedBooks?userID=**", "/api/books/vote/**").permitAll()
+                                .requestMatchers("/api/auth/**", "/register/**","/api/categories/**","/api/publishers/**", "/api/books/**", "/images/**", "/categories/**","/api/orders/search/**,","/api/books/votedBooks?userID=**", "/api/books/vote/**","/api/books/{bookId}/comments/**").permitAll()
 //                                .requestMatchers("/api/users/**")
 //                                .hasRole("ADMIN")
 //                                .anyRequest()
