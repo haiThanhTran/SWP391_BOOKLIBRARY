@@ -1,3 +1,4 @@
+// BookDetail.jsx
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { WishlistContext } from "../wishlist/WishlistContext";
@@ -6,6 +7,7 @@ import "./BookDetail.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import Comment from "./Comment";
 
 function BookDetail() {
   const { id } = useParams();
@@ -44,7 +46,6 @@ function BookDetail() {
       // Nếu không có token, hiển thị thông báo yêu cầu đăng nhập
       toast.error("Vui lòng đăng nhập trước khi mượn sách");
     } else {
-      // Nếu có token, thực hiện hành động mượn sách
       addToWishlist(book);
     }
   };
@@ -69,12 +70,11 @@ function BookDetail() {
                     />
                     <div className="rating">
                       <span>Rating:</span>
-                      <span className="stars">★★★☆☆</span>{" "}
-                      {/* Sample static stars */}
+                      <span className="stars">★★★☆☆</span>
                     </div>
                     <button
                       className="btn btn-outline-secondary mt-2 w-100"
-                      onClick={handleBorrow} // Sử dụng handleBorrow để xử lý khi nhấn nút Borrow
+                      onClick={handleBorrow}
                     >
                       Borrow
                     </button>
@@ -87,27 +87,8 @@ function BookDetail() {
                 {book ? (
                   <>
                     <h1>{book.bookName}</h1>
-                    <p>
-                      Author: {book.bookAuthor ? book.bookAuthor : "Unknown"}
-                    </p>
+                    <p>Author: {book.bookAuthor ? book.bookAuthor : "Unknown"}</p>
                     <p className="detailBook">{book.bookDescription}</p>
-                    <p className="detailBook">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Fusce in lacus non libero dapibus dapibus. Proin auctor
-                      nisl at orci scelerisque, non viverra erat interdum. Lorem
-                      ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                      in lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum. Lorem ipsum
-                      dolor sit amet, consectetur adipiscing elit. Fusce in
-                      lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum. Lorem ipsum
-                      dolor sit amet, consectetur adipiscing elit. Fusce in
-                      lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum. Lorem ipsum
-                      dolor sit amet, consectetur adipiscing elit. Fusce in
-                      lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum.
-                    </p>
                     <div className="book-info-buttons">
                       <button className="btn btn-outline-secondary m-1">
                         Category:
@@ -135,6 +116,7 @@ function BookDetail() {
                         {book.page}
                       </button>
                     </div>
+                    <Comment bookId={id} book={book} /> {/* Thêm dòng này */}
                   </>
                 ) : (
                   <h1>Loading...</h1>

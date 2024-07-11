@@ -1,0 +1,114 @@
+.comments-section {
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .comment-input-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .comment-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+  }
+  
+  .submit-comment {
+    align-self: flex-end;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .comment-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .comment-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+  }
+  
+  .comment-avatar {
+    margin-right: 15px;
+  }
+  
+  .comment-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .comment-content {
+    flex: 1;
+  }
+  
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    padding-bottom: 10px;
+    padding-top: 15px;
+  }
+  .comment-header strong {
+    font-weight: bold;
+  }
+  
+  .comment-header span {
+    font-size: 0.8rem;
+    color: #adb5bd;
+  }
+
+  .comment-item {
+    display: flex;
+    align-items: center; /* Ensures vertical alignment of all items in the comment */
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+  }
+  
+  .comment-avatar {
+    width: 40px; /* Maintain the avatar size */
+    height: 40px; /* Ensure the avatar is perfectly circular */
+    border-radius: 50%; /* Round the corners to make it a circle */
+    object-fit: cover; /* Ensure the image covers the area */
+    margin-right: 15px; /* Space between the avatar and the username */
+  }
+  
+  .comment-header {
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+    justify-content: space-between; /* Space between elements */
+    width: 100%; /* Full width to encapsulate both username and timestamp */
+  }
+  
+  .comment-header strong {
+    display: flex;
+    align-items: center; /* Aligns the username text with the avatar */
+    margin-right: auto; /* Pushes all other elements to the right */
+  }
+  
+  .comment-header span {
+    font-size: 0.8rem;
+    color: #adb5bd;
+    white-space: nowrap; /* Prevents the date from wrapping */
+  }
+  
