@@ -48,45 +48,48 @@ function Header() {
   const handleProfileClick = () => {
     navigate("/viewprofile"); //viewprofile
   };
-
-
-
-
+  const handleViewOrderClick = () => {
+    navigate("/vieworder"); //vieworder
+  };
   const SearchForm = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchOption, setSearchOption] = useState("All");
     const navigate = useNavigate();
-  
+
     const handleSearch = async (event) => {
       event.preventDefault();
       try {
         let response;
         if (searchOption === "Book name") {
-          response = await fetch(`http://localhost:9191/api/books/search-by-bookname?book_name=${searchTerm}`);
+          response = await fetch(
+            `http://localhost:9191/api/books/search-by-bookname?book_name=${searchTerm}`
+          );
         } else if (searchOption === "Author") {
-          response = await fetch(`http://localhost:9191/api/books/search-by-author?book_author=${searchTerm}`);
+          response = await fetch(
+            `http://localhost:9191/api/books/search-by-author?book_author=${searchTerm}`
+          );
         } else {
           response = await fetch(`http://localhost:9191/api/books`);
         }
         const books = await response.json();
-  
+
         if (!response.ok) {
           throw new Error(`Error: HTTP status ${response.status}`);
         }
-        
-        navigate("/search-results", { 
-          state: { 
+
+        navigate("/search-results", {
+          state: {
             books: books, // Correctly pass the 'books' array in the state
             searchOption,
-            searchTerm // Pass searchTerm as well 
-          } 
+            searchTerm, // Pass searchTerm as well
+          },
         });
       } catch (error) {
         console.error("Error fetching search results:", error);
         // Handle errors, e.g., display an error message to the user
       }
     };
-  
+
     return (
       <form onSubmit={handleSearch} className="search-form">
         <div className="inner-form">
@@ -135,7 +138,6 @@ function Header() {
       </form>
     );
   };
-
 
   return (
     <div className="header-area white-background">
@@ -893,7 +895,7 @@ function Header() {
                     </a>
                   </li>
                   <a
-                    href="#"
+                    href=""
                     className="d-inline-block sidemenu_btn d-block"
                     id="sidemenu_toggle"
                     onClick={handleWishListClick}
@@ -917,6 +919,9 @@ function Header() {
                           </a>
                           <a href="" onClick={handleProfileClick}>
                             Your Profile
+                          </a>
+                          <a href="" onClick={handleViewOrderClick}>
+                            Your Order
                           </a>
                           {user.role == "ADMIN" ? (
                             <>

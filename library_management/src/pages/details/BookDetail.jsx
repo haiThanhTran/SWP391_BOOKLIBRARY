@@ -7,15 +7,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 
-
 function BookDetail() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const { addToWishlist } = useContext(WishlistContext);
-
+  const { addToWishlist, wishlist } = useContext(WishlistContext);
 
   const [books, setBooks] = useState([]);
-
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -30,19 +27,20 @@ function BookDetail() {
     fetchBooks();
   }, []);
 
-
   useEffect(() => {
     if (books.length > 0) {
       const foundBook = books.find((book) => book.bookID === parseInt(id));
       setBook(foundBook);
     }
+    console.log("book", book);
   }, [books, id]);
-
 
   // Hàm xử lý việc mượn sách
   const handleBorrow = () => {
     const token = localStorage.getItem("token"); // Lấy token từ local storage
-    if (!token) {
+    if (book.status.statusID == "4") {
+      toast.error("Bạn không thể mượn sách này");
+    } else if (!token) {
       // Nếu không có token, hiển thị thông báo yêu cầu đăng nhập
       toast.error("Vui lòng đăng nhập trước khi mượn sách");
     } else {
@@ -51,6 +49,7 @@ function BookDetail() {
     }
   };
 
+  console.log("wishlist", wishlist);
 
   return (
     <>
@@ -148,6 +147,5 @@ function BookDetail() {
     </>
   );
 }
-
 
 export default BookDetail;

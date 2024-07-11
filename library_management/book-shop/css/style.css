@@ -2322,9 +2322,9 @@ form.findus .form-control, form.findus textarea {
 }
 
 .tab-content{
-    border-left: .5px solid #eceff6;
+    /* border-left: .5px solid #eceff6;
     border-right: .5px solid #eceff6;
-    border-bottom: .5px solid #eceff6;
+    border-bottom: .5px solid #eceff6; */
     padding-top: 40px;
     padding-bottom: 40px;
     padding-left: 16px !important;

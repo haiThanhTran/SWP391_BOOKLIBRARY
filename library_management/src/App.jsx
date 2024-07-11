@@ -17,7 +17,7 @@ import ManageStaff from "./pages/authen/ManageStaff";
 import ManageBook from "./pages/authen/ManageBook";
 import AddBookForm from "./pages/authen/AddBookForm";
 import UpdateBookForm from "./pages/authen/UpdateBookForm";
-
+import ViewOrder from "./pages/order/ViewOrder";
 import Wishlist from "./pages/wishlist/Wishlist";
 import { WishlistProvider } from "./pages/wishlist/WishlistContext";
 import StaffOrderManagement from "./pages/wishlist/StaffOrderManagement";
@@ -44,6 +44,7 @@ const App = () => {
           <Route path="/managebook" element={<ManageBook />} />
           <Route path="/addbookform" element={<AddBookForm />} />
           <Route path="/updatebookform/:id" element={<UpdateBookForm />} />
+          <Route path="/vieworder" element={<ViewOrder />} />
 
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/manageborrow" element={<StaffOrderManagement />} />

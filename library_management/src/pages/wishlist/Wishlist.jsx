@@ -82,18 +82,7 @@ function Wishlist() {
       }, 0);
 
 
-      // Check if the total quantity exceeds 5
-      if (totalQuantity > 5) {
-        toast.error("Số lượng sách mượn không được vượt quá 5 cuốn");
-        return;
-      }
 
-
-      // Check if the number of different books exceeds 5
-      if (orders.length > 5) {
-        toast.error("Không được mượn quá 5 đầu sách trong 1 đơn hàng");
-        return;
-      }
 
 
       console.log("Orders to be sent:", orders);

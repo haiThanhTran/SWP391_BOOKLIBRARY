@@ -39,7 +39,7 @@
         private String bookAuthor;
 
         @Column(name = "book_star")
-        private Integer bookStar = 0;
+        private Integer bookStar;
 
         private Integer page;
         private String language;

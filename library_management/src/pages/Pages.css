@@ -89,7 +89,7 @@
   position: absolute;
   bottom: 10px; /* Position it at the bottom */
   right: 10px; /* Position it to the right */
-  background-color: yellow; /* Yellow background */
+  background-color: rgb(9, 3, 14); /* Yellow background */
   color: white; /* White text */
   padding: 5px 10px; /* Padding for some space */
   border-radius: 5px; /* Rounded corners */

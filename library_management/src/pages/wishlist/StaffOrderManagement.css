@@ -15,8 +15,11 @@
   }
   
   
+  option[disabled] {
+    color: gray;
+  }
   
-  
+
   .search-section {
     display: flex;
     justify-content: center;

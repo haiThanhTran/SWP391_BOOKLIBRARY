@@ -58,7 +58,7 @@ public class BookService {
                     book.setDescription(updatedBook.getDescription());
                     book.setCategory(updatedBook.getCategory());
                     book.setPublisher(updatedBook.getPublisher());
-                    book.setStatus(updatedBook.getStatus());
+//                    book.setStatus(updatedBook.getStatus());
                     return bookRepository.save(book);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));

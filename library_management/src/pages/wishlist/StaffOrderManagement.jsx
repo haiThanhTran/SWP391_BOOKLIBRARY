@@ -1,19 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./StaffOrderManagement.css";
 import Header from "../../pages/nav-bar/Header";
-import empty_state from "../../assets/empty_state.png"; // Đảm bảo đường dẫn đúng tới hình ảnh của bạn
-import { FaSearch } from "react-icons/fa";
+import empty_state from "../../assets/empty_state.png";
+import logo from "../../assets/logo.jpg";
 
+import { FaSearch } from "react-icons/fa";
+import { UserContext } from "../../ultils/userContext";
+import Modal from "react-modal";
+import { saveAs } from "file-saver";
+
+Modal.setAppElement("#root");
 
 function StaffOrderManagement() {
   const [orderID, setOrderID] = useState("");
   const [orders, setOrders] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const token = localStorage.getItem("token");
-
+  const { user } = useContext(UserContext);
 
   const handleSearchOrder = async () => {
     try {
@@ -33,12 +41,11 @@ function StaffOrderManagement() {
     }
   };
 
-
   const handleUpdateOrder = async (orderID, status, returnDate) => {
     try {
       const response = await axios.put(
         `http://localhost:9191/api/orders/${orderID}/return`,
-        { status, returnDate },
+        { status, returnDate: new Date(returnDate).toISOString() },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,7 +53,6 @@ function StaffOrderManagement() {
         }
       );
       toast.success("Order updated successfully");
-
 
       const updatedOrders = orders.map((order) =>
         order.orderDetailID === orderID
@@ -59,11 +65,108 @@ function StaffOrderManagement() {
     }
   };
 
+  const handleCompensateOrder = async (orderID, compensationType) => {
+    const confirmMessage = `Bạn đã chắn chắn muôn thay đổi trạng thái thành đền ${
+      compensationType === "money" ? "tiền" : "sách"
+    } không?`;
+    if (window.confirm(confirmMessage)) {
+      try {
+        const status =
+          compensationType === "money"
+            ? "Compensated by Money"
+            : "Compensated by Book";
+        const response = await axios.put(
+          `http://localhost:9191/api/orders/${orderID}/return`,
+          { status, returnDate: new Date().toISOString() },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        toast.success(
+          `Đổi trạng thái thành công thành đền ${
+            compensationType === "money" ? "tiền" : "sách"
+          }`
+        );
+
+        const updatedOrders = orders.map((order) =>
+          order.orderDetailID === orderID ? { ...order, status } : order
+        );
+        setOrders(updatedOrders);
+
+        generateReport(selectedOrder, compensationType);
+      } catch (error) {
+        toast.error("Failed to compensate order");
+      }
+    }
+  };
+
+  const openModal = (order) => {
+    setSelectedOrder(order);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const generateReport = (order, compensationType) => {
+    const reportContent = `
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .header img { width: 10px; } /* Điều chỉnh kích thước logo */
+            .content { margin: 20px; }
+            .signature { margin-top: 50px; display: flex; justify-content: space-between; }
+            // .signature div { width: 40%; text-align: center; }
+            .content p { line-height: 1.5; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+    
+            <h2>BIÊN BẢN ĐỀN BÙ</h2>
+            <p>Ngày: ${new Date().toLocaleDateString()}</p>
+          </div>
+          <div class="content">
+            <p><strong>Tên người mượn:</strong> ${order.userName}</p>
+            <p><strong>Thời gian mượn:</strong> ${new Date(
+              order.orderDate
+            ).toLocaleString()}</p>
+            <p><strong>Tên sách:</strong> ${order.bookName}</p>
+            <p><strong>Giá sách:</strong> ${order.totalPrice}</p>
+            <p><strong>Lý do:</strong>...................................</p>
+            <p><strong>Phương án đền:</strong> ${
+              compensationType === "money" ? "Đền tiền" : "Đền sách"
+            }</p>
+            <p><strong>Cam Kết:</strong> Bên đền bù đã đền bù tổn thất cho phía thư viện cũng như bên thư viện đã xác nhận phương thức đền bù bằng ${
+              compensationType === "money" ? "Đền tiền" : "Đền sách"
+            } của khách hàng.</p>
+          </div>
+          <div class="signature">
+            <div style="text-align: left;">
+              <p>Người Đền Bù</p>
+              <p>(Ký, họ tên)</p>
+            </div>
+            <div style="text-align: right;">
+              <p>Người Xử Lý Đơn</p>
+              <p>(Ký, họ tên)</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob([reportContent], { type: "application/msword" });
+    saveAs(blob, `BienBan_${order.orderDetailID}_${compensationType}.doc`);
+  };
 
   return (
     <>
       <Header />
-
 
       <div className="StaffOrderManagement container mt-12">
         <ToastContainer />
@@ -84,7 +187,6 @@ function StaffOrderManagement() {
             Search
           </button>
         </div>
-
 
         {orders.length > 0 ? (
           <table className="table table-bordered">
@@ -130,16 +232,45 @@ function StaffOrderManagement() {
                         setOrders(updatedOrders);
                       }}
                     >
-                      <option value="Pending">Pending</option>
+                      <option value="Pending" disabled>
+                        Pending
+                      </option>
                       <option value="Borrowed">Borrowed</option>
                       <option value="Returned">Returned</option>
+                      <option value="Overdue" disabled>
+                        Overdue
+                      </option>
+                      <option value="Cancelled" disabled>
+                        Cancelled
+                      </option>
+                      <option value="Compensated by Money" disabled>
+                        Compensated by Money
+                      </option>
+                      <option value="Compensated by Book" disabled>
+                        Compensated by Book
+                      </option>
                     </select>
+                    <button
+                      className="btn btn-danger btn-sm mt-2"
+                      onClick={() => openModal(order)}
+                      disabled={[
+                        "Compensated by Money",
+                        "Compensated by Book",
+                        "Overdue",
+                        "Pending",
+                        "Cancelled",
+                      ].includes(order.status)}
+                    >
+                      Xử lý mất sách
+                    </button>
                   </td>
                   <td>
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={order.returnDate}
+                      value={new Date(order.returnDate)
+                        .toISOString()
+                        .slice(0, 16)}
                       onChange={(e) => {
                         const updatedOrders = orders.map((o) =>
                           o.orderDetailID === order.orderDetailID
@@ -148,6 +279,13 @@ function StaffOrderManagement() {
                         );
                         setOrders(updatedOrders);
                       }}
+                      disabled={[
+                        "Compensated by Money",
+                        "Compensated by Book",
+                        "Overdue",
+                        "Pending",
+                        "Cancelled",
+                      ].includes(order.status)}
                     />
                   </td>
                   <td>
@@ -157,9 +295,16 @@ function StaffOrderManagement() {
                         handleUpdateOrder(
                           order.orderDetailID,
                           order.status,
-                          order.returnDate
+                          new Date(order.returnDate)
                         )
                       }
+                      disabled={[
+                        "Compensated by Money",
+                        "Compensated by Book",
+                        "Overdue",
+                        "Pending",
+                        "Cancelled",
+                      ].includes(order.status)}
                     >
                       Update
                     </button>
@@ -169,7 +314,6 @@ function StaffOrderManagement() {
             </tbody>
           </table>
         ) : (
-          // Hiển thị hình ảnh nếu không có đơn hàng
           <div className="text-center">
             <img
               src={empty_state}
@@ -180,9 +324,48 @@ function StaffOrderManagement() {
           </div>
         )}
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Xử lý mất sách"
+        style={{
+          content: {
+            top: "50%",
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            width: '1000px',  // Điều chỉnh kích thước modal
+            height: '500px'  // Điều chỉnh kích thước modal
+          }
+        }}
+      >
+        <h2>Xử lý mất sách</h2>
+        <div>
+          <button
+            className="btn btn-primary m-2"
+            onClick={() =>
+              handleCompensateOrder(selectedOrder.orderDetailID, "money")
+            }
+          >
+            Phương án đền tiền
+          </button>
+          <button
+            className="btn btn-secondary m-2"
+            onClick={() =>
+              handleCompensateOrder(selectedOrder.orderDetailID, "book")
+            }
+          >
+            Phương án đền sách
+          </button>
+        </div>
+        <button className="btn btn-danger mt-3" onClick={closeModal}>
+          Đóng
+        </button>
+      </Modal>
     </>
   );
 }
-
 
 export default StaffOrderManagement;

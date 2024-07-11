@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { CiStar } from "react-icons/ci";
 import { IoInformationCircle } from "react-icons/io5";
 
-
 const SlideShow = ({ books }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [ratings, setRatings] = useState({}); // Để lưu trữ đánh giá cho mỗi cuốn sách
@@ -153,9 +152,12 @@ const SlideShow = ({ books }) => {
                     src={`http://localhost:9191/api/books/images/${book.bookImage}`}
                     alt={book.bookName}
                   />
-                  <div className="detail-book-quantity">{book.bookQuantity}</div>
-                <button>Borrow <IoInformationCircle /></button>
-
+                  <div className="detail-book-quantity">
+                    {book.bookQuantity}
+                  </div>
+                  <button>
+                    Borrow <IoInformationCircle />
+                  </button>
                 </Link>
                 {book.status.statusID === 4 && (
                   <div className="book-star">
