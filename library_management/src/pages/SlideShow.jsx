@@ -189,7 +189,7 @@ const SlideShow = ({ books }) => {
                           }}
                           disabled={votes[book.bookID]}
                         >
-                          Vote
+                          Đánh giá
                         </button>
                       </>
                     )}

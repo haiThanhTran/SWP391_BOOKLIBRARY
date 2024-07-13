@@ -22,7 +22,7 @@ public class CommentService {
         for (Comment comment : comments) {
             Hibernate.initialize(comment.getBook());  // Initialize the book associated with each comment
             if (comment.getBook() != null && comment.getBook().getCategory() != null) {
-                Hibernate.initialize(comment.getBook().getCategory());  // Further initialize category if needed
+                Hibernate.initialize(comment.getBook().getCategory().getBooks());  // Further initialize category if needed
             }
         }
         return comments;

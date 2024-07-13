@@ -19,7 +19,7 @@
     @Entity
     @NoArgsConstructor
     @AllArgsConstructor
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     public class Book {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -57,7 +57,7 @@ const Comment = ({ bookId, book }) => {
 
   return (
     <>
-      {book.status.statusID === 4 ? (
+      
         <div className="comments-section">
           <h3>Bình luận</h3>
           <div className="comment-input-section">
@@ -92,9 +92,9 @@ const Comment = ({ bookId, book }) => {
             ))}
           </ul>
         </div>
-      ) : (
+     
         <p></p>
-      )}
+      
     </>
   );
 };
