@@ -9,7 +9,6 @@ import "../../../node_modules/react-toastify/dist/ReactToastify.css";
 import empty_state from "../../assets/empty_state.png"; // Đảm bảo đường dẫn đúng tới hình ảnh của bạn
 import axios from "axios";
 
-
 function Wishlist() {
   const { wishlist, removeFromWishlist, clearWishlist } =
     useContext(WishlistContext);
@@ -17,15 +16,12 @@ function Wishlist() {
   const [quantities, setQuantities] = useState({});
   const token = localStorage.getItem("token");
 
-
   const { user } = useContext(UserContext);
-
 
   const handleRemoveFromWishlist = (bookID) => {
     removeFromWishlist(bookID);
     toast.success("Book removed from wishlist");
   };
-
 
   const handleQuantityChange = (bookID, quantity) => {
     setQuantities((prevQuantities) => ({
@@ -34,14 +30,12 @@ function Wishlist() {
     }));
   };
 
-
   const handleBorrowBooks = async () => {
     // if (!user || !user.user) {
-      if (!user) {
+    if (!user) {
       toast.error("Bạn phải đăng nhập để mượn sách");
       return;
     }
-
 
     try {
       const getLocalTime = () => {
@@ -49,7 +43,6 @@ function Wishlist() {
         const localTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
         return localTime;
       };
-
 
       const orders = wishlist.map((book) => {
         const localTime = getLocalTime();
@@ -75,18 +68,12 @@ function Wishlist() {
         };
       });
 
-
       // Calculate the total quantity
       const totalQuantity = orders.reduce((total, order) => {
         return total + parseInt(order.quantity);
       }, 0);
 
-
-
-
-
       console.log("Orders to be sent:", orders);
-
 
       const response = await axios.post(
         "http://localhost:9191/api/orders",
@@ -99,7 +86,6 @@ function Wishlist() {
         }
       );
 
-
       const orderNumber = response.data.searchID;
       toast.success(
         `Yêu cầu mượn sách thành công! Mã đơn hàng của bạn là: ${orderNumber}`
@@ -111,7 +97,6 @@ function Wishlist() {
     }
   };
 
-
   return (
     <>
       <Header />
@@ -121,7 +106,7 @@ function Wishlist() {
         style={{
           padding: "40px 0 20px 0",
           backgroundColor: "#E1DCC5",
-          height: "100%"
+          height: "100%",
         }}
       >
         <div className="container mt-4">
@@ -162,10 +147,6 @@ function Wishlist() {
                           }
                         >
                           <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
                         </select>
                       </td>
                       <td>
@@ -202,6 +183,5 @@ function Wishlist() {
     </>
   );
 }
-
 
 export default Wishlist;

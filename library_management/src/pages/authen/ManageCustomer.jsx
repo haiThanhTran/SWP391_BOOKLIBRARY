@@ -18,7 +18,7 @@ const ManageCustomer = () => {
         },
       });
       // Filter out users who are not customers
-       const customers = response.data.filter(
+      const customers = response.data.filter(
         (user) => user.role && user.role.role === "CUSTOMER"
       );
 
@@ -71,17 +71,17 @@ const ManageCustomer = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="container mt-12">
-        <h1>Manage Customer</h1>
+        <h1>Quản Lý Khách Hàng</h1>
         <table className="table table-striped">
           <thead>
             <tr>
-              <th>User Name</th>
+              <th>Tên Khách Hàng</th>
               <th>Email</th>
-              <th>Phone</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th>Số Điện Thoại</th>
+              <th>Trạng Thái</th>
+              <th>Xác Nhận</th>
             </tr>
           </thead>
           <tbody>
@@ -112,8 +112,7 @@ const ManageCustomer = () => {
                     onClick={() => handleSubmit(user.id)}
                   >
                     <TiTick />
-
-                    Submit
+                    Xác Nhận
                   </button>
                 </td>
               </tr>

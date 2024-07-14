@@ -73,12 +73,6 @@ function Main_page() {
                   <h1 className="w-sm-100 w-md-100 w-lg-25 animated fadeInLeft delay-1s">
                     BOOKS <span>LIBRARY</span>
                   </h1>
-                  <a
-                    href="book-shop\product-listing.html"
-                    className="btn animated fadeInLeft delay-1s"
-                  >
-                    EXPLORE NOW{" "}
-                  </a>
                 </div>
               </div>
             </div>
@@ -91,17 +85,17 @@ function Main_page() {
         <div className="body-page">
           <div className="book-content">
             <div className="our-services">
-              <h5 className="header-title">Welcome to Library</h5>
+              <h5 className="header-title">Thư Viện Giáo Dục</h5>
               <div className="container">
                 <div className="row">
                   <div className="col-sm-12 col-md-12 col-lg-3">
                     <div className="service">
                       <div className="media">
                         <div className="service-card">
-                          <i className="fas fa-truck mr-3"></i>
+                          <i className="fas fa-bolt fa-solid mr-3"></i>
                           <div className="media-body">
-                            <h5 className="mt-0">Free Shipping Item</h5>
-                            <span>Order over $500</span>
+                            <h5 className="mt-0">Mượn Sách Nhanh Chóng</h5>
+                            <span>Dưới 2 phút</span>
                           </div>
                         </div>
                       </div>
@@ -113,8 +107,8 @@ function Main_page() {
                         <div className="service-card">
                           <i className="fas fa-undo mr-3"></i>
                           <div className="media-body">
-                            <h5 className="mt-0">Money Back Guarantee</h5>
-                            <span>100% money back</span>
+                            <h5 className="mt-0">Thủ Tục Đơn Giản</h5>
+                            <span>Khách Hàng Tiết Kiệm Thời Gian</span>
                           </div>
                         </div>
                       </div>
@@ -126,8 +120,8 @@ function Main_page() {
                         <div className="service-card">
                           <i className="fas fa-piggy-bank mr-3"></i>
                           <div className="media-body">
-                            <h5 className="mt-0">Cash On Delivery</h5>
-                            <span>Lorem ipsum dolor amet</span>
+                            <h5 className="mt-0">Gợi Ý Sách</h5>
+                            <span>BLABLA</span>
                           </div>
                         </div>
                       </div>
@@ -139,8 +133,8 @@ function Main_page() {
                         <div className="service-card">
                           <i className="fas fa-hands-helping mr-3"></i>
                           <div className="media-body">
-                            <h5 className="mt-0">Help & Support</h5>
-                            <span>Call us: +0123,4567.89</span>
+                            <h5 className="mt-0">Trợ Giúp và Phản Hồi</h5>
+                            <span>Tel: 0969494571</span>
                           </div>
                         </div>
                       </div>
@@ -153,14 +147,14 @@ function Main_page() {
               {books.length > 0 ? (
                 <SlideShow books={incomingBoook} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
                 <SlideShow books={scienceBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
 
@@ -168,7 +162,7 @@ function Main_page() {
               {books.length > 0 ? (
                 <SlideShow books={businessBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
 
@@ -176,42 +170,42 @@ function Main_page() {
               {books.length > 0 ? (
                 <SlideShow books={discoveryBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
                 <SlideShow books={historyBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
                 <SlideShow books={growYourSelftBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
                 <SlideShow books={healthBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
                 <SlideShow books={novelBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
                 <SlideShow books={comicBooks} />
               ) : (
-                <p>Loading...</p>
+                <p>Chờ chút...</p>
               )}
             </div>
           </div>

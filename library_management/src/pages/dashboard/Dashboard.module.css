@@ -1,0 +1,423 @@
+/* :root {
+  --white: #fff;
+  --blue: #4b84fe;
+  --colorDark: #1b253d;
+  --colorLight: #99a0b0;
+  --red: #fa5b67;
+  --yellow: #ffbb09;
+  --bg: #f5f5fa;
+  --bgDark: #ede8f0;
+} */
+
+* {
+  box-sizing: border-box;
+}
+
+/* html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+} */
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Open Sans, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--colorLight);
+}
+
+.dashboard {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "menu search"
+    "menu content";
+}
+
+.searchWrap {
+  grid-area: search;
+  background: var(--white);
+  border-bottom: 1px solid var(--bgDark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3em;
+}
+
+.search {
+  height: 40px;
+}
+
+.search label {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.search label svg {
+  display: block;
+}
+
+.search label svg path,
+.search label svg circle {
+  fill: lighten(var(--colorLight), 10%);
+  transition: fill 0.15s ease;
+}
+
+.search label input {
+  display: block;
+  padding-left: 1em;
+  height: 100%;
+  margin: 0;
+  border: 0;
+}
+
+.search label input:focus {
+  background: var(--bg);
+}
+
+.search label:hover svg path,
+.search label:hover svg circle {
+  fill: lighten(var(--colorDark), 10%);
+}
+
+.userActions button {
+  border: 0;
+  background: none;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  margin-left: 0.5em;
+}
+
+.userActions button svg {
+  position: relative;
+  top: 2px;
+}
+
+.userActions button svg path,
+.userActions button svg circle {
+  fill: lighten(var(--colorLight), 10%);
+  transition: fill 0.15s ease;
+}
+
+.userActions button:hover svg path,
+.userActions button:hover svg circle {
+  fill: lighten(var(--colorDark), 10%);
+}
+
+.menuWrap {
+  grid-area: menu;
+  padding-bottom: 3em;
+  background: var(--white);
+  border-right: 1px solid var(--bgDark);
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.menuWrap .user {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0 3em;
+}
+
+.menuWrap .user .userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.menuWrap .user .userAvatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menuWrap .user figcaption {
+  margin: 0;
+  padding: 0 0 0 1em;
+  color: var(--colorDark);
+  font-weight: 700;
+  font-size: 0.875em;
+  line-height: 100%;
+}
+
+.menuWrap nav {
+  display: block;
+  padding: 0 3em;
+}
+
+.menuWrap nav section {
+  display: block;
+  padding: 3em 0 0;
+}
+
+.menuWrap nav h3 {
+  margin: 0;
+  font-size: 0.875em;
+  text-transform: uppercase;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.menuWrap nav ul {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.menuWrap nav li {
+  display: block;
+  padding: 0;
+  margin: 1em 0 0;
+}
+
+.menuWrap nav li a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--colorLight);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875em;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.menuWrap nav li a svg {
+  display: block;
+  margin-right: 1em;
+}
+
+.menuWrap nav li a svg path,
+.menuWrap nav li a svg circle {
+  fill: lighten(var(--colorLight), 10%);
+  transition: fill 0.15s ease;
+}
+
+.menuWrap nav li a:hover {
+  color: var(--colorDark);
+  background-color: var(--bgDark);
+}
+
+.menuWrap nav li a:hover svg path,
+.menuWrap nav li a:hover svg circle {
+  fill: lighten(var(--colorDark), 10%);
+}
+
+.menuWrap nav li a.active {
+  color: var(--blue);
+  background-color: var(--bgDark);
+}
+
+.menuWrap nav li a.active svg path,
+.menuWrap nav li a.active svg circle {
+  fill: var(--blue);
+}
+
+.contentWrap {
+  grid-area: content;
+  padding: 3em;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.contentWrap .contentHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contentWrap .contentHead h1 {
+  font-size: 1.375em;
+  line-height: 100%;
+  color: var(--colorDark);
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+.contentWrap .contentHead .action button {
+  border: 0;
+  background: var(--blue);
+  color: var(--white);
+  width: auto;
+  height: 3.5em;
+  padding: 0 2.25em;
+  border-radius: 3.5em;
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.contentWrap .contentHead .action button:hover {
+  background-color: darken(var(--blue), 10%);
+}
+
+.contentWrap .contentHead .action button:active {
+  background-color: darken(var(--blue), 20%);
+  transition: none;
+}
+
+.contentWrap .infoBoxes {
+  padding: 3em 0 2em;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 2em;
+}
+
+.contentWrap .infoBoxes .infoBox {
+  background: var(--white);
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 3em;
+  border: 1px solid var(--bgDark);
+  border-radius: 5px;
+}
+
+.contentWrap .infoBoxes .infoBox .boxIcon svg {
+  display: block;
+  width: 48px;
+  height: 48px;
+}
+
+.contentWrap .infoBoxes .infoBox .boxIcon svg path,
+.contentWrap .infoBoxes .infoBox .boxIcon svg circle {
+  fill: var(--colorLight);
+}
+
+.contentWrap .infoBoxes .infoBox .boxContent {
+  padding-left: 1.25em;
+  white-space: nowrap;
+}
+
+.contentWrap .infoBoxes .infoBox .boxContent .big {
+  display: block;
+  font-size: 2em;
+  line-height: 150%;
+  color: var(--colorDark);
+}
+
+.contentWrap .infoBoxes .infoBox.active svg path,
+.contentWrap .infoBoxes .infoBox.active svg circle {
+  fill: var(--blue);
+}
+
+.contentWrap .personBoxes {
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 2em;
+}
+
+.contentWrap .personBoxes .personBox {
+  background: var(--white);
+  height: 320px;
+  text-align: center;
+  padding: 3em;
+  border: 1px solid var(--bgDark);
+  border-radius: 5px;
+}
+
+.contentWrap .personBoxes .personBox:nth-child(2n) .boxAvatar .noName {
+  background: var(--blue);
+}
+
+.contentWrap .personBoxes .personBox:nth-child(5n) .boxAvatar .noName {
+  background: var(--yellow);
+}
+
+.contentWrap .personBoxes .personBox .boxAvatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0px auto;
+  overflow: hidden;
+}
+
+.contentWrap .personBoxes .personBox .boxAvatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contentWrap .personBoxes .personBox .boxAvatar .noName {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--white);
+  font-size: 1.5em;
+  font-weight: 600;
+  text-transform: uppercase;
+  width: 100%;
+  height: 100%;
+  background: var(--red);
+}
+
+.contentWrap .personBoxes .personBox .boxBio {
+  white-space: nowrap;
+}
+
+.contentWrap .personBoxes .personBox .boxBio .bioName {
+  margin: 2em 0 0.75em;
+  color: var(--colorDark);
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 100%;
+}
+
+.contentWrap .personBoxes .personBox .boxBio .bioPosition {
+  margin: 0;
+  font-size: 0.875em;
+  line-height: 100%;
+}
+
+.contentWrap .personBoxes .personBox .boxActions {
+  margin-top: 1.25em;
+  padding-top: 1.25em;
+  width: 100%;
+  border-top: 1px solid var(--bgDark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contentWrap .personBoxes .personBox .boxActions button {
+  border: 0;
+  background: none;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+}
+
+.contentWrap .personBoxes .personBox .boxActions button svg {
+  position: relative;
+  top: 2px;
+}
+
+.contentWrap .personBoxes .personBox .boxActions button svg path,
+.contentWrap .personBoxes .personBox .boxActions button svg circle {
+  fill: lighten(var(--colorLight), 10%);
+  transition: fill 0.15s ease;
+}
+
+.contentWrap .personBoxes .personBox .boxActions button:hover svg path,
+.contentWrap .personBoxes .personBox .boxActions button:hover svg circle {
+  fill: lighten(var(--colorDark), 10%);
+}

@@ -16,9 +16,13 @@ const Comment = ({ bookId, book }) => {
     }
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:9191/api/books/${bookId}/comments`);
+        const response = await axios.get(
+          `http://localhost:9191/api/books/${bookId}/comments`
+        );
         // Sắp xếp các bình luận theo thứ tự mới nhất đến cũ nhất
-        const sortedComments = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedComments = response.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
         setComments(sortedComments);
       } catch (error) {
         console.error("Fetch comments failed:", error);
@@ -57,44 +61,56 @@ const Comment = ({ bookId, book }) => {
 
   return (
     <>
-      {book.status.statusID === 4 ? (
-        <div className="comments-section">
-          <h3>Bình luận</h3>
-          <div className="comment-input-section">
-            <textarea
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Viết bình luận..."
-              className="comment-input"
-            ></textarea>
-            <button onClick={handleCommentSubmit} className="submit-comment">
-              Gửi bình luận
-            </button>
-          </div>
-          <ul className="comment-list">
-            {comments.map((comment) => (
-              <li key={comment.id} className="comment-item">
-                <img
-                  className="comment-avatar"
-                  src={comment.user && comment.user.avatar ? `http://localhost:9191/api/users/user-image/${comment.user.avatar}` : "default-avatar.png"}
-                  alt={`${comment.user ? comment.user.userName : "Unknown"}'s Avatar`}
-                />
-                <div className="comment-content">
-                  <div className="comment-header">
-                    <strong>{comment.user ? comment.user.userName : "Unknown User"}</strong>
-                    <span>{new Date(comment.createdAt).toLocaleString()}</span>
-                  </div>
-                  <p style={{ backgroundColor: "#EEEEEE", borderRadius: "5px", padding: "15px", fontWeight: "500", textAlign: "left" }}>
-                    {comment.text}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+      <div className="comments-section">
+        <h3>Bình luận</h3>
+        <div className="comment-input-section">
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Viết bình luận..."
+            className="comment-input"
+          ></textarea>
+          <button onClick={handleCommentSubmit} className="submit-comment">
+            Gửi bình luận
+          </button>
         </div>
-      ) : (
-        <p></p>
-      )}
+        <ul className="comment-list">
+          {comments.map((comment) => (
+            <li key={comment.id} className="comment-item">
+              <img
+                className="comment-avatar"
+                src={
+                  comment.user && comment.user.avatar
+                    ? `http://localhost:9191/api/users/user-image/${comment.user.avatar}`
+                    : "default-avatar.png"
+                }
+                alt={`${
+                  comment.user ? comment.user.userName : "Unknown"
+                }'s Avatar`}
+              />
+              <div className="comment-content">
+                <div className="comment-header">
+                  <strong>
+                    {comment.user ? comment.user.userName : "Unknown User"}
+                  </strong>
+                  <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                </div>
+                <p
+                  style={{
+                    backgroundColor: "#EEEEEE",
+                    borderRadius: "5px",
+                    padding: "15px",
+                    fontWeight: "500",
+                    textAlign: "left",
+                  }}
+                >
+                  {comment.text}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 };

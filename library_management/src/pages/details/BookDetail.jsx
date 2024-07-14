@@ -69,14 +69,14 @@ function BookDetail() {
                       className="img-fluid mb-3"
                     />
                     <div className="rating">
-                      <span>Rating:</span>
-                      <span className="stars">★★★☆☆</span>
+                      <span>Luợt đánh giá:</span>
+                      <span className="stars">{book.bookStar}★</span>
                     </div>
                     <button
                       className="btn btn-outline-secondary mt-2 w-100"
                       onClick={handleBorrow}
                     >
-                      Borrow
+                      Mượn sách
                     </button>
                   </>
                 )}
@@ -87,31 +87,28 @@ function BookDetail() {
                 {book ? (
                   <>
                     <h1>{book.bookName}</h1>
-                    <p>Author: {book.bookAuthor ? book.bookAuthor : "Unknown"}</p>
-                    <p className="detailBook">{book.bookDescription}</p>
+                    <p>
+                      Tác giả: {book.bookAuthor ? book.bookAuthor : "Unknown"}
+                    </p>
+                    <p className="detailBook">{book.description}</p>
                     <div className="book-info-buttons">
                       <button className="btn btn-outline-secondary m-1">
-                        Category:
+                        Phân loại:
                         <br />
                         {book.category.categoryName || "None"}
                       </button>
                       <button className="btn btn-outline-secondary m-1">
-                        Maturity Rating:
-                        <br />
-                        {book.bookStart || "11"}
-                      </button>
-                      <button className="btn btn-outline-secondary m-1">
-                        Publisher:
+                        Nhà xuất bản:
                         <br />
                         {book.publisher.publisherName || "None"}
                       </button>
                       <button className="btn btn-outline-secondary m-1">
-                        Language:
+                        Ngôn ngữ:
                         <br />
                         {book.language}
                       </button>
                       <button className="btn btn-outline-secondary m-1">
-                        Pages:
+                        Số trang:
                         <br />
                         {book.page}
                       </button>
@@ -119,7 +116,7 @@ function BookDetail() {
                     <Comment bookId={id} book={book} /> {/* Thêm dòng này */}
                   </>
                 ) : (
-                  <h1>Loading...</h1>
+                  <h1>Đợi chút...</h1>
                 )}
               </div>
             </div>

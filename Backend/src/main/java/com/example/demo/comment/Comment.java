@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Table(name = "comment")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Comment {
 

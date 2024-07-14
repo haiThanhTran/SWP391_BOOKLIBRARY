@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Main_page from "./pages/_id";
@@ -21,38 +21,40 @@ import ViewOrder from "./pages/order/ViewOrder";
 import Wishlist from "./pages/wishlist/Wishlist";
 import { WishlistProvider } from "./pages/wishlist/WishlistContext";
 import StaffOrderManagement from "./pages/wishlist/StaffOrderManagement";
-import ManageCategory from "./pages/category/ManageCategory"
+import ManageCategory from "./pages/category/ManageCategory";
 import ManagePublisher from "./pages/publisher/ManagePublisher";
 import ViewProfile from "./pages/profile/ViewProfile";
+import Dashboard from "./pages/dashboard/Dashboard";
+
 const App = () => {
   return (
     <UserProvider>
       <WishlistProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Main_page />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/BookDetail/:id" element={<BookDetail />} />
-          <Route path="/forgotPass" element={<ForgotPasswordForm />} />
-          <Route path="/manageaccounts" element={<ManageAccounts />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/search-results" element={<SearchResults />} />
-          <Route path="/changepass" element={<ChangePass />} />
-          <Route path="/managecustomer" element={<ManageCustomer />} />
-          <Route path="/managestaff" element={<ManageStaff />} />
-          <Route path="/managebook" element={<ManageBook />} />
-          <Route path="/addbookform" element={<AddBookForm />} />
-          <Route path="/updatebookform/:id" element={<UpdateBookForm />} />
-          <Route path="/vieworder" element={<ViewOrder />} />
-
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/manageborrow" element={<StaffOrderManagement />} />
-          <Route path="/managecategory" element ={<ManageCategory />} />
-          <Route path="/managepublisher" element ={<ManagePublisher />} />
-          <Route path="/viewprofile" element={<ViewProfile />} />
-        </Routes>
-      </Router>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Main_page />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/BookDetail/:id" element={<BookDetail />} />
+            <Route path="/forgotPass" element={<ForgotPasswordForm />} />
+            <Route path="/manageaccounts" element={<ManageAccounts />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/search-results" element={<SearchResults />} />
+            <Route path="/changepass" element={<ChangePass />} />
+            <Route path="/managecustomer" element={<ManageCustomer />} />
+            <Route path="/managestaff" element={<ManageStaff />} />
+            <Route path="/managebook" element={<ManageBook />} />
+            <Route path="/addbookform" element={<AddBookForm />} />
+            <Route path="/updatebookform/:id" element={<UpdateBookForm />} />
+            <Route path="/vieworder" element={<ViewOrder />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/manageborrow" element={<StaffOrderManagement />} />
+            <Route path="/managecategory" element={<ManageCategory />} />
+            <Route path="/managepublisher" element={<ManagePublisher />} />
+            <Route path="/viewprofile" element={<ViewProfile />} />
+            <Route path="/dashboard/*" element={<Dashboard />} /> {/* Thay đổi ở đây */}
+          </Routes>
+        </Router>
       </WishlistProvider>
     </UserProvider>
   );

@@ -156,7 +156,7 @@ const SlideShow = ({ books }) => {
                     {book.bookQuantity}
                   </div>
                   <button>
-                    Borrow <IoInformationCircle />
+                    Chi tiết <IoInformationCircle />
                   </button>
                 </Link>
                 {book.status.statusID === 4 && (
@@ -168,6 +168,7 @@ const SlideShow = ({ books }) => {
                         alt="Star"
                         style={{ fontSize: "10px", boxShadow: "none" }}
                       />
+                      
                     </div>
                     {!votes[book.bookID] && (
                       <>
@@ -191,7 +192,7 @@ const SlideShow = ({ books }) => {
                           }}
                           disabled={votes[book.bookID]}
                         >
-                          Vote
+                          Đánh giá
                         </button>
                       </>
                     )}

@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-owl-carousel2/lib/styles.css";
 import "react-owl-carousel2/src/owl.carousel.css";
 import SlideShow from "../SlideShow";
 import { UserContext } from "../../ultils/userContext";
-
 import Notification from "../notification/bell";
 import CategoryDropdown from "../category/CategoryDropdown";
 
@@ -16,6 +15,7 @@ function Header() {
   const handleWishListClick = () => {
     navigate("/wishlist");
   };
+
 
   const handleLoginClick = () => {
     navigate("/signin");
@@ -50,6 +50,10 @@ function Header() {
   };
   const handleViewOrderClick = () => {
     navigate("/vieworder"); //vieworder
+  };
+
+  const handleDashboardClick = () => {
+    navigate("/dashboard/*"); //vieworder
   };
   const SearchForm = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -925,9 +929,13 @@ function Header() {
                           </a>
                           {user.role == "ADMIN" ? (
                             <>
+                            <a href="" onClick={handleDashboardClick}>
+                                Dashboard
+                              </a>
                               <a href="" onClick={handleManageCustomerClick}>
                                 Manage Customer
                               </a>
+
                               <a href="" onClick={handleManageStaffClick}>
                                 Manage Staff
                               </a>
@@ -953,7 +961,7 @@ function Header() {
                             <p></p>
                           )}
 
-                          <a href="/" onClick={handleLogout}>
+                          <a href="" onClick={handleLogout}>
                             Log out
                           </a>
                         </div>

@@ -157,7 +157,7 @@ const ManageBook = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="manage-book-page-managebook">
         <div className="sidebar-managebook">
           <div className="search-bar-managebook">
