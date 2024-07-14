@@ -3,7 +3,6 @@ import axios from 'axios';
 import { IconButton, TextField, Button, List, ListItem, ListItemText, ListItemSecondaryAction } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 
-
 function App() {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -15,7 +14,6 @@ function App() {
         fetchCategories();
     }, []);
 
-
     const fetchCategories = async () => {
         try {
             const response = await axios.get('http://localhost:9191/api/categories');
@@ -25,69 +23,75 @@ function App() {
         }
     };
 
+    const isCategoryNameValid = (name) => {
+        const regex = /^[a-zA-Z0-9\s]*$/; // Only allows letters, numbers, and spaces
+        return name.trim() !== '' && regex.test(name);
+    };
 
     const createCategory = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.post(
-            'http://localhost:9191/api/categories',
-            { categoryName: newCategory },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setCategories([...categories, response.data]);
-          setNewCategory('');
-        } catch (error) {
-          console.error('Error creating category:', error);
+        if (!isCategoryNameValid(newCategory)) {
+            alert('Invalid category name. Only letters, numbers, and spaces are allowed.');
+            return;
         }
-      };
-      
-      const updateCategory = async (id, updatedName) => {
+        
         try {
-          const token = localStorage.getItem("token");
-          const response = await axios.put(
-            `http://localhost:9191/api/categories/${id}`,
-            { categoryName: updatedName },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setCategories(categories.map(cat => (cat.categoryID === id ? response.data : cat)));
-          setSelectedCategory(null);
+            const token = localStorage.getItem("token");
+            const response = await axios.post(
+                'http://localhost:9191/api/categories',
+                { categoryName: newCategory },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setCategories([...categories, response.data]);
+            setNewCategory('');
         } catch (error) {
-          console.error('Error updating category:', error);
+            console.error('Error creating category:', error);
         }
-      };
-      
-      const deleteCategory = async (id) => {
+    };
+
+    const updateCategory = async (id, updatedName) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.put(
+                `http://localhost:9191/api/categories/${id}`,
+                { categoryName: updatedName },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setCategories(categories.map(cat => (cat.categoryID === id ? response.data : cat)));
+            setSelectedCategory(null);
+        } catch (error) {
+            console.error('Error updating category:', error);
+        }
+    };
+
+    const deleteCategory = async (id) => {
         const confirmDelete = window.confirm('Bạn có chắc chắn xóa không? Nếu xóa thư mục này sẽ xóa các sách liên quan đến thư mục này');
         if (!confirmDelete) return;
-      
-        try {
-          const token = localStorage.getItem("token");
-          await axios.delete(`http://localhost:9191/api/categories/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setCategories(categories.filter(cat => cat.categoryID !== id));
-          setSelectedCategory(null);
-        } catch (error) {
-          console.error('Error deleting category:', error);
-        }
-      };
-      
 
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:9191/api/categories/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setCategories(categories.filter(cat => cat.categoryID !== id));
+            setSelectedCategory(null);
+        } catch (error) {
+            console.error('Error deleting category:', error);
+        }
+    };
 
     const filteredCategories = categories.filter(category =>
         category.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
 
     return (
         <div>
@@ -98,7 +102,6 @@ function App() {
                     margin: 0;
                     padding: 0;
                 }
-
 
                 .container {
                     display: flex;
@@ -111,16 +114,13 @@ function App() {
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 }
 
-
                 .categories {
                     width: 30%;
                 }
 
-
                 .details {
                     width: 65%;
                 }
-
 
                 h1 {
                     text-align: center;
@@ -128,18 +128,15 @@ function App() {
                     margin-top: 20px;
                 }
 
-
                 .actions {
                     display: flex;
                     align-items: center;
                 }
 
-
                 .iconButton {
                     margin-left: 5px;
                 }
             `}</style>
-
 
             <h1>Categories</h1>
             <div className="container">
@@ -172,7 +169,12 @@ function App() {
                             value={newCategory}
                             onChange={e => setNewCategory(e.target.value)}
                         />
-                        <IconButton color="primary" className="iconButton" onClick={createCategory}>
+                        <IconButton
+                            color="primary"
+                            className="iconButton"
+                            onClick={createCategory}
+                            disabled={!isCategoryNameValid(newCategory)}
+                        >
                             <Add />
                         </IconButton>
                     </div>
@@ -199,6 +201,5 @@ function App() {
         </div>
     );
 }
-
 
 export default App;

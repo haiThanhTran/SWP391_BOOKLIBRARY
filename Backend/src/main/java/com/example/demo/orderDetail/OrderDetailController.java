@@ -1,6 +1,8 @@
 package com.example.demo.orderDetail;
 
 
+import com.example.demo.notification.Notification;
+import com.example.demo.notification.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,15 @@ public class OrderDetailController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private NotificationService notificationService;
 
+    private OrderDetailService orderDetailService;
 
+    @GetMapping("/api/orderdetails")
+    public List<OrderDetail> getOrderDetails(@RequestParam Long userId) {
+        return orderDetailService.getOrdersByOrderID(userId);
+    }
     @GetMapping("/{orderID}")
     public ResponseEntity<List<OrderDetail>> getOrdersByOrderID(@PathVariable Long orderID) {
         System.out.println(orderID);
@@ -127,7 +136,6 @@ public class OrderDetailController {
 
 
 
-
     @PutMapping("/{orderID}/return")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<OrderDetail> updateReturnDate(@PathVariable Long orderID, @RequestBody Map<String, Object> payload) {
@@ -143,6 +151,5 @@ public class OrderDetailController {
             return ResponseEntity.badRequest().body(null);
         }
     }
-
 
 }

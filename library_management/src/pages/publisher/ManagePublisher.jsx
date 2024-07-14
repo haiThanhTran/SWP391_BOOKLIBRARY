@@ -29,8 +29,17 @@ function App() {
     }
   };
 
+  const isPublisherNameValid = (name) => {
+    const regex = /^[a-zA-Z0-9\s]*$/; // Only allows letters, numbers, and spaces
+    return name.trim() !== '' && regex.test(name);
+  };
 
   const createPublisher = async () => {
+    if (!isPublisherNameValid(newPublisher)) {
+      alert('Invalid publisher name. Only letters, numbers, and spaces are allowed.');
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
@@ -69,13 +78,13 @@ function App() {
       console.error("Error updating publisher:", error);
     }
   };
-  
+
   const deletePublisher = async (id) => {
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn xóa không? Nếu xóa nhà xuất bản này sẽ xóa các sách liên quan đến nhà xuất bản này"
     );
     if (!confirmDelete) return;
-  
+
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`http://localhost:9191/api/publishers/${id}`, {
@@ -97,53 +106,41 @@ function App() {
   return (
     <div>
       <style>{`
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f4;
-                    margin: 0;
-                    padding: 0;
-                }
-
-
-                .container {
-                    display: flex;
-                    justify-content: space-between;
-                    max-width: 1200px;
-                    margin: 20px auto;
-                    padding: 20px;
-                    background-color: #fff;
-                    border-radius: 5px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
-
-
-                .publishers {
-                    width: 30%;
-                }
-
-
-                .details {
-                    width: 65%;
-                }
-
-
-                h1 {
-                    text-align: center;
-                    color: #333;
-                    margin-top: 20px;
-                }
-
-
-                .actions {
-                    display: flex;
-                    align-items: center;
-                }
-
-
-                .iconButton {
-                    margin-left: 5px;
-                }
-            `}</style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          display: flex;
+          justify-content: space-between;
+          max-width: 1200px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .publishers {
+          width: 30%;
+        }
+        .details {
+          width: 65%;
+        }
+        h1 {
+          text-align: center;
+          color: #333;
+          margin-top: 20px;
+        }
+        .actions {
+          display: flex;
+          align-items: center;
+        }
+        .iconButton {
+          margin-left: 5px;
+        }
+      `}</style>
 
       <h1>Publishers</h1>
       <div className="container">
@@ -192,6 +189,7 @@ function App() {
               color="primary"
               className="iconButton"
               onClick={createPublisher}
+              disabled={!isPublisherNameValid(newPublisher)}
             >
               <Add />
             </IconButton>

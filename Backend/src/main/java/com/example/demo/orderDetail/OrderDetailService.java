@@ -1,6 +1,8 @@
 package com.example.demo.orderDetail;
 
 
+import com.example.demo.notification.Notification;
+import com.example.demo.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class OrderDetailService {
 
     @Autowired
     private OrderDetailRepository bookOrderRepository;
+    @Autowired
+    private NotificationService notificationService;
 
 
     public List<OrderDetail> getOrdersByOrderID(Long orderID) {
@@ -55,6 +59,4 @@ public class OrderDetailService {
         }
         return null;
     }
-
-
 }
