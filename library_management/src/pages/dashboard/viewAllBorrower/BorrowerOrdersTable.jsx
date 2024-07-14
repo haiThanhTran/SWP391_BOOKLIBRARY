@@ -48,9 +48,9 @@ const BorrowerOrdersTable = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="borrower-orders-table">
-        <h2>Borrower amount from highest to lowest</h2>
+        <h2>NHỮNG NGƯỜI DÙNG MƯỢN SÁCH NHIỀU NHẤT</h2>
         <table>
           <thead>
             <tr>
@@ -76,7 +76,7 @@ const BorrowerOrdersTable = () => {
           </tbody>
         </table>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

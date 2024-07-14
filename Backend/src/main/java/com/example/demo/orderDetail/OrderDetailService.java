@@ -137,37 +137,39 @@ public class OrderDetailService {
 
             }
         }
-    //DASHBOARD
-    public long getDistinctOrdersCountByMonth(YearMonth yearMonth) {
-        LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
-        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
-        return bookOrderRepository.countDistinctBySearchIDForCurrentMonth(startOfMonth, endOfMonth);
     }
+        //DASHBOARD
+        public long getDistinctOrdersCountByMonth (YearMonth yearMonth){
+            LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
+            LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+            return bookOrderRepository.countDistinctBySearchIDForCurrentMonth(startOfMonth, endOfMonth);
+        }
 
-    public long getOrdersCountByMonth(YearMonth yearMonth) {
-        LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
-        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
-        return bookOrderRepository.countByOrderDateBetween(startOfMonth, endOfMonth);
-    }
+        public long getOrdersCountByMonth (YearMonth yearMonth){
+            LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
+            LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+            return bookOrderRepository.countByOrderDateBetween(startOfMonth, endOfMonth);
+        }
 
-    // Get the count of unique users who borrowed books in a given month
-    public long countUniqueUsersByMonth(YearMonth yearMonth) {
-        LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
-        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
-        return bookOrderRepository.countDistinctUserIdByOrderDateBetween(startOfMonth, endOfMonth);
-    }
+        // Get the count of unique users who borrowed books in a given month
+        public long countUniqueUsersByMonth (YearMonth yearMonth){
+            LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
+            LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+            return bookOrderRepository.countDistinctUserIdByOrderDateBetween(startOfMonth, endOfMonth);
+        }
 
-    public List<Object[]> getAggregatedOrderDetailsByMonth(YearMonth yearMonth) {
-        LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
-        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
-        return bookOrderRepository.findAggregatedOrderDetailsByMonth(startOfMonth, endOfMonth);
-    }
+        public List<Object[]> getAggregatedOrderDetailsByMonth (YearMonth yearMonth){
+            LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
+            LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+            return bookOrderRepository.findAggregatedOrderDetailsByMonth(startOfMonth, endOfMonth);
+        }
 
-    public List<Object[]> getUsersWithSearchCount() {
-        return bookOrderRepository.findUsersWithSearchCount();
-    }
+        public List<Object[]> getUsersWithSearchCount () {
+            return bookOrderRepository.findUsersWithSearchCount();
+        }
 
-    public List<Object[]> getTop5MostBorrowedBooks() {
-        return bookOrderRepository.findTop5MostBorrowedBooks();
-    }
+        public List<Object[]> getTop5MostBorrowedBooks () {
+            return bookOrderRepository.findTop5MostBorrowedBooks();
+        }
+
 }

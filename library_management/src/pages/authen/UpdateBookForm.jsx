@@ -229,7 +229,7 @@ const UpdateBookForm = () => {
   };
 
   const navigateToHome = () => {
-    navigate("/managebook");
+    navigate("/adminfunction/managebook");
   };
 
   return (

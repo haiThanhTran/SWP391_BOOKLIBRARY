@@ -24,7 +24,8 @@ import StaffOrderManagement from "./pages/wishlist/StaffOrderManagement";
 import ManageCategory from "./pages/category/ManageCategory";
 import ManagePublisher from "./pages/publisher/ManagePublisher";
 import ViewProfile from "./pages/profile/ViewProfile";
-import Dashboard from "./pages/dashboard/AdminFunction";
+import AdminFunction from "./pages/dashboard/AdminFunction";
+import Dashboard from "./pages/dashboard/Dashboard";
 import { NotificationProvider } from "./pages/notification/NotificationContext";
 import AggregatedOrdersTable from "./pages/dashboard/viewAllOrder/AggregatedOrdersTable";
 import BorrowerOrdersTable from "./pages/dashboard/viewAllBorrower/BorrowerOrdersTable";
@@ -57,21 +58,8 @@ const App = () => {
               <Route path="/managecategory" element={<ManageCategory />} />
               <Route path="/managepublisher" element={<ManagePublisher />} />
               <Route path="/viewprofile" element={<ViewProfile />} />
-              <Route path="/adminfunction/*" element={<Dashboard />} />{" "}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route
-                path="/dashboard/dashboardorder"
-                element={<AggregatedOrdersTable />}
-              />
-              <Route
-                path="/dashboard/dashboardborrower"
-                element={<BorrowerOrdersTable />}
-              />
-              <Route
-                path="/dashboard/moneydashboard"
-                element={<MoneyDashboard />}
-              />
-              {/* Thay đổi ở đây */}
+              <Route path="/adminfunction/*" element={<AdminFunction />} />{" "}
+              <Route path="/dashboard/*" element={<Dashboard />} />
             </Routes>
           </Router>
         </WishlistProvider>

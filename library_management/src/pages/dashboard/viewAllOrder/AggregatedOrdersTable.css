@@ -6,6 +6,7 @@
   .aggregated-orders-table h2 {
     text-align: center;
     margin-bottom: 20px;
+    font-weight: 600;
   }
   
   .aggregated-orders-table table {

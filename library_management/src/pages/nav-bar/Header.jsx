@@ -4,7 +4,7 @@ import "react-owl-carousel2/lib/styles.css";
 import "react-owl-carousel2/src/owl.carousel.css";
 import SlideShow from "../SlideShow";
 import { UserContext } from "../../ultils/userContext";
-import Notification from "../notification/Bell";
+import Bell from "../notification/Bell";
 import CategoryDropdown from "../category/CategoryDropdown";
 
 function Header() {
@@ -475,7 +475,7 @@ function Header() {
                           </a>
                         </li>
                       </div>
-                      <div>
+                      {/* <div>
                         {user && user.role === "ADMIN" && (
                           <li className="nav-item">
                             <a className="nav-link" href="/dashboard">
@@ -483,7 +483,7 @@ function Header() {
                             </a>
                           </li>
                         )}
-                      </div>
+                      </div> */}
                       <li className="nav-item dropdown position-relative">
                         <CategoryDropdown />
                       </li>
@@ -906,7 +906,7 @@ function Header() {
                   </li>
 
                   <li className="d-inline-block mini-menu-card">
-                    <Notification />
+                    <Bell />
                   </li>
 
                   {/* <li className="d-inline-block mini-menu-card">
@@ -937,21 +937,12 @@ function Header() {
                           />
                         </button>
                         <div className="dropdown-content">
-                          <a href="" onClick={handleChangePasswordClick}>
-                            Change Password
-                          </a>
-                          <a href="" onClick={handleProfileClick}>
-                            Your Profile
-                          </a>
-                          <a href="" onClick={handleViewOrderClick}>
-                            Your Order
-                          </a>
                           {user.role == "ADMIN" ? (
                             <>
                               <a href="" onClick={handleDashboardClick}>
                                 Dashboard
                               </a>
-                              <a href="" onClick={handleManageCustomerClick}>
+                              {/* <a href="" onClick={handleManageCustomerClick}>
                                 Manage Customer
                               </a>
 
@@ -964,11 +955,20 @@ function Header() {
                               <a href="" onClick={handlecategoryClick}>
                                 Manager Category
                               </a>
-                              <a href="/managebook">Manage Book</a>
+                              <a href="/managebook">Manage Book</a> */}
                             </>
                           ) : (
                             <p></p>
                           )}
+                          <a href="" onClick={handleChangePasswordClick}>
+                            Change Password
+                          </a>
+                          <a href="" onClick={handleProfileClick}>
+                            Your Profile
+                          </a>
+                          <a href="" onClick={handleViewOrderClick}>
+                            Your Order
+                          </a>
 
                           {user.role == "STAFF" ? (
                             <>

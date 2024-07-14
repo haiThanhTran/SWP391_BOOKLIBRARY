@@ -144,8 +144,8 @@ function Main_page() {
                         <div className="service-card">
                           <i className="fas fa-piggy-bank mr-3"></i>
                           <div className="media-body">
-                            <h5 className="mt-0">Gợi Ý Sách</h5>
-                            <span>BLABLA</span>
+                            <h5 className="mt-0">Tài Nguyên Sách Dồi Dào</h5>
+                            <span>Cung Cấp Nhiều Danh Mục Sách</span>
                           </div>
                         </div>
                       </div>

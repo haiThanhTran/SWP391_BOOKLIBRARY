@@ -1,13 +1,16 @@
 .money-dashboard {
-    padding-top: 100px;
+    /* padding-top: 100px; */
     margin: 20px;
 }
 
 .money-dashboard h2 {
     text-align: center;
     margin-bottom: 20px;
+    font-weight: 600;
 }
-
+#month-select{
+    border-radius: 5px;
+}
 .dashboard-summary {
     display: flex;
     justify-content: center;
@@ -15,6 +18,7 @@
 }
 
 .summary-item {
+    border-radius: 5px;
     text-align: center;
     margin: 0 10px;
     padding: 20px;

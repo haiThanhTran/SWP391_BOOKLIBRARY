@@ -194,7 +194,7 @@ const AddBookForm = ({ onClose }) => {
   };
 
   const navigateToHome = () => {
-    window.location.href = "/managebook";
+    window.location.href = "/adminfunction/managebook";
   };
 
   return (

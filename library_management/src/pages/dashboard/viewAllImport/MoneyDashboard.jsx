@@ -72,7 +72,7 @@ const MoneyDashboard = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="money-dashboard">
         <div className="dashboard-header">
           <h2>Sách đã nhập</h2>
@@ -96,7 +96,7 @@ const MoneyDashboard = () => {
         </div>
         <div className="dashboard-summary">
           <div className="summary-item">
-            <h3>Imported Books</h3>
+            <h3>Sách Nhập</h3>
             <table>
               <thead>
                 <tr>
@@ -132,7 +132,7 @@ const MoneyDashboard = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

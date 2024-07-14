@@ -48,9 +48,9 @@ const AggregatedOrdersTable = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="aggregated-orders-table">
-        <h2>Aggregated Orders</h2>
+        <h2>Số lượng mượn sách</h2>
         <table>
           <thead>
             <tr>
@@ -81,7 +81,7 @@ const AggregatedOrdersTable = () => {
         </table>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
