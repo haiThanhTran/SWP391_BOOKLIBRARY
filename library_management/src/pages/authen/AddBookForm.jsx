@@ -209,7 +209,7 @@ const AddBookForm = ({ onClose }) => {
           <div className="formbold-input-flex">
             <div className="property-input">
               <label htmlFor="bookPrice" className="formbold-form-label">
-                Book Price
+                Giá sách
               </label>
               <input
                 type="number"
@@ -224,7 +224,7 @@ const AddBookForm = ({ onClose }) => {
 
             <div className="property-input">
               <label htmlFor="bookName" className="formbold-form-label">
-                Book Name
+                Tên sách
               </label>
               <input
                 type="text"
@@ -239,7 +239,7 @@ const AddBookForm = ({ onClose }) => {
 
             <div className="property-input">
               <label htmlFor="bookQuantity" className="formbold-form-label">
-                Book Quantity
+                Số lượng sách
               </label>
               <input
                 type="number"
@@ -256,7 +256,7 @@ const AddBookForm = ({ onClose }) => {
           <div className="formbold-input-flex">
             <div className="property-input">
               <label htmlFor="bookAuthor" className="formbold-form-label">
-                Book Author
+                Tác giả
               </label>
               <input
                 type="text"
@@ -270,7 +270,7 @@ const AddBookForm = ({ onClose }) => {
             </div>
             <div className="property-input">
               <label htmlFor="page" className="formbold-form-label">
-                Page
+                Số trang
               </label>
               <input
                 type="number"
@@ -285,7 +285,7 @@ const AddBookForm = ({ onClose }) => {
 
             <div className="property-input">
               <label htmlFor="language" className="formbold-form-label">
-                Language
+                ngôn ngữ
               </label>
               <input
                 type="text"
@@ -302,7 +302,7 @@ const AddBookForm = ({ onClose }) => {
           <div className="formbold-input-flex">
             <div className="property-input">
               <label htmlFor="category.categoryID" className="formbold-form-label">
-                Category
+                Hạng mục sách
               </label>
               <select
                 name="category.categoryID"
@@ -323,7 +323,7 @@ const AddBookForm = ({ onClose }) => {
 
             <div className="property-input">
               <label htmlFor="publisher.publisherID" className="formbold-form-label">
-                Publisher
+                Nhà xuất bản
               </label>
               <select
                 name="publisher.publisherID"
@@ -344,7 +344,7 @@ const AddBookForm = ({ onClose }) => {
 
             <div className="property-input">
               <label htmlFor="status.statusID" className="formbold-form-label">
-                Status
+                Trạng thái
               </label>
               <select
                 name="status.statusID"
@@ -367,7 +367,7 @@ const AddBookForm = ({ onClose }) => {
           <div className="formbold-form-file-flex">
             <div className="upload-container">
               <label htmlFor="upload" className="formbold-form-label">
-                Upload Picture of Book
+                Tải ảnh sách lên
               </label>
               <input
                 type="file"
@@ -380,7 +380,7 @@ const AddBookForm = ({ onClose }) => {
               {errors.selectedImage && <p className="error-text">{errors.selectedImage}</p>}
               <div className="formbold-mb-3">
                 <label htmlFor="description" className="description">
-                  Description of Book
+                  Miêu tả sách
                 </label>
                 <textarea
                   rows="6"
@@ -406,13 +406,13 @@ const AddBookForm = ({ onClose }) => {
 
           <div className="button-group">
             <button className="formbold-btn add" type="submit">
-              ADD
+              Thêm
             </button>
             <button className="formbold-btn cancel" type="button" onClick={navigateToHome}>
-              CANCEL
+              Hủy
             </button>
             <button className="formbold-btn clear" type="button" onClick={handleClear}>
-              CLEAR
+              Xóa ô nhập
             </button>
           </div>
         </form>

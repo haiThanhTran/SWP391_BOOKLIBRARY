@@ -17,6 +17,8 @@ import com.example.demo.user.User;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -177,6 +179,162 @@ public class OrderDetailController {
             return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    //DASHBOARD
+
+
+    // API trả về số lượng order của tháng hiện tại
+    @GetMapping("/currentMonthOrderCount")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Long> getCurrentMonthOrderCount() {
+        try {
+            YearMonth currentMonth = YearMonth.now();
+            long currentMonthCount = bookOrderService.getDistinctOrdersCountByMonth(currentMonth);
+            return ResponseEntity.ok(currentMonthCount);
+        } catch (Exception e) {
+            // Replace logger.error with the appropriate logger usage
+            System.err.println("Error while fetching current month order count: " + e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // API trả về phần trăm thay đổi số lượng order giữa tháng hiện tại và tháng trước đó
+    @GetMapping("/currentMonthPercentageChange")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> getCurrentMonthPercentageChange() {
+        try {
+            YearMonth currentMonth = YearMonth.now();
+            YearMonth previousMonth = currentMonth.minusMonths(1);
+
+            long currentMonthCount = bookOrderService.getOrdersCountByMonth(currentMonth);
+            long previousMonthCount = bookOrderService.getOrdersCountByMonth(previousMonth);
+
+            double percentageChange = 0;
+            if (previousMonthCount != 0) {
+                percentageChange = ((double) (currentMonthCount - previousMonthCount) / previousMonthCount) * 100;
+            } else if (currentMonthCount != 0) {
+                percentageChange = 100;
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("currentMonthCount", currentMonthCount);
+            response.put("previousMonthCount", previousMonthCount);
+            response.put("percentageChange", percentageChange);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error while calculating percentage change", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/uniqueBorrowersCount")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Long> getUniqueBorrowersCountForCurrentMonth() {
+        YearMonth currentMonth = YearMonth.now();
+        long count = bookOrderService.countUniqueUsersByMonth(currentMonth);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/uniqueBorrowersPercentageChange")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> getUniqueBorrowersPercentageChange() {
+        YearMonth currentMonth = YearMonth.now();
+        YearMonth previousMonth = currentMonth.minusMonths(1);
+
+        long currentMonthCount = bookOrderService.countUniqueUsersByMonth(currentMonth);
+        long previousMonthCount = bookOrderService.countUniqueUsersByMonth(previousMonth);
+
+        double percentageChange = 0;
+        if (previousMonthCount != 0) {
+            percentageChange = ((double) (currentMonthCount - previousMonthCount) / previousMonthCount) * 100;
+        } else if (currentMonthCount != 0) {
+            percentageChange = 100;
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentMonthCount", currentMonthCount);
+        response.put("previousMonthCount", previousMonthCount);
+        response.put("percentageChange", percentageChange);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/dashboardOrders")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Object[]>> getCurrentMonthAggregatedOrders() {
+        try {
+            YearMonth currentMonth = YearMonth.now();
+            List<Object[]> aggregatedOrders = bookOrderService.getAggregatedOrderDetailsByMonth(currentMonth);
+            return ResponseEntity.ok(aggregatedOrders);
+        } catch (Exception e) {
+            // Replace logger.error with the appropriate logger usage
+            System.err.println("Error while fetching current month aggregated orders: " + e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/usersWithSearchCount")
+    public ResponseEntity<List<Map<String, Object>>> getUsersWithSearchCount() {
+        List<Object[]> results = bookOrderService.getUsersWithSearchCount();
+        List<Map<String, Object>> response = results.stream().map(result -> {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("userId", result[0]);
+            userMap.put("avatar", result[1]);
+            userMap.put("searchCount", result[2]);
+            return userMap;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/top-5-borrowed-books")
+    public ResponseEntity<List<Object[]>> getTop5MostBorrowedBooks() {
+        List<Object[]> results = bookOrderService.getTop5MostBorrowedBooks();
+        return ResponseEntity.ok(results);
+    }
+
+
+    //Borrow chart
+    @GetMapping("/monthlyBorrowings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Long>> getMonthlyBorrowings() {
+        try {
+            // Lấy năm hiện tại
+            Year currentYear = Year.now();
+
+            // Lấy số lượt mượn sách hàng tháng cho năm hiện tại
+            List<Long> monthlyBorrowings = new ArrayList<>();
+            for (int month = 1; month <= 12; month++) {
+                YearMonth yearMonth = YearMonth.of(currentYear.getValue(), month);
+                long borrowingsCount = bookOrderService.getOrdersCountByMonth(yearMonth);
+                monthlyBorrowings.add(borrowingsCount);
+            }
+
+            return ResponseEntity.ok(monthlyBorrowings);
+        } catch (Exception e) {
+            logger.error("Error while fetching monthly borrowings", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    //User chart
+    @GetMapping("/monthlyUniqueBorrowers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Long>> getMonthlyUniqueBorrowers() {
+        try {
+            Year currentYear = Year.now();
+            List<Long> monthlyUniqueBorrowers = new ArrayList<>();
+            for (int month = 1; month <= 12; month++) {
+                YearMonth yearMonth = YearMonth.of(currentYear.getValue(), month);
+                long uniqueBorrowersCount = bookOrderService.countUniqueUsersByMonth(yearMonth);
+                monthlyUniqueBorrowers.add(uniqueBorrowersCount);
+            }
+            return ResponseEntity.ok(monthlyUniqueBorrowers);
+        } catch (Exception e) {
+            logger.error("Error while fetching monthly unique borrowers", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

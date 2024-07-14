@@ -1,6 +1,7 @@
     package com.example.demo.book;
 
     import com.example.demo.category.Category;
+    import com.example.demo.importBook.ImportBook;
     import com.example.demo.publisher.Publisher;
     import com.example.demo.status.Status;
     import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,6 +13,7 @@
     import lombok.Setter;
 
     import java.util.HashMap;
+    import java.util.List;
     import java.util.Map;
 
     @Getter
@@ -65,6 +67,9 @@
         @OneToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "status_id", nullable = false)
         private Status status;
+
+//        @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//        private List<ImportBook> importBooks;
 
         @Transient
         private Map<Long, Integer> voters = new HashMap<>(); // Để lưu phiếu bầu của người dùng

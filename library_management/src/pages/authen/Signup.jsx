@@ -123,7 +123,7 @@ function Login() {
         <div className="container">
           <div className="signup-content">
             <div className="signup-form">
-              <h2 className="form-title">Sign up</h2>
+              <h2 className="form-title">Đăng ký</h2>
               {/* Form post */}
               <form
                 method="POST"
@@ -252,7 +252,7 @@ function Login() {
                 <img src={Signin} alt="sign up image" />
               </figure>
               <a href="/signin" className="signup-image-link">
-                I am already member
+                Đã có tài khoản? Đăng nhập ngay
               </a>
             </div>
           </div>

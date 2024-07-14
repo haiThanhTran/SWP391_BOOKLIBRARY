@@ -132,10 +132,10 @@ const App = () => {
 
   return (
     <Container fluid className="profile-container viewprofile mt-5">
-      <h1 className="profile-heading viewprofile">Edit Profile</h1>
+      <h1 className="profile-heading viewprofile">Chỉnh sửa trang cá nhân</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="formUserName">
-          <Form.Label>User Name</Form.Label>
+          <Form.Label>Tên người dùng</Form.Label>
           <Col xs={12} md={6} className="mx-auto">
             <Form.Control
               type="text"
@@ -148,7 +148,7 @@ const App = () => {
         </Form.Group>
 
         <Form.Group controlId="formUserAddress">
-          <Form.Label>Address</Form.Label>
+          <Form.Label>Địa chỉ</Form.Label>
           <Col xs={12} md={6} className="mx-auto">
             <Form.Control
               type="text"
@@ -161,7 +161,7 @@ const App = () => {
         </Form.Group>
 
         <Form.Group controlId="formUserPhone">
-          <Form.Label>Phone</Form.Label>
+          <Form.Label>Số điện thoại</Form.Label>
           <Col xs={12} md={6} className="mx-auto">
             <Form.Control
               type="tel"
@@ -174,7 +174,7 @@ const App = () => {
         </Form.Group>
 
         <Form.Group controlId="formBio">
-          <Form.Label>Bio</Form.Label>
+          <Form.Label>Tiểu sử</Form.Label>
           <Col xs={12} md={6} className="mx-auto">
             <Form.Control
               as="textarea"
@@ -187,7 +187,7 @@ const App = () => {
         </Form.Group>
 
         <Form.Group controlId="formBookPicture">
-          <Form.Label>Upload Picture of Book</Form.Label>
+          <Form.Label>Tải ảnh</Form.Label>
           <Col xs={12} md={6} className="mx-auto">
             <Form.Control
               type="file"
@@ -220,19 +220,19 @@ const App = () => {
         </Form.Group>
 
         <Row className="mt-3 justify-content-md-center">
-          <Col md="auto">
+          {/* <Col md="auto">
             <Button variant="secondary" onClick={handleEdit}>
               Edit
             </Button>
-          </Col>
+          </Col> */}
           <Col md="auto">
             <Button variant="primary" type="submit">
-              Save Changes
+              Lưu
             </Button>
           </Col>
           <Col md="auto">
             <Button variant="primary" onClick={navigateToHome}>
-              Cancel
+              Hủy
             </Button>
           </Col>
         </Row>

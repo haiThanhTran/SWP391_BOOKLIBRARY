@@ -53,7 +53,7 @@ function Header() {
   };
 
   const handleDashboardClick = () => {
-    navigate("/dashboard/*"); //vieworder
+    navigate("/adminfunction/*"); //vieworder
   };
   const SearchForm = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -105,9 +105,9 @@ function Header() {
                 value={searchOption}
                 onChange={(e) => setSearchOption(e.target.value)}
               >
-                <option value="All">All</option>
-                <option value="Author">Author</option>
-                <option value="Book name">Book name</option>
+                <option value="All">Tất cả</option>
+                <option value="Author">Tác Giả</option>
+                <option value="Book name">Tên sách</option>
               </select>
             </div>
           </div>
@@ -468,6 +468,22 @@ function Header() {
                           </ul>
                         </div>
                       </li> */}
+                      <div>
+                        <li className="nav-item">
+                          <a className="nav-link" href="/">
+                            Trang chủ
+                          </a>
+                        </li>
+                      </div>
+                      <div>
+                        {user && user.role === "ADMIN" && (
+                          <li className="nav-item">
+                            <a className="nav-link" href="/dashboard">
+                              Thống kê
+                            </a>
+                          </li>
+                        )}
+                      </div>
                       <li className="nav-item dropdown position-relative">
                         <CategoryDropdown />
                       </li>
@@ -904,7 +920,7 @@ function Header() {
                     id="sidemenu_toggle"
                     onClick={handleWishListClick}
                     style={{
-                      textDecoration: "none"
+                      textDecoration: "none",
                     }}
                   >
                     <i className="lni lni-shopping-basket"></i>

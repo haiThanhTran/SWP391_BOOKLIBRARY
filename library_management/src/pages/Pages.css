@@ -53,6 +53,7 @@
   margin: 0 10px;
   text-align: center;
   position: relative; /* Added to position quantity */
+  text-decoration: none;
 }
 
 .book img {
@@ -70,6 +71,7 @@
 }
 
 .book button {
+  text-decoration: none;
   display: block;
   margin: 10px auto;
   padding: 5px 10px;
@@ -94,7 +96,30 @@
   padding: 5px 10px; /* Padding for some space */
   border-radius: 5px; /* Rounded corners */
   font-weight: bold; /* Bold text */
+.detail-book-quantity span {
+  text-decoration: none;
 }
+
+.detail-book-quantity {
+  position: relative;
+  display: inline-block;
+}
+
+.detail-book-quantity img {
+  display: block;
+}
+
+.detail-book-quantity .quantity {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: yellow;
+  color: black;
+  /* padding: 5px; */
+  text-decoration: none;
+}
+
+
 
 .dropbtn {
   background-color: #04AA6D;

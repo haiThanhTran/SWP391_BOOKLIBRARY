@@ -1,15 +1,16 @@
-import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useContext } from "react";
 import "react-owl-carousel2/lib/styles.css";
 import "react-owl-carousel2/src/owl.carousel.css";
 import SlideShow from "./SlideShow";
-import { UserContext } from "../../src/ultils/userContext";
 import Footer from "../pages/footer/Footer";
 import Header from "../pages/nav-bar/Header"; // Correct import
 import axios from "axios";
 
 function Main_page() {
   const [books, setBooks] = useState([]);
+  //
+  const [topBorrow, setTopBorrow] = useState([]);
+
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -23,37 +24,60 @@ function Main_page() {
     };
     fetchBooks();
   }, []);
+  
+  useEffect(() => {
+    const fetchTopBorrow = async () => {
+      try {
+        const response = await axios.get("http://localhost:9191/api/orders/top-5-borrowed-books");
+        setTopBorrow(response.data);
+        console.log("top borrow api: ", response.data);
+      } catch (error) {
+        console.error("Fetch top borrow failed:", error);
+      }
+    };
+    fetchTopBorrow();
+  }, []);
 
+  const categoryMap = {
+    "Khoa học": 1,
+    "Kinh doanh": 2,
+    "Khám phá": 3,
+    "Lịch sử": 4,
+    "Phát triển bản thân": 5,
+    "Sức khỏe": 6,
+    "Tiểu thuyết": 7,
+    "Truyện tranh": 8,
+  };
+  
   const scienceBooks = books.filter(
-    (book) => book.category.categoryName === "Khoa học" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Khoa học"] && book.status.statusID === 2
   );
   const businessBooks = books.filter(
-    (book) => book.category.categoryName === "Kinh doanh" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Kinh doanh"] && book.status.statusID === 2
   );
   const discoveryBooks = books.filter(
-    (book) => book.category.categoryName === "Khám phá" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Khám phá"] && book.status.statusID === 2
   );
   const historyBooks = books.filter(
-    (book) => book.category.categoryName === "Lịch sử" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Lịch sử"] && book.status.statusID === 2
   );
   const growYourSelftBooks = books.filter(
-    (book) =>
-      book.category.categoryName === "Phát triển bản thân" &&
-      book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Phát triển bản thân"] && book.status.statusID === 2
   );
   const healthBooks = books.filter(
-    (book) => book.category.categoryName === "Sức khỏe" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Sức khỏe"] && book.status.statusID === 2
   );
   const novelBooks = books.filter(
-    (book) =>
-      book.category.categoryName === "Tiểu thuyết" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Tiểu thuyết"] && book.status.statusID === 2
   );
   const comicBooks = books.filter(
-    (book) =>
-      book.category.categoryName === "Truyện tranh" && book.status.statusID === 5
+    (book) => book.category.categoryID === categoryMap["Truyện tranh"] && book.status.statusID === 2
   );
-  const incomingBoook = books.filter(book => book.status.statusID === 4);
+  
+  const incomingBoook = books.filter(book => book.status.statusID === 1);
   console.log("incomingBoook: ", incomingBoook);
+
+
 
   return (
     <>
@@ -145,14 +169,21 @@ function Main_page() {
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={incomingBoook} />
+                <SlideShow books={incomingBoook} categoryID={null} />
+              ) : (
+                <p>Loading...</p>
+              )}
+            </div>
+            <div className="App">
+              {topBorrow.length > 0 ? (
+                 <SlideShow books={topBorrow} categoryID={null} isTopBorrow={true} />
               ) : (
                 <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={scienceBooks} />
+                <SlideShow books={scienceBooks} categoryID={categoryMap["Khoa học"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
@@ -160,7 +191,7 @@ function Main_page() {
 
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={businessBooks} />
+                <SlideShow books={businessBooks} categoryID={categoryMap["Kinh doanh"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
@@ -168,42 +199,42 @@ function Main_page() {
 
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={discoveryBooks} />
+                <SlideShow books={discoveryBooks} categoryID={categoryMap["Khám phá"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={historyBooks} />
+                <SlideShow books={historyBooks} categoryID={categoryMap["Lịch sử"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={growYourSelftBooks} />
+                <SlideShow books={growYourSelftBooks} categoryID={categoryMap["Phát triển bản thân"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={healthBooks} />
+                <SlideShow books={healthBooks} categoryID={categoryMap["Sức khỏe"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={novelBooks} />
+                <SlideShow books={novelBooks} categoryID={categoryMap["Tiểu thuyết"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
             </div>
             <div className="App">
               {books.length > 0 ? (
-                <SlideShow books={comicBooks} />
+                <SlideShow books={comicBooks} categoryID={categoryMap["Truyện tranh"]} />
               ) : (
                 <p>Chờ chút...</p>
               )}
@@ -215,141 +246,7 @@ function Main_page() {
 
         <Footer />
 
-        {/* <!--START Cart Box--> */}
-        <div className="cart-box-overlay">
-          <a>
-            <i className="fas fa-times cross-sign" id="close-window1"></i>
-          </a>
-
-          <div className="container">
-            <div className="row">
-              <div className="search-listing row">
-                <div className="col-12 mb-4">
-                  <h4 className="">Shop Cart</h4>
-                </div>
-                <div className="col-12">
-                  <div className="listing-search-scroll">
-                    <div className="media row">
-                      <div className="img-holder ml-1 mr-2 col-4">
-                        <a href="#">
-                          <img
-                            src="book-shop\img\book-1.jpg"
-                            className="align-self-center"
-                            alt="cartitem"
-                          />
-                        </a>
-                      </div>
-                      <div className="media-body mt-auto mb-auto col-8">
-                        <h5 className="name">
-                          <a href="#">So Sad Today</a>
-                        </h5>
-                        <p className="category">light wear Lastest</p>
-                        <a
-                          className="btn black-sm-btn"
-                          href="book-shop\shop-cart.html"
-                        >
-                          <i className="fas fa-shopping-bag"></i>
-                        </a>
-                        <a className="btn black-sm-btn">
-                          <i className="fas fa-eye"></i>
-                        </a>
-                      </div>
-                    </div>
-                    <div className="media row">
-                      <div className="img-holder ml-1 mr-2 col-4">
-                        <a href="#">
-                          <img
-                            src="book-shop\img\book-2.jpg"
-                            className="align-self-center"
-                            alt="cartitem"
-                          />
-                        </a>
-                      </div>
-                      <div className="media-body mt-auto mb-auto col-8">
-                        <h5 className="name">
-                          <a href="#">As I Lay Dying</a>
-                        </h5>
-                        <p className="category">light wear Lastest</p>
-                        <a
-                          className="btn black-sm-btn"
-                          href="book-shop\shop-cart.html"
-                        >
-                          <i className="fas fa-shopping-bag"></i>
-                        </a>
-                        <a className="btn black-sm-btn" href="#">
-                          <i className="fas fa-eye"></i>
-                        </a>
-                      </div>
-                    </div>
-                    <div className="media row">
-                      <div className="img-holder ml-1 mr-2 col-4">
-                        <a href="#">
-                          <img
-                            src="book-shop\img\book-3.jpg"
-                            className="align-self-center"
-                            alt="cartitem"
-                          />
-                        </a>
-                      </div>
-                      <div className="media-body mt-auto mb-auto col-8">
-                        <h5 className="name">
-                          <a href="#">Love Does</a>
-                        </h5>
-                        <p className="category">light wear Lastest</p>
-                        <a
-                          className="btn black-sm-btn"
-                          href="book-shop\shop-cart.html"
-                        >
-                          <i className="fas fa-shopping-bag"></i>
-                        </a>
-                        <a className="btn black-sm-btn" href="#">
-                          <i className="fas fa-eye"></i>
-                        </a>
-                      </div>
-                    </div>
-                    <div className="media row">
-                      <div className="img-holder ml-1 mr-2 col-4">
-                        <a href="#">
-                          <img
-                            src="book-shop\img\book-2-1.jpg"
-                            className="align-self-center"
-                            alt="cartitem"
-                          />
-                        </a>
-                      </div>
-                      <div className="media-body mt-auto mb-auto col-8">
-                        <h5 className="name">
-                          <a href="#">The Last Stand</a>
-                        </h5>
-                        <p className="category">light wear Lastest</p>
-                        <a
-                          className="btn black-sm-btn"
-                          href="book-shop\shop-cart.html"
-                        >
-                          <i className="fas fa-shopping-bag"></i>
-                        </a>
-                        <a className="btn black-sm-btn" href="#">
-                          <i className="fas fa-eye"></i>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bag-btn">
-              <h4 className="total">
-                <span>Total: </span>100$
-              </h4>
-              <a href="#" className="btn green-color-yellow-gradient-btn">
-                View Bag{" "}
-              </a>
-              <a href="#" className="btn yellow-color-green-gradient-btn">
-                Checkout{" "}
-              </a>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </>
   );
