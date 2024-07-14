@@ -1,0 +1,63 @@
+.money-dashboard {
+    padding-top: 100px;
+    margin: 20px;
+}
+
+.money-dashboard h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-summary {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.summary-item {
+    text-align: center;
+    margin: 0 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    flex: 1;
+}
+
+.summary-item h3 {
+    margin-bottom: 10px;
+}
+
+.summary-item table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.summary-item th,
+.summary-item td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.summary-item th {
+    text-align: center;
+    background-color: #f2f2f2;
+}
+
+.summary-item td {
+    text-align: center;
+}
+
+.summary-item tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.summary-item tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.book-image {
+    width: 131px;
+    height: 200px;
+}

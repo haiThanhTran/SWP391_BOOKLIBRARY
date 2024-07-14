@@ -1,6 +1,8 @@
 package com.example.demo.book;
 
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.importBook.ImportBook;
+import com.example.demo.importBook.ImportBookService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -25,6 +28,7 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
+    private final ImportBookService importBookService;
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
@@ -75,6 +79,15 @@ public class BookController {
         createdBook.setBookImage(imageFilename);
         bookService.updateBook(createdBook.getBookID(), createdBook);
 
+        // Create a new ImportBook record
+        ImportBook importBook = new ImportBook();
+        importBook.setImportDate(new Date()); // Set current date
+        importBook.setImportQuantity(book.getBookQuantity()); // Set quantity from book
+        importBook.setBook(createdBook); // Set the associated book
+
+        // Save the import book record
+        importBookService.createImportBook(importBook);
+
         return ResponseEntity.ok(createdBook);
     }
 
@@ -91,6 +104,12 @@ public class BookController {
             return ResponseEntity.badRequest().body(null);
         }
 
+        // Get the current book from the database
+        Book currentBook = bookService.getBookById(id);
+        if (currentBook == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         // Handle the image update if an image file is provided
         if (image != null && !image.isEmpty()) {
             String imageFilename = "image" + id + "." + getFileExtension(image.getOriginalFilename());
@@ -104,6 +123,19 @@ public class BookController {
 
             // Update the book's image path
             book.setBookImage(imageFilename);
+        }
+
+        // Calculate the difference in quantity
+        int quantityDifference = book.getBookQuantity() - currentBook.getBookQuantity();
+        if (quantityDifference > 0) {
+            // Create a new ImportBook record if the new quantity is greater than the old quantity
+            ImportBook importBook = new ImportBook();
+            importBook.setImportDate(new Date()); // Set current date
+            importBook.setImportQuantity(quantityDifference); // Set the quantity difference
+            importBook.setBook(currentBook); // Set the associated book
+
+            // Save the import book record
+            importBookService.createImportBook(importBook);
         }
 
         // Update the book without changing the bookStar field

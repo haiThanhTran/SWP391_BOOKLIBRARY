@@ -24,6 +24,11 @@ import StaffOrderManagement from "./pages/wishlist/StaffOrderManagement";
 import ManageCategory from "./pages/category/ManageCategory"
 import ManagePublisher from "./pages/publisher/ManagePublisher";
 import ViewProfile from "./pages/profile/ViewProfile";
+import Dashboard from "./pages/dashboard/Dashboard";
+import AggregatedOrdersTable from "./pages/dashboard/viewAllOrder/AggregatedOrdersTable";
+import BorrowerOrdersTable from "./pages/dashboard/viewAllBorrower/BorrowerOrdersTable";
+import MoneyDashboard from "./pages/dashboard/viewAllImport/MoneyDashboard";
+
 const App = () => {
   return (
     <UserProvider>
@@ -50,6 +55,11 @@ const App = () => {
           <Route path="/managecategory" element ={<ManageCategory />} />
           <Route path="/managepublisher" element ={<ManagePublisher />} />
           <Route path="/viewprofile" element={<ViewProfile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/dashboardorder" element={<AggregatedOrdersTable />} />
+          <Route path="/dashboard/dashboardborrower" element={<BorrowerOrdersTable />} />
+          <Route path="/dashboard/moneydashboard" element={<MoneyDashboard />} />
+          
         </Routes>
       </Router>
       </WishlistProvider>

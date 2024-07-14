@@ -49,44 +49,45 @@ function Header() {
     navigate("/viewprofile"); //viewprofile
   };
 
-
-
-
   const SearchForm = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchOption, setSearchOption] = useState("All");
     const navigate = useNavigate();
-  
+
     const handleSearch = async (event) => {
       event.preventDefault();
       try {
         let response;
         if (searchOption === "Book name") {
-          response = await fetch(`http://localhost:9191/api/books/search-by-bookname?book_name=${searchTerm}`);
+          response = await fetch(
+            `http://localhost:9191/api/books/search-by-bookname?book_name=${searchTerm}`
+          );
         } else if (searchOption === "Author") {
-          response = await fetch(`http://localhost:9191/api/books/search-by-author?book_author=${searchTerm}`);
+          response = await fetch(
+            `http://localhost:9191/api/books/search-by-author?book_author=${searchTerm}`
+          );
         } else {
           response = await fetch(`http://localhost:9191/api/books`);
         }
         const books = await response.json();
-  
+
         if (!response.ok) {
           throw new Error(`Error: HTTP status ${response.status}`);
         }
-        
-        navigate("/search-results", { 
-          state: { 
+
+        navigate("/search-results", {
+          state: {
             books: books, // Correctly pass the 'books' array in the state
             searchOption,
-            searchTerm // Pass searchTerm as well 
-          } 
+            searchTerm, // Pass searchTerm as well
+          },
         });
       } catch (error) {
         console.error("Error fetching search results:", error);
         // Handle errors, e.g., display an error message to the user
       }
     };
-  
+
     return (
       <form onSubmit={handleSearch} className="search-form">
         <div className="inner-form">
@@ -98,9 +99,9 @@ function Header() {
                 value={searchOption}
                 onChange={(e) => setSearchOption(e.target.value)}
               >
-                <option value="All">All</option>
-                <option value="Author">Author</option>
-                <option value="Book name">Book name</option>
+                <option value="All">Tất cả</option>
+                <option value="Author">Tác Giả</option>
+                <option value="Book name">Tên sách</option>
               </select>
             </div>
           </div>
@@ -135,7 +136,6 @@ function Header() {
       </form>
     );
   };
-
 
   return (
     <div className="header-area white-background">
@@ -462,6 +462,22 @@ function Header() {
                           </ul>
                         </div>
                       </li> */}
+                      <div>
+                          <li className="nav-item">
+                            <a className="nav-link" href="/">
+                              Trang chủ
+                            </a>
+                          </li>
+                      </div>
+                      <div>
+                        {user && user.role === "ADMIN" && (
+                          <li className="nav-item">
+                            <a className="nav-link" href="/dashboard">
+                              Thống kê
+                            </a>
+                          </li>
+                        )}
+                      </div>
                       <li className="nav-item dropdown position-relative">
                         <CategoryDropdown />
                       </li>

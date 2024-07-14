@@ -95,10 +95,10 @@ const SearchResults = () => {
           <p>
             {bookList.length}{" "}
             {category
-              ? `books in category "${category.categoryName}"`
+              ? `sách trong hạng mục "${category.categoryName}"`
               : searchOption === "All"
-              ? `books found`
-              : `books related to "${searchTerm}"`}
+              ? `sách tìm được`
+              : `sách với từ khóa "${searchTerm}"`}
           </p>
         </div>
         <ul className="book-list">

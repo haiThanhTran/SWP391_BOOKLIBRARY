@@ -135,20 +135,20 @@ const UpdateBookForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (!validateForm()) {
       // If validation fails, specifically because of missing image:
       if (errors.selectedImage) {
-        alert(errors.selectedImage); 
+        alert(errors.selectedImage);
       } else {
-        alert("Please fill in all fields"); 
+        alert("Please fill in all fields");
       }
       return;
     }
-  
+
     const token = localStorage.getItem("token");
     const formToSubmit = new FormData();
-  
+
     const bookData = {
       bookPrice: formData.bookPrice,
       bookName: formData.bookName,
@@ -169,14 +169,14 @@ const UpdateBookForm = () => {
         statusID: formData.status.statusID,
       },
     };
-  
+
     formToSubmit.append("book", JSON.stringify(bookData));
     if (selectedImage) {
       formToSubmit.append("image", selectedImage);
     } else {
       formToSubmit.append("bookImage", formData.bookImage);
     }
-  
+
     try {
       const response = await fetch(`http://localhost:9191/api/books/${id}`, {
         method: "PUT",
@@ -185,7 +185,7 @@ const UpdateBookForm = () => {
         },
         body: formToSubmit,
       });
-  
+
       if (response.ok) {
         alert("Book updated successfully!");
         navigateToHome();
@@ -202,8 +202,6 @@ const UpdateBookForm = () => {
       alert("An error occurred while updating the book.");
     }
   };
-  
-  
 
   const handleClear = () => {
     setFormData({
@@ -246,7 +244,7 @@ const UpdateBookForm = () => {
           <div className="formbold-input-flex">
             <div className="property-input">
               <label htmlFor="bookPrice" className="formbold-form-label">
-                Book Price
+                Giá sách
               </label>
               <input
                 type="number"
@@ -263,7 +261,7 @@ const UpdateBookForm = () => {
 
             <div className="property-input">
               <label htmlFor="bookName" className="formbold-form-label">
-                Book Name
+                Tên sách
               </label>
               <input
                 type="text"
@@ -280,7 +278,7 @@ const UpdateBookForm = () => {
 
             <div className="property-input">
               <label htmlFor="bookQuantity" className="formbold-form-label">
-                Book Quantity
+                Số lượng sách
               </label>
               <input
                 type="number"
@@ -299,7 +297,7 @@ const UpdateBookForm = () => {
           <div className="formbold-input-flex">
             <div className="property-input">
               <label htmlFor="bookAuthor" className="formbold-form-label">
-                Book Author
+                Tác giả
               </label>
               <input
                 type="text"
@@ -315,7 +313,7 @@ const UpdateBookForm = () => {
             </div>
             <div className="property-input">
               <label htmlFor="page" className="formbold-form-label">
-                Page
+                Số trang
               </label>
               <input
                 type="number"
@@ -330,7 +328,7 @@ const UpdateBookForm = () => {
 
             <div className="property-input">
               <label htmlFor="language" className="formbold-form-label">
-                Language
+                Ngôn ngữ
               </label>
               <input
                 type="text"
@@ -352,7 +350,7 @@ const UpdateBookForm = () => {
                 htmlFor="category.categoryID"
                 className="formbold-form-label"
               >
-                Category
+                Hạng mục sách
               </label>
               <select
                 name="category.categoryID"
@@ -378,7 +376,7 @@ const UpdateBookForm = () => {
                 htmlFor="publisher.publisherID"
                 className="formbold-form-label"
               >
-                Publisher
+                Nhà xuất bản
               </label>
               <select
                 name="publisher.publisherID"
@@ -404,7 +402,7 @@ const UpdateBookForm = () => {
 
             <div className="property-input">
               <label htmlFor="status.status_id" className="formbold-form-label">
-                Status
+                Trạng thái
               </label>
               <select
                 name="status.statusID"
@@ -429,7 +427,7 @@ const UpdateBookForm = () => {
           <div className="formbold-form-file-flex">
             <div className="upload-container">
               <label htmlFor="upload" className="formbold-form-label">
-                Upload Picture of Book
+                Tải ảnh sách lên
               </label>
               <input
                 type="file"
@@ -444,7 +442,7 @@ const UpdateBookForm = () => {
               )}
               <div className="formbold-mb-3">
                 <label htmlFor="description" className="description">
-                  Description of Book
+                  Miêu tả sách
                 </label>
                 <textarea
                   rows="6"
@@ -480,21 +478,21 @@ const UpdateBookForm = () => {
 
           <div className="button-group">
             <button className="formbold-btn add" type="submit">
-              Update
+              Sửa
             </button>
             <button
               className="formbold-btn cancel"
               type="button"
               onClick={navigateToHome}
             >
-              CANCEL
+              Hủy
             </button>
             <button
               className="formbold-btn clear"
               type="button"
               onClick={handleClear}
             >
-              CLEAR
+              Xóa ô nhập
             </button>
           </div>
         </form>

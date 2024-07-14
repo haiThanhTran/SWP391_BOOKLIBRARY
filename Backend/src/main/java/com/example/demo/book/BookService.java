@@ -6,6 +6,8 @@ import com.example.demo.exception.ResourceNotFoundException;
 //import com.example.demo.review.ReviewService;
 //import com.example.demo.timeline.TimelineService;
 //import com.example.demo.userBookStatus.UserBookStatusService;
+import com.example.demo.status.Status;
+import com.example.demo.status.StatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final StatusRepository statusRepository;
 
 //    UserBookStatusService userBookStatusService;
 //    CartService cartService;
@@ -72,7 +75,19 @@ public class BookService {
 //            reviewService.deleteReviewWithBookId(id);
 //            orderDetailService.deleteOrderDetailWithBookId(id);
 //            timelineService.deleteTimelineWithBookId(id);
-            bookRepository.deleteById(id);
+
+//            bookRepository.deleteById(id);
+            Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+
+            // Tìm kiếm trạng thái với ID là "3"
+            Status deletedStatus = statusRepository.findById(3L).orElseThrow(() -> new ResourceNotFoundException("Status not found with id: " + 3));
+
+            // Đặt trạng thái của sách thành "3"
+            book.setStatus(deletedStatus);
+
+            // Lưu lại sách
+            bookRepository.save(book);
+
         } else {
             throw new ResourceNotFoundException("Book not found with id: " + id);
         }

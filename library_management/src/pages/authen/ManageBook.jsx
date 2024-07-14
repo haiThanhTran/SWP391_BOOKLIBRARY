@@ -163,7 +163,7 @@ const ManageBook = () => {
           <div className="search-bar-managebook">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Tìm kiếm..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -171,27 +171,27 @@ const ManageBook = () => {
               value={searchOption}
               onChange={(e) => setSearchOption(e.target.value)}
             >
-              <option value="All">All</option>
+              <option value="All">Tất cả</option>
               <option value="ID">ID</option>
-              <option value="Book name">Book name</option>
+              <option value="Book name">Tên sách</option>
             </select>
-            <button onClick={handleSearch}>Search</button>
+            <button onClick={handleSearch}>Tìm kiếm</button>
           </div>
-          <h2>Actions</h2>
+          <h2>Chức năng </h2>
           <div className="book-actions-managebook">
             <div className="book-actions-top-managebook">
               <button
                 className="btn-add-managebook"
                 onClick={() => navigate("/addbookform")}
               >
-                Add <FaBookmark />
+                Thêm <FaBookmark />
               </button>
               <button
                 className="btn-detail-managebook"
                 onClick={() => navigate(`/bookdetail/${selectedBook?.bookID}`)}
                 disabled={!selectedBook}
               >
-                Detail <IoInformationCircle />
+                Chi tiết <IoInformationCircle />
               </button>
             </div>
             <div className="book-actions-bottom-managebook">
@@ -200,18 +200,18 @@ const ManageBook = () => {
                 onClick={handleEditClick}
                 disabled={!selectedBook}
               >
-                Edit <FaRegEdit />
+                Sửa <FaRegEdit />
               </button>
               <button
                 className="btn-delete-managebook"
                 onClick={handleDeleteClick}
                 disabled={!selectedBook}
               >
-                Delete <MdDelete />
+                Xóa <MdDelete />
               </button>
             </div>
           </div>
-          <h2>Categories</h2>
+          <h2>Hạng mục</h2>
           {categories.map((category) => (
             <div
               className={`category-managebook ${

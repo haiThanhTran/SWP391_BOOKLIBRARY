@@ -3,28 +3,45 @@ import StarRatingComponent from "react-star-rating-component";
 import "./Pages.css";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import star from "../assets/star.png";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { CiStar } from "react-icons/ci";
 import { IoInformationCircle } from "react-icons/io5";
+import axios from "axios";
+import { MdAssignmentTurnedIn } from "react-icons/md";
+import { color } from "chart.js/helpers";
+import { orange } from "@mui/material/colors";
 
-
-const SlideShow = ({ books }) => {
+const SlideShow = ({ books, categoryID, isTopBorrow }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [ratings, setRatings] = useState({}); // Để lưu trữ đánh giá cho mỗi cuốn sách
-  const [votes, setVotes] = useState({}); // Để lưu trữ trạng thái đã vote cho mỗi cuốn sách
-  const [voteSuccessMessage, setVoteSuccessMessage] = useState(""); // Trạng thái để điều khiển thông báo thành công
+  const [ratings, setRatings] = useState({});
+  const [votes, setVotes] = useState({});
+  const [voteSuccessMessage, setVoteSuccessMessage] = useState("");
   const [user, setUser] = useState(null);
-  const [loginMessage, setLoginMessage] = useState(""); // Trạng thái để điều khiển thông báo đăng nhập
+  const [loginMessage, setLoginMessage] = useState("");
   const [categoryName, setCategoryName] = useState("");
 
+  const navigate = useNavigate();
+  //
+  const [categories, setCategories] = useState([]);
+  //
   useEffect(() => {
-    if (books.length > 0) {
+    axios
+      .get("http://localhost:9191/api/categories")
+      .then((response) => {
+        setCategories(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the categories!", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (books.length > 0 && !isTopBorrow) {
       setCategoryName(books[0].category.categoryName);
     }
-  }, [books]);
+  }, [books, isTopBorrow]);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -38,12 +55,11 @@ const SlideShow = ({ books }) => {
 
   useEffect(() => {
     if (user && user.id) {
-      // Load sách đã được vote từ localStorage cho người dùng cụ thể
       const votedBooksFromStorage =
         JSON.parse(localStorage.getItem(`votedBooks_${user.id}`)) || {};
       setVotes(votedBooksFromStorage);
     }
-  }, [user]); // Chỉ chạy khi user được cập nhật
+  }, [user]);
 
   const nextSlide = () => {
     if (currentIndex < books.length - 5) {
@@ -75,7 +91,7 @@ const SlideShow = ({ books }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Thêm token vào header
+            Authorization: `Bearer ${token}`,
           },
         }
       ).then((response) => {
@@ -86,36 +102,40 @@ const SlideShow = ({ books }) => {
           };
           setVotes(newVotes);
 
-          // Lưu thông tin vote vào Local Storage cho người dùng cụ thể
           localStorage.setItem(
             `votedBooks_${user.id}`,
             JSON.stringify(newVotes)
           );
 
-          // Thiết lập thông báo thành công
           toast.success(`Vote cho sách ${bookID} thành công`);
 
-          // Xóa thông báo thành công sau một thời gian (ví dụ: 3 giây)
           setTimeout(() => {
             setVoteSuccessMessage("");
           }, 3000);
         } else {
-          // Xử lý lỗi
           console.error("Vote thất bại");
         }
       });
     } else {
-      // Hiển thị thông báo yêu cầu đăng nhập
       setLoginMessage("Bạn cần đăng nhập để thực hiện vote sách.");
 
-      // Xóa thông báo đăng nhập sau một thời gian (ví dụ: 3 giây)
       setTimeout(() => {
         setLoginMessage("");
       }, 3000);
     }
   };
 
-  const allBooksIncoming = books.every((book) => book.status.statusID === 4);
+  const handleCategoryClick = (e) => {
+    e.preventDefault();
+    const category = categories.find((cat) => cat.categoryID === categoryID);
+    if (category) {
+      navigate("/search-results", { state: { category } });
+    }
+  };
+
+  const isAllBooksIncoming = isTopBorrow
+    ? false
+    : books.every((book) => book.status.statusID === 1);
 
   return (
     <>
@@ -134,9 +154,18 @@ const SlideShow = ({ books }) => {
             <p>{voteSuccessMessage}</p>
           </div>
         )}
-        <div className="header">
-          <a href="#">{allBooksIncoming ? "Incoming Book" : categoryName}</a>
-        </div>
+        {isTopBorrow ? (
+          <div className="header" >
+            <a style={{color: "red"}} href="#">Top Borrowed Books</a>
+          </div>
+        ) : (
+          <div className="header">
+            <a href="#" onClick={handleCategoryClick}>
+              {isAllBooksIncoming ? "Incoming Book" : categoryName}
+            </a>
+          </div>
+        )}
+
         <div className="slider">
           <button
             className={`prev ${currentIndex === 0 ? "disabled" : ""}`}
@@ -146,18 +175,66 @@ const SlideShow = ({ books }) => {
             <ArrowBackIosIcon />
           </button>
           <div className="book-display">
-            {books.slice(currentIndex, currentIndex + 5).map((book) => (
-              <div className="book" key={book.bookID}>
-                <Link to={`/BookDetail/${book.bookID}`}>
-                  <img
-                    src={`http://localhost:9191/api/books/images/${book.bookImage}`}
-                    alt={book.bookName}
-                  />
-                  <div className="detail-book-quantity">{book.bookQuantity}</div>
-                <button>Borrow <IoInformationCircle /></button>
-
+            {books.slice(currentIndex, currentIndex + 5).map((book, index) => (
+              <div className="book" key={index}>
+                <Link
+                  to={
+                    isTopBorrow
+                      ? `/BookDetail/${book[0]}`
+                      : `/BookDetail/${book.bookID}`
+                  }
+                >
+                  {isTopBorrow ? (
+                    <>
+                      <div className="detail-book-quantity">
+                        <div className="image-container">
+                          <img
+                            src={`http://localhost:9191/api/books/images/${book[2]}`}
+                            alt={book.book_name}
+                          />
+                        </div>
+                        <div className="quantity">
+                          <span>{book[3]}</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="detail-book-quantity">
+                      <div className="image-container">
+                        <img
+                          src={`http://localhost:9191/api/books/images/${book.bookImage}`}
+                          alt={book.bookName}
+                        />
+                      </div>
+                      <div className="quantity">
+                        <span>{book.bookQuantity}</span>
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    {isAllBooksIncoming ? (
+                      <button>
+                        Detail <IoInformationCircle />
+                      </button>
+                    ) : isTopBorrow ? (
+                      <>
+                        <button
+                          style={{ backgroundColor: "#28A745"}}
+                        >
+                          {book[4]} Borrowed <MdAssignmentTurnedIn />
+                        </button>
+                        <button>
+                          Borrow <IoInformationCircle />
+                        </button>
+                      </>
+                    ) : (
+                      <button>
+                        Borrow <IoInformationCircle />
+                      </button>
+                    )}
+                  </div>
                 </Link>
-                {book.status.statusID === 4 && (
+                {!isTopBorrow && book.status.statusID === 1 && (
                   <div className="book-star">
                     <div className="star-rating">
                       <span>{book.bookStar}</span>

@@ -1,0 +1,123 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  padding-top: 100px;
+  font-family: Arial, sans-serif;
+}
+
+.top-metrics {
+  display: flex;
+  gap: 20px;
+}
+
+.metric {
+  justify-content: center;
+  flex: 1;
+  background: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metric-icon {
+  width: 70px;
+  height: 70px;
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-title {
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.metric-value {
+  font-weight: bold;
+  text-align: center;
+}
+
+.metric-change {
+  align-items: center;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.positive-change {
+  color: green;
+}
+
+.negative-change {
+  color: red;
+}
+
+.products-and-customers {
+  display: flex;
+  gap: 20px;
+}
+
+.chart-container,
+.new-chart-container {
+  justify-items: center;
+  text-align: center;
+  align-items: center;
+  flex: 2;  /* Maintain flexibility for responsiveness */
+  background: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-x: auto; 
+  display: flex;
+  flex-direction: column;
+  /* Updated heights for better fit */
+  max-height: 320px; /* Limit maximum height */
+}
+
+
+
+.chart-container canvas,
+.new-chart-container canvas {
+  width: 70% !important;
+  height: 100% !important;
+}
+
+.top-selling-products {
+  flex: 1;
+  background: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.top-selling-products table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.top-selling-products th,
+.top-selling-products td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.top-selling-products th {
+  background: #f8f8f8;
+}
+
+.view-btn {
+  background-color: orange;
+}
+
+.book-top5-image {
+  width: 100px;
+  height: 80px;
+}

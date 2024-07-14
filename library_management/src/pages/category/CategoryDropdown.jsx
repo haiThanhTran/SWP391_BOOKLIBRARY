@@ -30,7 +30,7 @@ const CategoryDropdown = () => {
         aria-haspopup="true"
         aria-expanded="false"
       >
-        BOOK CATEGORIES
+        Danh mục sách
       </a>
       <div className="dropdown-menu">
         <ul>
