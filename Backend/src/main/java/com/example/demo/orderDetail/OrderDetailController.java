@@ -1,7 +1,9 @@
 package com.example.demo.orderDetail;
 
-import com.example.demo.notification.Notification;
-import com.example.demo.notification.NotificationService;
+
+
+import com.example.demo.book.Book;
+import com.example.demo.book.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,26 +31,47 @@ public class OrderDetailController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
-    private NotificationService notificationService;
+    private BookService bookService;
 
-    @GetMapping("/api/orderdetails")
+    @GetMapping("/bell")
     public List<OrderDetail> getOrderDetails(@RequestParam Long userId) {
-        return orderDetailService.getOrdersByOrderID(userId);
+        logger.info("Useer khi search bang bell: {}", userId);
+        return bookOrderService.getOrdersByUserId(userId);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<List<OrderDetailDTO>> getOrdersByUserID(@RequestParam Long userID) {
+        logger.info("Received request for orders by user ID: {}", userID);
+        try {
+            List<OrderDetail> orders = bookOrderService.getOrdersByUserId(userID);
+            List<OrderDetailDTO> dtoList = orders.stream().map(order -> new OrderDetailDTO(
+                    order.getOrderDetailID(),
+                    order.getBook().getBookID(),
+                    order.getBook().getBookName(),
+                    order.getBook().getBookImage(),
+                    order.getTotalPrice(),
+                    order.getQuantity(),
+                    order.getSearchID(),
+                    order.getOrderDate(),
+                    order.getReturnDate(),
+                    order.getStatus(),
+                    (order.getUser() != null) ? order.getUser().getUserName() : null,
+                    (order.getUser() != null) ? order.getUser().getUserMail() : null
+            )).collect(Collectors.toList());
 
-    @GetMapping("/{orderID}")
-    public ResponseEntity<List<OrderDetail>> getOrdersByOrderID(@PathVariable Long orderID) {
-        System.out.println(orderID);
-        List<OrderDetail> orders = bookOrderService.getOrdersByOrderID(orderID);
-        System.out.println(orders);
-        if (orders.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (dtoList.isEmpty()) {
+                logger.warn("No orders found for user ID: {}", userID);
+                return ResponseEntity.notFound().build();
+            }
+            logger.info("Returning orders: {}", dtoList);
+            return ResponseEntity.ok(dtoList);
+        } catch (Exception e) {
+            logger.error("Error while processing request for user ID: {}", userID, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(orders);
     }
-
 
     @GetMapping("/search/{searchID}")
     @PreAuthorize("hasRole('STAFF')")
@@ -140,11 +163,6 @@ public class OrderDetailController {
         return ResponseEntity.ok(response);
     }
 
-
-
-
-
-
     @PutMapping("/{orderID}/return")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<OrderDetail> updateReturnDate(@PathVariable Long orderID, @RequestBody Map<String, Object> payload) {
@@ -161,6 +179,4 @@ public class OrderDetailController {
             return ResponseEntity.badRequest().body(null);
         }
     }
-
-
 }

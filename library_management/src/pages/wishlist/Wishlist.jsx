@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "../../../node_modules/react-toastify/dist/ReactToastify.css";
 import empty_state from "../../assets/empty_state.png"; // Đảm bảo đường dẫn đúng tới hình ảnh của bạn
 import axios from "axios";
+import { useNotification } from "../notification/NotificationContext";
 
 function Wishlist() {
   const { wishlist, removeFromWishlist, clearWishlist } =
@@ -17,6 +18,8 @@ function Wishlist() {
   const token = localStorage.getItem("token");
 
   const { user } = useContext(UserContext);
+  const { incrementNotificationCount, setNotificationCount } =
+    useNotification();
 
   const handleRemoveFromWishlist = (bookID) => {
     removeFromWishlist(bookID);
@@ -31,7 +34,6 @@ function Wishlist() {
   };
 
   const handleBorrowBooks = async () => {
-    // if (!user || !user.user) {
     if (!user) {
       toast.error("Bạn phải đăng nhập để mượn sách");
       return;
@@ -47,7 +49,6 @@ function Wishlist() {
       const orders = wishlist.map((book) => {
         const localTime = getLocalTime();
         return {
-          // userID: user.user.id,
           userID: user.id,
           book: {
             bookID: book.bookID,
@@ -68,11 +69,6 @@ function Wishlist() {
         };
       });
 
-      // Calculate the total quantity
-      const totalQuantity = orders.reduce((total, order) => {
-        return total + parseInt(order.quantity);
-      }, 0);
-
       console.log("Orders to be sent:", orders);
 
       const response = await axios.post(
@@ -85,6 +81,7 @@ function Wishlist() {
           },
         }
       );
+      alert("Chúc mừng bạn đã đặt sách thành công");
 
       const orderNumber = response.data.searchID;
       toast.success(
@@ -92,6 +89,9 @@ function Wishlist() {
       );
       clearWishlist();
       setOrderID(orderNumber);
+
+      // Increment notification count
+      incrementNotificationCount();
     } catch (error) {
       toast.error(`Yêu cầu mượn sách thất bại: ${error.message}`);
     }
@@ -110,19 +110,19 @@ function Wishlist() {
         }}
       >
         <div className="container mt-4">
-          <h1 style={{ marginTop: "20px", paddingTop: "60px" }}>
-            Your Wishlist
+          <h1 style={{ margin: "20px", paddingTop: "60px" }}>
+            Giỏ Hàng 
           </h1>
           {wishlist.length > 0 ? (
             <>
               <table className="table table-striped">
                 <thead>
                   <tr>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Author</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">Ảnh</th>
+                    <th scope="col">Tên sách</th>
+                    <th scope="col">Tác giả</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Hành Động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,7 +154,7 @@ function Wishlist() {
                           className="btn btn-outline-danger"
                           onClick={() => handleRemoveFromWishlist(book.bookID)}
                         >
-                          Remove
+                          Xóa
                         </button>
                       </td>
                     </tr>

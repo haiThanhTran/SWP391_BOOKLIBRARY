@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const UserContext = createContext();
 
@@ -16,11 +17,12 @@ export const UserProvider = ({ children }) => {
     setUser(user);
     localStorage.setItem("user", JSON.stringify(user));
   };
-
+  // const navigate = useNavigate();
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    window.location.href = "/signin";
   };
 
   return (

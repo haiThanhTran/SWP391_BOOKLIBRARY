@@ -151,35 +151,40 @@ const ManageStaff = () => {
                 <td>{user.userPhone}</td>
                 <td>{user.userAddress}</td>
                 <td>
-                <select
-                  className="form-select"
-                  defaultValue={user.role.role}
-                  onChange={(e) =>
-                    handleInputChange(user.id, "role", e.target.value)
-                  }
-                  disabled={
-                    user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
-                  }
-                >
-                  <option value="ADMIN">Admin</option>
-                  <option value="STAFF">Staff</option>
-                </select>
-              </td>
-                <td>
-                <select
-                  className="form-select"
-                  defaultValue={user.enabled ? "Enabled" : "Disabled"}
-                  onChange={(e) =>
-                    handleInputChange(
-                      user.id,
-                      "enabled",
-                      e.target.value === "Enabled"
-                    )
-                  }
-                  disabled={
-                    user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
-                  }
-                >
+                  <select
+                    className="form-select"
+                    defaultValue={user.role.role}
+                    onChange={(e) =>
+                      handleInputChange(user.id, "role", e.target.value)
+                    }
+                    disabled={
+                      user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
+                    }
+                  >
+                    <option value="ADMIN">Admin</option>
+                    <option value="STAFF">Staff</option>
+                  </select>
+                </td>
+                <td className="d-flex align-items-center">
+                  <div
+                    className={`status-indicator ${
+                      user.enabled ? "enabled" : "disabled"
+                    }`}
+                  ></div>
+                  <select
+                    className="form-select"
+                    defaultValue={user.enabled ? "Enabled" : "Disabled"}
+                    onChange={(e) =>
+                      handleInputChange(
+                        user.id,
+                        "enabled",
+                        e.target.value === "Enabled"
+                      )
+                    }
+                    disabled={
+                      user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
+                    }
+                  >
                     <option value="Enabled">Enabled</option>
                     <option value="Disabled">Disabled</option>
                   </select>

@@ -7,7 +7,6 @@ import "./StaffOrderManagement.css";
 import Header from "../../pages/nav-bar/Header";
 import empty_state from "../../assets/empty_state.png";
 import logo from "../../assets/logo.jpg";
-
 import { FaSearch } from "react-icons/fa";
 import { UserContext } from "../../ultils/userContext";
 import Modal from "react-modal";
@@ -120,14 +119,13 @@ function StaffOrderManagement() {
             .header { text-align: center; margin-bottom: 20px; }
             .header img { width: 10px; } /* Điều chỉnh kích thước logo */
             .content { margin: 20px; }
-            .signature { margin-top: 50px; display: flex; justify-content: space-between; }
-            // .signature div { width: 40%; text-align: center; }
+            .signature-table { width: 100%; margin-top: 50px; }
+            .signature-cell { width: 50%; text-align: center; vertical-align: top; }
             .content p { line-height: 1.5; }
           </style>
         </head>
         <body>
           <div class="header">
-    
             <h2>BIÊN BẢN ĐỀN BÙ</h2>
             <p>Ngày: ${new Date().toLocaleDateString()}</p>
           </div>
@@ -146,16 +144,18 @@ function StaffOrderManagement() {
               compensationType === "money" ? "Đền tiền" : "Đền sách"
             } của khách hàng.</p>
           </div>
-          <div class="signature">
-            <div style="text-align: left;">
-              <p>Người Đền Bù</p>
-              <p>(Ký, họ tên)</p>
-            </div>
-            <div style="text-align: right;">
-              <p>Người Xử Lý Đơn</p>
-              <p>(Ký, họ tên)</p>
-            </div>
-          </div>
+          <table class="signature-table">
+            <tr>
+              <td class="signature-cell">
+                <p>Người Đền Bù</p>
+                <p>(Ký, họ tên)</p>
+              </td>
+              <td class="signature-cell">
+                <p>Người Xử Lý Đơn</p>
+                <p>(Ký, họ tên)</p>
+              </td>
+            </tr>
+          </table>
         </body>
       </html>
     `;
@@ -331,18 +331,20 @@ function StaffOrderManagement() {
         style={{
           content: {
             top: "50%",
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            width: '1000px',  // Điều chỉnh kích thước modal
-            height: '500px'  // Điều chỉnh kích thước modal
-          }
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            width: "50%", // Adjust the width to be 50% of the viewport width
+            minWidth: "800px", // Set a maximum width
+            height: "30%", // Adjust the height to be 30% of the viewport height
+            minHeight: "400px", // Set a maximum height
+          },
         }}
       >
         <h2>Xử lý mất sách</h2>
-        <div>
+        <div className="d-flex justify-content-center">
           <button
             className="btn btn-primary m-2"
             onClick={() =>
@@ -360,9 +362,11 @@ function StaffOrderManagement() {
             Phương án đền sách
           </button>
         </div>
-        <button className="btn btn-danger mt-3" onClick={closeModal}>
-          Đóng
-        </button>
+        <div className="d-flex justify-content-center">
+          <button className="btn btn-danger mt-3" onClick={closeModal}>
+            Đóng
+          </button>
+        </div>
       </Modal>
     </>
   );

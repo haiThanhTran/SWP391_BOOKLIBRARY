@@ -8,14 +8,24 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Add, Edit, Delete, FileCopy } from "@mui/icons-material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function App() {
+const ManagementPublisher = () => {
   const [publishers, setPublishers] = useState([]);
   const [selectedPublisher, setSelectedPublisher] = useState(null);
   const [newPublisher, setNewPublisher] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     fetchPublishers();
   }, []);
@@ -30,18 +40,19 @@ function App() {
   };
 
   const isPublisherNameValid = (name) => {
-    const regex = /^[a-zA-Z0-9\s]*$/; // Only allows letters, numbers, and spaces
-    return name.trim() !== '' && regex.test(name);
+    const regex = /^[a-zA-Z0-9\s]*$/;
+    return name.trim() !== "" && regex.test(name);
   };
 
   const createPublisher = async () => {
     if (!isPublisherNameValid(newPublisher)) {
-      alert('Invalid publisher name. Only letters, numbers, and spaces are allowed.');
+      toast.error(
+        "Invalid publisher name. Only letters, numbers, and spaces are allowed."
+      );
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:9191/api/publishers",
         { publisherName: newPublisher },
@@ -53,14 +64,23 @@ function App() {
       );
       setPublishers([...publishers, response.data]);
       setNewPublisher("");
+      setOpenAdd(false);
+      toast.success("Publisher added successfully!");
     } catch (error) {
       console.error("Error creating publisher:", error);
+      toast.error("Failed to add publisher.");
     }
   };
 
   const updatePublisher = async (id, updatedName) => {
+    if (!isPublisherNameValid(updatedName)) {
+      toast.error(
+        "Invalid publisher name. Only letters, numbers, and spaces are allowed."
+      );
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.put(
         `http://localhost:9191/api/publishers/${id}`,
         { publisherName: updatedName },
@@ -74,8 +94,11 @@ function App() {
         publishers.map((pub) => (pub.publisherID === id ? response.data : pub))
       );
       setSelectedPublisher(null);
+      setOpenEdit(false);
+      toast.success("Publisher updated successfully!");
     } catch (error) {
       console.error("Error updating publisher:", error);
+      toast.error("Failed to update publisher.");
     }
   };
 
@@ -86,7 +109,6 @@ function App() {
     if (!confirmDelete) return;
 
     try {
-      const token = localStorage.getItem("token");
       await axios.delete(`http://localhost:9191/api/publishers/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -94,9 +116,16 @@ function App() {
       });
       setPublishers(publishers.filter((pub) => pub.publisherID !== id));
       setSelectedPublisher(null);
+      toast.success("Publisher deleted successfully!");
     } catch (error) {
       console.error("Error deleting publisher:", error);
+      toast.error("Failed to delete publisher.");
     }
+  };
+
+  const handleCopyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.info("Copied to clipboard!");
   };
 
   const filteredPublishers = publishers.filter((publisher) =>
@@ -104,137 +133,113 @@ function App() {
   );
 
   return (
-    <div>
-      <style>{`
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f4f4f4;
-          margin: 0;
-          padding: 0;
-        }
-        .container {
-          display: flex;
-          justify-content: space-between;
-          max-width: 1200px;
-          margin: 20px auto;
-          padding: 20px;
-          background-color: #fff;
-          border-radius: 5px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .publishers {
-          width: 30%;
-        }
-        .details {
-          width: 65%;
-        }
-        h1 {
-          text-align: center;
-          color: #333;
-          margin-top: 20px;
-        }
-        .actions {
-          display: flex;
-          align-items: center;
-        }
-        .iconButton {
-          margin-left: 5px;
-        }
-      `}</style>
-
+    <div style={{ padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "5px" }}>
+      <ToastContainer />
       <h1>Publishers</h1>
-      <div className="container">
-        <div className="publishers">
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenAdd(true)}
+          startIcon={<Add />}
+        >
+          Add new
+        </Button>
+        <TextField
+          label="Search Publishers"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ marginLeft: "20px", flex: 1 }}
+        />
+      </div>
+      <List style={{ backgroundColor: "#fff", borderRadius: "5px" }}>
+        {filteredPublishers.map((publisher) => (
+          <ListItem key={publisher.publisherID} style={{ borderBottom: "1px solid #ccc" }}>
+            <ListItemText primary={publisher.publisherName} />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                aria-label="edit"
+                onClick={() => {
+                  setSelectedPublisher(publisher);
+                  setOpenEdit(true);
+                }}
+              >
+                <Edit />
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => deletePublisher(publisher.publisherID)}
+              >
+                <Delete />
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="copy"
+                onClick={() => handleCopyToClipboard(publisher.publisherName)}
+              >
+                <FileCopy />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+      <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
+        <DialogTitle>Add New Publisher</DialogTitle>
+        <DialogContent>
           <TextField
             fullWidth
-            label="Search Publishers"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            label="Publisher Name"
+            value={newPublisher}
+            onChange={(e) => setNewPublisher(e.target.value)}
           />
-          <List>
-            {filteredPublishers.map((publisher) => (
-              <ListItem
-                key={publisher.publisherID}
-                button
-                onClick={() => setSelectedPublisher(publisher)}
-              >
-                <ListItemText primary={publisher.publisherName} />
-                <ListItemSecondaryAction className="actions">
-                  <IconButton
-                    edge="end"
-                    aria-label="edit"
-                    onClick={() => setSelectedPublisher(publisher)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => deletePublisher(publisher.publisherID)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-          <div className="actions">
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAdd(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={createPublisher} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {selectedPublisher && (
+        <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
+          <DialogTitle>Edit Publisher</DialogTitle>
+          <DialogContent>
             <TextField
               fullWidth
-              label="New Publisher"
-              value={newPublisher}
-              onChange={(e) => setNewPublisher(e.target.value)}
+              label="Publisher Name"
+              value={selectedPublisher.publisherName}
+              onChange={(e) =>
+                setSelectedPublisher({
+                  ...selectedPublisher,
+                  publisherName: e.target.value,
+                })
+              }
             />
-            <IconButton
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenEdit(false)} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() =>
+                updatePublisher(
+                  selectedPublisher.publisherID,
+                  selectedPublisher.publisherName
+                )
+              }
               color="primary"
-              className="iconButton"
-              onClick={createPublisher}
-              disabled={!isPublisherNameValid(newPublisher)}
             >
-              <Add />
-            </IconButton>
-          </div>
-        </div>
-        <div className="details">
-          {selectedPublisher && (
-            <>
-              <h2>{selectedPublisher.publisherName}</h2>
-              <TextField
-                fullWidth
-                value={selectedPublisher.publisherName}
-                onChange={(e) =>
-                  setSelectedPublisher({
-                    ...selectedPublisher,
-                    publisherName: e.target.value,
-                  })
-                }
-              />
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() =>
-                  updatePublisher(
-                    selectedPublisher.publisherID,
-                    selectedPublisher.publisherName
-                  )
-                }
-              >
-                Update
-              </Button>
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={() => deletePublisher(selectedPublisher.publisherID)}
-                style={{ marginLeft: "10px" }}
-              >
-                Delete
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </div>
   );
-}
+};
 
-export default App;
+export default ManagementPublisher;

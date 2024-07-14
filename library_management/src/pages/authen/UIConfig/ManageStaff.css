@@ -14,6 +14,7 @@
 
 .table-striped th,
 .table-striped td {
+    
     border: 1px solid #ddd;
 }
 
@@ -56,3 +57,33 @@
 .table-striped tbody tr:nth-of-type(even) {
     background-color: #ffffff; /* Màu nền của các hàng trong phần thân */
 }
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .enabled {
+    background-color: green;
+    animation: blink 1s infinite;
+  }
+  
+  .disabled {
+    background-color: red;
+  }
+  
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  

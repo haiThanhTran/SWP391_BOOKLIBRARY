@@ -1,21 +1,21 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-owl-carousel2/lib/styles.css";
 import "react-owl-carousel2/src/owl.carousel.css";
 import SlideShow from "../SlideShow";
 import { UserContext } from "../../ultils/userContext";
-import Notification from "../notification/bell";
+import Notification from "../notification/Bell";
 import CategoryDropdown from "../category/CategoryDropdown";
 
 function Header() {
   const { user, handleLogout } = useContext(UserContext);
+
   const navigate = useNavigate();
   console.log("userDetail", user);
 
   const handleWishListClick = () => {
     navigate("/wishlist");
   };
-
 
   const handleLoginClick = () => {
     navigate("/signin");
@@ -893,18 +893,21 @@ function Header() {
                     <Notification />
                   </li>
 
-                  <li className="d-inline-block mini-menu-card">
-                    <a className="nav-link" id="add_cart_box" href="#">
+                  {/* <li className="d-inline-block mini-menu-card">
+                    <a className="d-inline-block sidemenu_btn d-block" id="add_cart_box" href="" onClick={handleWishListClick}>
                       <i className="lni lni-shopping-basket"></i>
                     </a>
-                  </li>
+                  </li> */}
                   <a
                     href=""
                     className="d-inline-block sidemenu_btn d-block"
                     id="sidemenu_toggle"
                     onClick={handleWishListClick}
+                    style={{
+                      textDecoration: "none"
+                    }}
                   >
-                    <i className="lni lni-menu"></i>
+                    <i className="lni lni-shopping-basket"></i>
                   </a>
 
                   <div>
@@ -929,7 +932,7 @@ function Header() {
                           </a>
                           {user.role == "ADMIN" ? (
                             <>
-                            <a href="" onClick={handleDashboardClick}>
+                              <a href="" onClick={handleDashboardClick}>
                                 Dashboard
                               </a>
                               <a href="" onClick={handleManageCustomerClick}>

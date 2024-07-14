@@ -4,7 +4,7 @@ import Countdown from "react-countdown";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import { UserContext } from "../../ultils/userContext";
 import Header from "../../pages/nav-bar/Header";
-
+import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 function ViewOrder() {
   const [orders, setOrders] = useState([]);
   const { user } = useContext(UserContext);
@@ -35,7 +35,9 @@ function ViewOrder() {
           },
         }
       );
-      const sortedOrders = response.data.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+      const sortedOrders = response.data.sort(
+        (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
+      );
       setOrders(sortedOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -113,8 +115,15 @@ function ViewOrder() {
   return (
     <>
       <Header />
-      <div className="container mt-12">
-        <h1>Your Orders</h1>
+      <div
+        className="container mt-12"
+        style={{
+          marginTop: "175px",
+          backgroundColor: "#E1DCC5",
+          height: "100%",
+        }}
+      >
+        <h2>Trạng thái mượn sách</h2>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           {/* <li className="nav-item">
           <a

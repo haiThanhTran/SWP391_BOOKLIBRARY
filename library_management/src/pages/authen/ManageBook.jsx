@@ -6,9 +6,10 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Header from "../nav-bar/Header";
 import Footer from "../footer/Footer";
-import "./UIConfig/css/ManageBook.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./UIConfig/css/ManageBook.css";
 
 const ManageBook = () => {
   const [books, setBooks] = useState([]);
@@ -175,19 +176,19 @@ const ManageBook = () => {
               <option value="ID">ID</option>
               <option value="Book name">Book name</option>
             </select>
-            <button onClick={handleSearch}>Search</button>
+            <button className="btn btn-primary" onClick={handleSearch}>Search</button>
           </div>
           <h2>Actions</h2>
           <div className="book-actions-managebook">
             <div className="book-actions-top-managebook">
               <button
-                className="btn-add-managebook"
+                className="btn btn-primary"
                 onClick={() => navigate("/addbookform")}
               >
                 Add <FaBookmark />
               </button>
               <button
-                className="btn-detail-managebook"
+                className="btn btn-success"
                 onClick={() => navigate(`/bookdetail/${selectedBook?.bookID}`)}
                 disabled={!selectedBook}
               >
@@ -196,14 +197,14 @@ const ManageBook = () => {
             </div>
             <div className="book-actions-bottom-managebook">
               <button
-                className="btn-edit-managebook"
+                className="btn btn-warning"
                 onClick={handleEditClick}
                 disabled={!selectedBook}
               >
                 Edit <FaRegEdit />
               </button>
               <button
-                className="btn-delete-managebook"
+                className="btn btn-danger"
                 onClick={handleDeleteClick}
                 disabled={!selectedBook}
               >
@@ -256,21 +257,21 @@ const ManageBook = () => {
               {selectedBook === book && (
                 <div className="book-item-actions">
                   <button
-                    className="btn-detail-managebook"
+                    className="btn btn-success"
                     onClick={() => navigate(`/bookdetail/${selectedBook?.bookID}`)}
                     disabled={!selectedBook}
                   >
                     Detail <IoInformationCircle />
                   </button>
                   <button
-                    className="btn-edit-managebook"
+                    className="btn btn-warning"
                     onClick={handleEditClick}
                     disabled={!selectedBook}
                   >
                     Edit <FaRegEdit />
                   </button>
                   <button
-                    className="btn-delete-managebook"
+                    className="btn btn-danger"
                     onClick={handleDeleteClick}
                     disabled={!selectedBook}
                   >
