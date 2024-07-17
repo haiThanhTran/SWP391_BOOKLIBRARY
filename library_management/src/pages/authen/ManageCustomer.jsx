@@ -4,11 +4,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { TiTick } from "react-icons/ti";
 import Header from "../nav-bar/Header";
 import Footer from "../footer/Footer";
+import { useNavigate } from "react-router-dom";
 
 const ManageCustomer = () => {
   const [users, setUsers] = useState([]);
   const [updatedUsers, setUpdatedUsers] = useState({});
   const token = localStorage.getItem("token");
+
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
 
   const fetchUsers = async () => {
     try {
@@ -90,7 +100,12 @@ const ManageCustomer = () => {
                 <td>{user.userName}</td>
                 <td>{user.userMail}</td>
                 <td>{user.userPhone}</td>
-                <td>
+                <td className="d-flex align-items-center">
+                  <div
+                    className={`status-indicator ${
+                      user.enabled ? "enabled" : "disabled"
+                    }`}
+                  ></div>
                   <select
                     className="form-select"
                     defaultValue={user.enabled ? "Enabled" : "Disabled"}

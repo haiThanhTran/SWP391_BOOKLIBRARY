@@ -16,8 +16,17 @@ import {
 import { Add, Edit, Delete, FileCopy } from "@mui/icons-material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const ManagementPublisher = () => {
+  const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userStaffCategory || userStaffCategory.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [userStaffCategory, navigate]);
   const [publishers, setPublishers] = useState([]);
   const [selectedPublisher, setSelectedPublisher] = useState(null);
   const [newPublisher, setNewPublisher] = useState("");

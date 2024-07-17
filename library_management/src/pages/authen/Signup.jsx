@@ -71,12 +71,12 @@ function Login() {
   };
 
   const vScheme = {
-    userName: yup.string().required(),
-    userMail: yup.string().required().email("invalid Email"),
+    userName: yup.string().required("Họ và tên không được để trống"),
+    userMail: yup.string().required().email("Email không được để trống"),
     userPass: yup
       .string()
-      .required("required")
-      .matches(/[a-zA-Z0-9]{8,}$/, "invalid Password"),
+      .required("Mật khẩu không thể trống")
+      .matches(/[a-zA-Z0-9]{8,}$/, "Vui lòng đặt đúng định dạng mật khẩu"),
     confPassword: yup.string().required("required"),
     userPhone: yup
       .number()
@@ -84,7 +84,7 @@ function Login() {
       .positive("A userPhone number can't start with a minus")
       .integer("A userPhone number can't include a decimal point")
       .min(8)
-      .required("A userPhone number is required"),
+      .required("SĐT không được để trống"),
   };
 
   const LoginForm = useFormik({
@@ -139,7 +139,7 @@ function Login() {
                     type="text"
                     name="name"
                     id="name"
-                    placeholder="Your Name"
+                    placeholder="Họ & Tên"
                     {...LoginForm.getFieldProps("userName")}
                   />
                   {LoginForm.touched.userName && LoginForm.errors.userName && (
@@ -157,7 +157,7 @@ function Login() {
                     type="email"
                     name="email"
                     id="email"
-                    placeholder="Your Email"
+                    placeholder="Email"
                     {...LoginForm.getFieldProps("userMail")}
                   />
                   {LoginForm.touched.email && LoginForm.errors.email && (
@@ -172,7 +172,7 @@ function Login() {
                     type="phone"
                     name="userPhone"
                     id="userPhone"
-                    placeholder="Your Phone"
+                    placeholder="Điện Thoại"
                     {...LoginForm.getFieldProps("userPhone")}
                   />
                   {LoginForm.touched.userPhone &&
@@ -190,7 +190,7 @@ function Login() {
                     type="password"
                     name="pass"
                     id="pass"
-                    placeholder="Password"
+                    placeholder="Mật Khẩu"
                     onKeyUp={setPassword}
                     {...LoginForm.getFieldProps("userPass")}
                   />
@@ -208,12 +208,14 @@ function Login() {
                     type="password"
                     name="re_pass"
                     id="re_pass"
-                    placeholder="Repeat your userPass"
+                    placeholder="Nhập Lại Mật Khẩu"
                     onKeyUp={checkConfirm}
                     {...LoginForm.getFieldProps("confPassword")}
                   />
                   {LoginForm.touched.confPassword && confirmFlag === false && (
-                    <div className="text-danger">Passwords do not match</div>
+                    <div className="text-danger">
+                      Mật khẩu nhập lại không đúng
+                    </div>
                   )}
                 </div>
                 <div className="form-group">
@@ -227,9 +229,9 @@ function Login() {
                     <span>
                       <span></span>
                     </span>
-                    I agree all statements in{" "}
+                    Tôi đồng ý với tất cả{" "}
                     <a href="#" className="term-service">
-                      Terms of service
+                      Điều Khoản
                     </a>
                   </label>
                 </div>
@@ -239,7 +241,7 @@ function Login() {
                     name="signup"
                     id="signup"
                     className="form-submit"
-                    value="Register"
+                    value="Đăng Ký"
                   />
                 </div>
               </form>

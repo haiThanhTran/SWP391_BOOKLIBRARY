@@ -4,8 +4,19 @@ import Countdown from "react-countdown";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import { UserContext } from "../../ultils/userContext";
 import Header from "../../pages/nav-bar/Header";
-import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate, useParams } from "react-router-dom";
+
 function ViewOrder() {
+  const userOrder = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+  const { orderId } = useParams();
+
+  useEffect(() => {
+    if (!userOrder) {
+      navigate("/signin");
+    }
+  }, [userOrder, navigate]);
+
   const [orders, setOrders] = useState([]);
   const { user } = useContext(UserContext);
 
@@ -23,21 +34,11 @@ function ViewOrder() {
     }
 
     try {
-      console.log("userID: ", user.id);
-      const response = await axios.get(
-        "http://localhost:9191/api/orders/user",
-        {
-          params: {
-            userID: user.id,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const sortedOrders = response.data.sort(
-        (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
-      );
+      const response = await axios.get("http://localhost:9191/api/orders/user", {
+        params: { userID: user.id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const sortedOrders = response.data.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
       setOrders(sortedOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -79,10 +80,7 @@ function ViewOrder() {
     return Object.keys(groupedOrders).map((searchID) => (
       <tbody
         key={searchID}
-        style={{
-          border: "5px solid #cccccc",
-          marginBottom: "20px",
-        }}
+        style={{ border: "5px solid #cccccc", marginBottom: "20px" }}
       >
         {groupedOrders[searchID].map((order, index) => (
           <tr key={order.orderDetailID}>
@@ -125,22 +123,9 @@ function ViewOrder() {
       >
         <h2>Trạng thái mượn sách</h2>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
-          {/* <li className="nav-item">
-          <a
-            className="nav-link active"
-            id="all-tab"
-            data-toggle="tab"
-            href="#all"
-            role="tab"
-            aria-controls="all"
-            aria-selected="true"
-          >
-            Tất cả
-          </a>
-        </li> */}
           <li className="nav-item">
             <a
-              className="nav-link"
+              className="nav-link active"
               id="pending-tab"
               data-toggle="tab"
               href="#pending"

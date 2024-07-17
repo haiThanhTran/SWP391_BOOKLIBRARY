@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { WishlistContext } from "./WishlistContext";
 import { UserContext } from "../../ultils/userContext";
 import Header from "../../pages/nav-bar/Header";
@@ -9,8 +9,17 @@ import "../../../node_modules/react-toastify/dist/ReactToastify.css";
 import empty_state from "../../assets/empty_state.png"; // Đảm bảo đường dẫn đúng tới hình ảnh của bạn
 import axios from "axios";
 import { useNotification } from "../notification/NotificationContext";
+import { useNavigate } from "react-router-dom";
 
 function Wishlist() {
+  const userOrder = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userOrder) {
+      navigate("/signin");
+    }
+  }, [userOrder, navigate]);
   const { wishlist, removeFromWishlist, clearWishlist } =
     useContext(WishlistContext);
   const [orderID, setOrderID] = useState("");
@@ -110,9 +119,7 @@ function Wishlist() {
         }}
       >
         <div className="container mt-4">
-          <h1 style={{ margin: "20px", paddingTop: "60px" }}>
-            Giỏ Hàng 
-          </h1>
+          <h1 style={{ margin: "20px", paddingTop: "60px" }}>Giỏ Hàng</h1>
           {wishlist.length > 0 ? (
             <>
               <table className="table table-striped">
@@ -175,7 +182,7 @@ function Wishlist() {
                 alt="No Orders Found"
                 className="img-fluid"
               />
-              <p>Not Found Book</p>
+              <p>Không Có Sách</p>
             </div>
           )}
         </div>

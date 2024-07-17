@@ -12,6 +12,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./UIConfig/css/ManageBook.css";
 
 const ManageBook = () => {
+  const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
+
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -19,7 +29,6 @@ const ManageBook = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOption, setSearchOption] = useState("All");
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const getAllBooks = async () => {

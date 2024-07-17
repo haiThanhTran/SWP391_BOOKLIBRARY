@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./UIConfig/css/ChangePass.css";
 import { blue } from "@mui/material/colors";
-
+import { UserContext } from "../../ultils/userContext";
+import { useNavigate } from "react-router-dom";
 /**
  * ChangePass component for handling password change form.
  * @returns {JSX.Element} - JSX element representing the password change form.
  */
 function ChangePass() {
+  const { user } = useContext(UserContext);
   // useState hooks for managing state of password, confirmPassword, passwordError, confirmPasswordError, and formIsValid.
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState('');
@@ -15,6 +17,15 @@ function ChangePass() {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [formIsValid, setFormIsValid] = useState(false);
+  
+  const userPass = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userPass) {
+      navigate("/signin");
+    }
+  }, [userPass, navigate]);
 
   // useEffect hook to validate password and confirmPassword on every change.
   useEffect(() => {

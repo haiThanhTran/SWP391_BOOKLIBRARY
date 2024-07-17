@@ -940,7 +940,7 @@ function Header() {
                           {user.role == "ADMIN" ? (
                             <>
                               <a href="" onClick={handleDashboardClick}>
-                                Dashboard
+                                Bảng Điều Khiển
                               </a>
                               {/* <a href="" onClick={handleManageCustomerClick}>
                                 Manage Customer
@@ -961,19 +961,19 @@ function Header() {
                             <p></p>
                           )}
                           <a href="" onClick={handleChangePasswordClick}>
-                            Change Password
+                            Đổi Mật Khẩu
                           </a>
                           <a href="" onClick={handleProfileClick}>
-                            Your Profile
+                            Hồ Sơ
                           </a>
                           <a href="" onClick={handleViewOrderClick}>
-                            Your Order
+                            Đơn Hàng
                           </a>
 
                           {user.role == "STAFF" ? (
                             <>
                               <a href="" onClick={handleManageBorowClick}>
-                                Manage Borrow
+                                Quản Lý Mượn-Trả
                               </a>
                             </>
                           ) : (
@@ -981,12 +981,12 @@ function Header() {
                           )}
 
                           <a href="" onClick={handleLogout}>
-                            Log out
+                            Đăng Xuất
                           </a>
                         </div>
                       </div>
                     ) : (
-                      <button onClick={handleLoginClick}>Sign In</button>
+                      <button onClick={handleLoginClick}>Đăng Nhập</button>
                     )}
                   </div>
                 </ul>

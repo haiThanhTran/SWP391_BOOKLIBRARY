@@ -16,33 +16,32 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import axios from "axios";
 import { useNotification } from "./NotificationContext";
 import { UserContext } from "../../ultils/userContext";
+import { useNavigate } from "react-router-dom";
 const Bell = () => {
   const { user } = useContext(UserContext);
   const [orderDetails, setOrderDetails] = useState([]);
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [showAll, setShowAll] = useState(false);
   const { notificationCount, setNotificationCount } = useNotification();
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (user) {
       setUserId(user.id);
-      console.log("User updated:", userId);
+      console.log('User updated:', userId);
     }
   }, [user]);
 
   const fetchOrderDetails = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:9191/api/orders/bell?userId=${userId}`
-      );
+      const response = await axios.get(`http://localhost:9191/api/orders/bell?userId=${userId}`);
       const uniqueOrders = mergeDuplicateOrders(response.data);
       setOrderDetails(
-        uniqueOrders.sort(
-          (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
-        )
+        uniqueOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
       );
     } catch (error) {
-      console.error("Error fetching order details:", error);
+      console.error('Error fetching order details:', error);
     }
   };
 
@@ -65,8 +64,13 @@ const Bell = () => {
     setShowAll(true);
   };
 
+  const handleOrderClick = (searchID) => {
+    navigate(`/vieworder/${searchID}`);
+    handleClose(); // Close the notification popover
+  };
+
   const open = Boolean(anchorEl);
-  const id = open ? "notification-popover" : undefined;
+  const id = open ? 'notification-popover' : undefined;
 
   const mergeDuplicateOrders = (orders) => {
     const mergedOrders = [];
@@ -95,7 +99,7 @@ const Bell = () => {
     return (
       <List>
         {displayOrders.map((orderDetail) => (
-          <ListItem key={orderDetail.searchID} alignItems="flex-start">
+          <ListItem key={orderDetail.searchID} alignItems="flex-start" button onClick={() => handleOrderClick(orderDetail.searchID)}>
             <ListItemAvatar>
               <Avatar src="https://th.bing.com/th/id/OIP.NnDnfxfuDA8i1Nfl8M8RfgHaHa?w=3333&h=3333&rs=1&pid=ImgDetMain&fbclid=IwZXh0bgNhZW0CMTAAAR1OXUMon_0p53E1O13A-Bv8eWQT4VoJMTEHvXkhpy8o9zWNogktlBwKN5Q_aem_Acod6jbhDhrpUBXRJgKuU3uONuPi2VdRtWtUNMejqUEwwnFIJih9m-S1vrAl_WkTWuhqchOOsRD09dQAmOSBeLL2" />
             </ListItemAvatar>
@@ -103,16 +107,8 @@ const Bell = () => {
               primary="Thông báo đặt sách"
               secondary={
                 <span>
-                  Bạn đã đặt lịch mượn sách thành công, mã của bạn là{" "}
-                  <strong>{orderDetail.searchID}</strong>. Vui lòng đến nhận
-                  sách trong giờ từ bây giờ đến{" "}
-                  <strong>
-                    {new Date(
-                      new Date(orderDetail.orderDate).getTime() +
-                        24 * 60 * 60 * 1000
-                    ).toLocaleString()}
-                  </strong>{" "}
-                  trước khi đơn hàng của bạn bị hủy.
+                  Bạn đã đặt lịch mượn sách thành công, mã của bạn là <strong>{orderDetail.searchID}</strong>. Vui lòng đến nhận sách trong giờ từ bây giờ đến{' '}
+                  <strong>{new Date(new Date(orderDetail.orderDate).getTime() + 24 * 60 * 60 * 1000).toLocaleString()}</strong> trước khi đơn hàng của bạn bị hủy.
                 </span>
               }
             />
@@ -140,19 +136,19 @@ const Bell = () => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
+          vertical: 'bottom',
+          horizontal: 'center',
         }}
         transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
+          vertical: 'top',
+          horizontal: 'center',
         }}
         PaperProps={{
           style: {
-            width: "300px", // Adjust width as needed
-            maxHeight: "600px", // Limit max height for scrolling
-            overflowY: "auto",
-            marginTop: "6px",
+            width: '300px', // Adjust width as needed
+            maxHeight: '600px', // Limit max height for scrolling
+            overflowY: 'auto',
+            marginTop: '6px',
           },
         }}
       >

@@ -5,8 +5,17 @@ import Header from "../nav-bar/Header";
 import Footer from "../footer/Footer";
 import "./UIConfig/ManageStaff.css";
 import { TiTick } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
 
 const ManageStaff = () => {
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
   const [users, setUsers] = useState([]);
   const [updatedUsers, setUpdatedUsers] = useState({});
   const [newUser, setNewUser] = useState({

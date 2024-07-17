@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,10 +11,19 @@ import { FaSearch } from "react-icons/fa";
 import { UserContext } from "../../ultils/userContext";
 import Modal from "react-modal";
 import { saveAs } from "file-saver";
+import { useNavigate } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
 function StaffOrderManagement() {
+  const userStaffOrder = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userStaffOrder || !userStaffOrder.role || userStaffOrder.role !== "STAFF") {
+      navigate("/signin");
+    }
+  }, [userStaffOrder, navigate]);
   const [orderID, setOrderID] = useState("");
   const [orders, setOrders] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);

@@ -1,11 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Card } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./profilestyle.css";
 import axios from "axios";
 import { UserContext } from "../../ultils/userContext";
-
+import Header from "../../pages/nav-bar/Header";
+import logo from "../../assets/logo.jpg";
+import { useNavigate } from "react-router-dom";
 const App = () => {
+  const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userStaffCategory) {
+      navigate("/signin");
+    }
+  }, [userStaffCategory, navigate]);
   const navigateToHome = () => {
     window.location.href = "/";
   };
@@ -66,20 +76,10 @@ const App = () => {
     }
   };
 
-  const handleEdit = () => {
-    setEditableFields((prevState) => ({
-      userName: !prevState.userName,
-      userAddress: !prevState.userAddress,
-      userPhone: !prevState.userPhone,
-      bio: !prevState.bio,
-      avatar: !prevState.avatar,
-    }));
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Kiểm tra xem ảnh mới đã được chọn hay chưa
+    // Check if a new image is selected
     if (!selectedBookImage) {
       setErrors({ selectedImage: "Please select a new image to update." });
       return;
@@ -131,113 +131,160 @@ const App = () => {
   };
 
   return (
-    <Container fluid className="profile-container viewprofile mt-5">
-      <h1 className="profile-heading viewprofile">Chỉnh sửa trang cá nhân</h1>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formUserName">
-          <Form.Label>Tên người dùng</Form.Label>
-          <Col xs={12} md={6} className="mx-auto">
-            <Form.Control
-              type="text"
-              name="userName"
-              value={formData.userName}
-              onChange={(e) => handleChange(e, "userName")}
-              readOnly={!editableFields.userName}
-            />
-          </Col>
-        </Form.Group>
+    <>
+      <Header />
+      <Container fluid className="profile-container viewprofile">
+        <Row>
+          <Col md={4}>
+            <Card className="text-center col-left">
+              <Card.Body>
+                <h5 className="mt-3">{formData.userName || "User Name"}</h5>
 
-        <Form.Group controlId="formUserAddress">
-          <Form.Label>Địa chỉ</Form.Label>
-          <Col xs={12} md={6} className="mx-auto">
-            <Form.Control
-              type="text"
-              name="userAddress"
-              value={formData.userAddress}
-              onChange={(e) => handleChange(e, "userAddress")}
-              readOnly={!editableFields.userAddress}
-            />
-          </Col>
-        </Form.Group>
-
-        <Form.Group controlId="formUserPhone">
-          <Form.Label>Số điện thoại</Form.Label>
-          <Col xs={12} md={6} className="mx-auto">
-            <Form.Control
-              type="tel"
-              name="userPhone"
-              value={formData.userPhone}
-              onChange={(e) => handleChange(e, "userPhone")}
-              readOnly={!editableFields.userPhone}
-            />
-          </Col>
-        </Form.Group>
-
-        <Form.Group controlId="formBio">
-          <Form.Label>Tiểu sử</Form.Label>
-          <Col xs={12} md={6} className="mx-auto">
-            <Form.Control
-              as="textarea"
-              name="bio"
-              value={formData.bio}
-              onChange={(e) => handleChange(e, "bio")}
-              readOnly={!editableFields.bio}
-            />
-          </Col>
-        </Form.Group>
-
-        <Form.Group controlId="formBookPicture">
-          <Form.Label>Tải ảnh</Form.Label>
-          <Col xs={12} md={6} className="mx-auto">
-            <Form.Control
-              type="file"
-              name="avatar"
-              onChange={handleBookPictureChange}
-              accept="image/*"
-              readOnly={!editableFields.avatar}
-            />
-            {errors.selectedImage && (
-              <p className="error-text">{errors.selectedImage}</p>
-            )}
-            <div className="image-preview-container">
-              {selectedBookImage ? (
+                <div className="image-preview-container">
+                  {selectedBookImage ? (
+                    <img
+                      src={URL.createObjectURL(selectedBookImage)}
+                      alt="Profile"
+                      className="rounded-circle profile-avatar"
+                    />
+                  ) : (
+                    formData.avatar && (
+                      <img
+                        src={`http://localhost:9191/api/users/user-image/${formData.avatar}`}
+                        alt="Profile"
+                        className="rounded-circle profile-avatar"
+                      />
+                    )
+                  )}
+                </div>
+                <p className="text-muted mb-1">
+                  Email: {formData.userMail || "..."}
+                </p>
+                <p className="text-muted mb-3">
+                  Location: {formData.userAddress || "..."}
+                </p>
                 <img
-                  src={URL.createObjectURL(selectedBookImage)}
-                  alt="Selected book"
-                  className="preview-img"
+                  src={logo}
+                  alt="No Orders Found"
+                  className="img-fluid"
+                  style={{ maxWidth: "60%" }}
                 />
-              ) : (
-                formData.avatar && (
-                  <img
-                    src={`http://localhost:9191/api/users/user-image/${formData.avatar}`}
-                    alt={formData.avatar}
-                    className="preview-img"
-                  />
-                )
-              )}
-            </div>
+              </Card.Body>
+            </Card>
           </Col>
-        </Form.Group>
+          <Col md={8}>
+            <Card>
+              <Card.Header className="profile-heading viewprofile-right">
 
-        <Row className="mt-3 justify-content-md-center">
-          {/* <Col md="auto">
-            <Button variant="secondary" onClick={handleEdit}>
-              Edit
-            </Button>
-          </Col> */}
-          <Col md="auto">
-            <Button variant="primary" type="submit">
-              Lưu
-            </Button>
-          </Col>
-          <Col md="auto">
-            <Button variant="primary" onClick={navigateToHome}>
-              Hủy
-            </Button>
+                Hồ Sơ Của Bạn
+              </Card.Header>
+              <Card.Body>
+                <Form onSubmit={handleSubmit}>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formUserName">
+                        <Form.Label className="viewprofile-form-label">
+                          Họ & Tên
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="userName"
+                          value={formData.userName}
+                          onChange={(e) => handleChange(e, "userName")}
+                          readOnly={!editableFields.userName}
+                          className="viewprofile-form-control"
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group controlId="formUserAddress">
+                        <Form.Label className="viewprofile-form-label">
+                          Địa Chỉ
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="userAddress"
+                          value={formData.userAddress}
+                          onChange={(e) => handleChange(e, "userAddress")}
+                          readOnly={!editableFields.userAddress}
+                          className="viewprofile-form-control"
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formUserPhone">
+                        <Form.Label className="viewprofile-form-label">
+                          SĐT
+                        </Form.Label>
+                        <Form.Control
+                          type="tel"
+                          name="userPhone"
+                          value={formData.userPhone}
+                          onChange={(e) => handleChange(e, "userPhone")}
+                          readOnly={!editableFields.userPhone}
+                          className="viewprofile-form-control"
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group controlId="formBio">
+                        <Form.Label className="viewprofile-form-label">
+                          Tiểu Sử
+                        </Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          name="bio"
+                          value={formData.bio}
+                          onChange={(e) => handleChange(e, "bio")}
+                          readOnly={!editableFields.bio}
+                          className="viewprofile-form-control"
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formBookPicture">
+                        <Form.Label className="viewprofile-form-label">
+                          Thay Đổi Ảnh Đại Diện
+                        </Form.Label>
+                        <Form.Control
+                          type="file"
+                          name="avatar"
+                          onChange={handleBookPictureChange}
+                          accept="image/*"
+                          readOnly={!editableFields.avatar}
+                          className="viewprofile-form-control"
+                        />
+                        {errors.selectedImage && (
+                          <p className="error-text">{errors.selectedImage}</p>
+                        )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row className="mt-3">
+                    <Col>
+                      <Button variant="success" type="submit">
+                        Save
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        className="ms-2"
+                        onClick={navigateToHome}
+                      >
+                        Cancel
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card.Body>
+            </Card>
           </Col>
         </Row>
-      </Form>
-    </Container>
+      </Container>
+    </>
   );
 };
 

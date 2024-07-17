@@ -155,7 +155,7 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
         )}
         {isTopBorrow ? (
           <div className="header">
-            <a style={{ color: "red"}} href="#">
+            <a style={{ color: "red" }} href="#">
               Xếp Hạng Sách Mượn Nhiều Nhất
             </a>
           </div>
@@ -216,12 +216,12 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
                     {isAllBooksIncoming ? null : isTopBorrow ? (
                       <>
                         <button style={{ backgroundColor: "#28A745" }}>
-                          {book[4]} Borrowed <MdAssignmentTurnedIn />
+                          {book[4]} Đã Mượn <MdAssignmentTurnedIn />
                         </button>
                       </>
                     ) : (
                       <button>
-                        Borrow <IoInformationCircle />
+                        Chi Tiết <IoInformationCircle />
                       </button>
                     )}
                   </div>

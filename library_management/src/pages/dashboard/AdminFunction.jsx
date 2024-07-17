@@ -18,6 +18,14 @@ import { UserContext } from "../../ultils/userContext";
 import { WishlistContext } from "../wishlist/WishlistContext";
 
 const AdminFunction = () => {
+  const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userStaffCategory || userStaffCategory.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [userStaffCategory, navigate]);
   const { user, handleLogout } = useContext(UserContext);
   const { wishlist } = useContext(WishlistContext);
   const [activeLink, setActiveLink] = useState("/adminfunction/dashboard");
@@ -25,7 +33,6 @@ const AdminFunction = () => {
     "Admin Function / Manage Customer"
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -148,7 +155,7 @@ const AdminFunction = () => {
                 onClick={() => handleLinkClick("/adminfunction/managecategory")}
               >
                 <i className="fas fa-list"></i>
-                Quản Lý Danh Mục Sách
+                Các Danh Mục Sách
               </Link>
             </li>
             <li>

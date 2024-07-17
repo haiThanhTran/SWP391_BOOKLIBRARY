@@ -60,6 +60,7 @@ const App = () => {
               <Route path="/viewprofile" element={<ViewProfile />} />
               <Route path="/adminfunction/*" element={<AdminFunction />} />{" "}
               <Route path="/dashboard/*" element={<Dashboard />} />
+              <Route path="/vieworder/:orderId" element={<ViewOrder />} />
             </Routes>
           </Router>
         </WishlistProvider>

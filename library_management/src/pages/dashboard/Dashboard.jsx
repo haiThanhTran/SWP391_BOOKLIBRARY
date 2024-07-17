@@ -13,20 +13,26 @@ import OrderChart from "./orderChart/OrderChart";
 import UserChart from "./userChart/UserChart"; // Ensure you have created and imported UserChart
 
 const Dashboard = () => {
+  const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userStaffCategory || userStaffCategory.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [userStaffCategory, navigate]);
   const [orderCount, setOrderCount] = useState(0);
   const [percentageChange, setPercentageChange] = useState(0);
   const [isPositiveChange, setIsPositiveChange] = useState(true);
   const [uniqueBorrowersCount, setUniqueBorrowersCount] = useState(0);
   const [uniqueBorrowersChange, setUniqueBorrowersChange] = useState(0);
-  const [isUniqueBorrowersChangePositive, setIsUniqueBorrowersChangePositive] =
-    useState(true);
+  const [isUniqueBorrowersChangePositive, setIsUniqueBorrowersChangePositive] =useState(true);
   const [currentMonthYear, setCurrentMonthYear] = useState("");
   const [importedMoney, setImportedMoney] = useState(0);
   const [importExpenseChange, setImportExpenseChange] = useState(0);
   const [monthlyBorrowings, setMonthlyBorrowings] = useState([]);
   const [monthlyUniqueBorrowers, setMonthlyUniqueBorrowers] = useState([]); // New state for unique borrowers
   const { user, handleLogout } = useContext(UserContext);
-  const navigate = useNavigate();
   const [topBooks, setTopBooks] = useState([]);
 
   useEffect(() => {
