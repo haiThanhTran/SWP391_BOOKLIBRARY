@@ -35,4 +35,8 @@ public class CommentService {
         comment.setCreatedAt(LocalDateTime.now());
         return commentRepository.save(comment);
     }
+
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
 }
