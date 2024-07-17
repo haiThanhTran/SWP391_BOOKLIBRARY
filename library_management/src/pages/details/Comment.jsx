@@ -9,6 +9,7 @@ const Comment = ({ bookId, book }) => {
   const [user, setUser] = useState(null);
 
   console.log("book", book);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -59,6 +60,28 @@ const Comment = ({ bookId, book }) => {
     }
   };
 
+  const handleCommentDelete = async (commentId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Vui lòng đăng nhập trước khi xóa bình luận");
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:9191/api/books/${bookId}/comments/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setComments(comments.filter(comment => comment.id !== commentId));
+      toast.success("Bình luận đã được xóa");
+    } catch (error) {
+      console.error("Delete comment failed:", error);
+      toast.error("Xóa bình luận thất bại");
+    }
+  };
+
+  const isAdmin = user && user.role === "ADMIN"; // Giả sử rằng vai trò của người dùng được lưu trong thuộc tính 'role'
+
   return (
     <>
       <div className="comments-section">
@@ -79,31 +102,23 @@ const Comment = ({ bookId, book }) => {
             <li key={comment.id} className="comment-item">
               <img
                 className="comment-avatar"
-                src={
-                  comment.user && comment.user.avatar
-                    ? `http://localhost:9191/api/users/user-image/${comment.user.avatar}`
-                    : "default-avatar.png"
-                }
-                alt={`${
-                  comment.user ? comment.user.userName : "Unknown"
-                }'s Avatar`}
+                src={comment.user && comment.user.avatar ? `http://localhost:9191/api/users/user-image/${comment.user.avatar}` : "default-avatar.png"}
+                alt={`${comment.user ? comment.user.userName : "Unknown"}'s Avatar`}
               />
               <div className="comment-content">
                 <div className="comment-header">
-                  <strong>
-                    {comment.user ? comment.user.userName : "Unknown User"}
-                  </strong>
+                  <strong>{comment.user ? comment.user.userName : "Unknown User"}</strong>
                   <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                  {isAdmin && (
+                    <button
+                      onClick={() => handleCommentDelete(comment.id)}
+                      className="delete-comment"
+                    >
+                      Xóa
+                    </button>
+                  )}
                 </div>
-                <p
-                  style={{
-                    backgroundColor: "#EEEEEE",
-                    borderRadius: "5px",
-                    padding: "15px",
-                    fontWeight: "500",
-                    textAlign: "left",
-                  }}
-                >
+                <p style={{ backgroundColor: "#EEEEEE", borderRadius: "5px", padding: "15px", fontWeight: "500", textAlign: "left" }}>
                   {comment.text}
                 </p>
               </div>

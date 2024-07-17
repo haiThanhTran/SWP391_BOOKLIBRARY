@@ -54,4 +54,10 @@ public class CommentController {
         Comment savedComment = commentService.saveComment(comment, user, book, comment.getText());
         return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long bookId, @PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
