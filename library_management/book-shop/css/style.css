@@ -615,7 +615,7 @@ END scroll-top-arrow
 .homer-banner .banner-description h1{
     font-size: 70px;
     font-weight: 200;
-    font-family: Poppins, "sans-serif";
+    /* font-family: Poppins, "sans-serif"; */
     margin-bottom: 10px;
 }
 

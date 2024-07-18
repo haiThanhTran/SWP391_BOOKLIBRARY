@@ -40,7 +40,7 @@ function BookDetail() {
   // Hàm xử lý việc mượn sách
   const handleBorrow = () => {
     const token = localStorage.getItem("token"); // Lấy token từ local storage
-    if (book.status.statusID == "4") {
+    if (book.status.statusID == "1" || book.bookQuantity == "0") {
       toast.error("Bạn không thể mượn sách này");
     } else if (!token) {
       // Nếu không có token, hiển thị thông báo yêu cầu đăng nhập
@@ -71,6 +71,10 @@ function BookDetail() {
                     <div className="rating">
                       <span>Luợt đánh giá:</span>
                       <span className="stars">{book.bookStar}★</span>
+                    </div>
+                    <div className="rating">
+                      <span>Số sách còn lại:</span>
+                      <span className="stars">{book.bookQuantity}📖</span>
                     </div>
                     <button
                       className="btn btn-outline-secondary mt-2 w-100"

@@ -20,7 +20,11 @@ function StaffOrderManagement() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userStaffOrder || !userStaffOrder.role || userStaffOrder.role !== "STAFF") {
+    if (
+      !userStaffOrder ||
+      !userStaffOrder.role ||
+      userStaffOrder.role !== "STAFF"
+    ) {
       navigate("/signin");
     }
   }, [userStaffOrder, navigate]);
@@ -179,14 +183,14 @@ function StaffOrderManagement() {
 
       <div className="StaffOrderManagement container mt-12">
         <ToastContainer />
-        <h1>Order Management</h1>
+        <h1>Quản Lý Mượn-Trả Sách</h1>
         <div className="search-section d-flex mb-3">
           <input
             type="text"
             className="form-control me-2"
             value={orderID}
             onChange={(e) => setOrderID(e.target.value)}
-            placeholder="Enter Search ID"
+            placeholder="Vui lòng nhập mã đơn hàng"
           />
           <button
             className="btn btn-sm btn-primary"
@@ -201,15 +205,15 @@ function StaffOrderManagement() {
           <table className="table table-bordered">
             <thead>
               <tr>
-                <th>Book Image</th>
-                <th>User Name</th>
-                <th>Quantity</th>
-                <th>Book Name</th>
-                <th>Total Price</th>
-                <th>Order Date</th>
-                <th>Status</th>
-                <th>Return Date</th>
-                <th>Actions</th>
+                <th>Ảnh Sách</th>
+                <th>Tên Khách Hàng</th>
+                <th>Số Lượng</th>
+                <th>Tên Sách</th>
+                <th>Tiền</th>
+                <th>Thời Gian Mượn</th>
+                <th>Trạng Thái</th>
+                <th>Thời Gian Trả</th>
+                <th>Xác Nhận</th>
               </tr>
             </thead>
             <tbody>
@@ -242,21 +246,21 @@ function StaffOrderManagement() {
                       }}
                     >
                       <option value="Pending" disabled>
-                        Pending
+                        Đang chờ
                       </option>
-                      <option value="Borrowed">Borrowed</option>
-                      <option value="Returned">Returned</option>
+                      <option value="Borrowed">Đang mượn</option>
+                      <option value="Returned">Đã trả</option>
                       <option value="Overdue" disabled>
-                        Overdue
+                        Quá hạn
                       </option>
                       <option value="Cancelled" disabled>
-                        Cancelled
+                        Bị hủy
                       </option>
                       <option value="Compensated by Money" disabled>
-                        Compensated by Money
+                        Đền tiền sách
                       </option>
                       <option value="Compensated by Book" disabled>
-                        Compensated by Book
+                        Đền sách
                       </option>
                     </select>
                     <button
@@ -329,7 +333,7 @@ function StaffOrderManagement() {
               alt="No Orders Found"
               className="img-fluid"
             />
-            <p>No Orders Found</p>
+            <p>Không có đơn hàng nào !</p>
           </div>
         )}
       </div>
