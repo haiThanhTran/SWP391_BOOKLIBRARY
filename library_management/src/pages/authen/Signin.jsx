@@ -6,11 +6,13 @@ import axios from "axios";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { UserContext } from "../../ultils/userContext";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Signin() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { handleLoginSuccess } = useContext(UserContext);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const handleSignUpClick = () => {
     navigate("/signup");
@@ -33,12 +35,17 @@ function Signin() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setError("");
+      if (!captchaToken) {
+        setError("Please complete the reCAPTCHA");
+        return;
+      }
       try {
         const response = await axios.post(
           "http://localhost:9191/api/auth/login",
           {
             user_name: values.your_name,
             user_pass: values.your_pass,
+            captchaToken: captchaToken,
           }
         );
         if (response.status === 200) {
@@ -60,6 +67,7 @@ function Signin() {
   return (
     <div className="main">
       <Helmet>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script src="src/pages/authen/UIConfig/vendor/jquery/jquery.min.js"></script>
         <script src="src/pages/authen/UIConfig/js/main.js"></script>
         <link
@@ -126,6 +134,13 @@ function Signin() {
                   <p className="forgot" onClick={forgotForm}>
                     Forgot password
                   </p>
+                </div>
+
+                <div className="form-group">
+                  <ReCAPTCHA
+                    sitekey="6LdjERUqAAAAAA3VukqzruuImsBySPPHcQb4Onu9"
+                    onChange={(token) => setCaptchaToken(token)}
+                  />
                 </div>
 
                 <div className="form-group">

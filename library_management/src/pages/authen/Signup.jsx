@@ -6,12 +6,14 @@ import { useState } from "react";
 import * as yup from "yup";
 import axios from "axios";
 import { API_ROOT } from "../../ultils/constants";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Login() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const API_ROOT = "http://localhost:9191/register";
   const [error, setError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   // Role mapping
   const roleMapping = {
@@ -37,11 +39,15 @@ function Login() {
   };
 
   const [sub, setSub] = useState(false);
-  console.log();
   const onSub = async (values) => {
     // Map role string to role ID
     const roleID = roleMapping[values.role];
-    const payload = { ...values, role: roleID };
+    const payload = { ...values, role: roleID, captchaToken };
+
+    if (!captchaToken) {
+      setError("Please complete the reCAPTCHA");
+      return;
+    }
 
     try {
       const response = await createNewAccountApi(payload);
@@ -65,31 +71,30 @@ function Login() {
     userPass: "",
     confPassword: "",
     role: "CUSTOMER",
-    isAdmin: false,
-    isManager: false,
-    active: false,
+    agreeTerm: false,
   };
 
   const vScheme = {
-    userName: yup.string().required(),
-    userMail: yup.string().required().email("invalid Email"),
+    userName: yup.string().required("required"),
+    userMail: yup.string().required("required").email("invalid Email"),
     userPass: yup
       .string()
       .required("required")
-      .matches(/[a-zA-Z0-9]{8,}$/, "invalid Password"),
-    confPassword: yup.string().required("required"),
+      .matches(/.{8,}/, "Mật khẩu phải có ít nhất 8 ký tự"),
+    confPassword: yup
+      .string()
+      .required("required")
+      .oneOf([yup.ref("userPass"), null], "Mật khẩu không khớp"),
     userPhone: yup
-      .number()
-      .typeError("That doesn't look like a userPhone number")
-      .positive("A userPhone number can't start with a minus")
-      .integer("A userPhone number can't include a decimal point")
-      .min(8)
-      .required("A userPhone number is required"),
+      .string()
+      .required("A userPhone number is required")
+      .matches(/^[0-9]{8,}$/, "Invalid phone number"),
+    agreeTerm: yup.bool().oneOf([true], "You must accept the terms and conditions"),
   };
 
   const LoginForm = useFormik({
     initialValues: initialvalues,
-    onSubmit: onSub, // Định nghĩa hàm xử lý khi form được submit
+    onSubmit: onSub,
     validationSchema: yup.object(vScheme),
   });
 
@@ -111,6 +116,7 @@ function Login() {
   return (
     <div className="main">
       <Helmet>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script src="src/pages/authen/UIConfig/vendor/jquery/jquery.min.js"></script>
         <script src="src/pages/authen/UIConfig/js/main.js"></script>
         <link
@@ -124,7 +130,6 @@ function Login() {
           <div className="signup-content">
             <div className="signup-form">
               <h2 className="form-title">Đăng ký</h2>
-              {/* Form post */}
               <form
                 method="POST"
                 className="register-form"
@@ -137,31 +142,28 @@ function Login() {
                   </label>
                   <input
                     type="text"
-                    name="name"
+                    name="userName"
                     id="name"
                     placeholder="Your Name"
                     {...LoginForm.getFieldProps("userName")}
                   />
                   {LoginForm.touched.userName && LoginForm.errors.userName && (
-                    <div className="text-danger">
-                      {LoginForm.errors.userName}
-                    </div>
+                    <div className="text-danger">{LoginForm.errors.userName}</div>
                   )}
                 </div>
-                {/* Email */}
                 <div className="form-group">
                   <label htmlFor="email">
                     <i className="zmdi zmdi-email"></i>
                   </label>
                   <input
                     type="email"
-                    name="email"
+                    name="userMail"
                     id="email"
                     placeholder="Your Email"
                     {...LoginForm.getFieldProps("userMail")}
                   />
-                  {LoginForm.touched.email && LoginForm.errors.email && (
-                    <div className="text-danger">{LoginForm.errors.email}</div>
+                  {LoginForm.touched.userMail && LoginForm.errors.userMail && (
+                    <div className="text-danger">{LoginForm.errors.userMail}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -169,18 +171,15 @@ function Login() {
                     <i className="zmdi zmdi-phone"></i>
                   </label>
                   <input
-                    type="phone"
+                    type="text"
                     name="userPhone"
                     id="userPhone"
                     placeholder="Your Phone"
                     {...LoginForm.getFieldProps("userPhone")}
                   />
-                  {LoginForm.touched.userPhone &&
-                    LoginForm.errors.userPhone && (
-                      <div className="text-danger">
-                        {LoginForm.errors.userPhone}
-                      </div>
-                    )}
+                  {LoginForm.touched.userPhone && LoginForm.errors.userPhone && (
+                    <div className="text-danger">{LoginForm.errors.userPhone}</div>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor="pass">
@@ -188,16 +187,14 @@ function Login() {
                   </label>
                   <input
                     type="password"
-                    name="pass"
+                    name="userPass"
                     id="pass"
                     placeholder="Password"
                     onKeyUp={setPassword}
                     {...LoginForm.getFieldProps("userPass")}
                   />
                   {LoginForm.touched.userPass && LoginForm.errors.userPass && (
-                    <div className="text-danger">
-                      {LoginForm.errors.userPass}
-                    </div>
+                    <div className="text-danger">{LoginForm.errors.userPass}</div>
                   )}
                 </div>
                 <div className="form-group">
@@ -206,22 +203,23 @@ function Login() {
                   </label>
                   <input
                     type="password"
-                    name="re_pass"
+                    name="confPassword"
                     id="re_pass"
-                    placeholder="Repeat your userPass"
+                    placeholder="Repeat your Password"
                     onKeyUp={checkConfirm}
                     {...LoginForm.getFieldProps("confPassword")}
                   />
-                  {LoginForm.touched.confPassword && confirmFlag === false && (
+                  {LoginForm.touched.confPassword && !confirmFlag && (
                     <div className="text-danger">Passwords do not match</div>
                   )}
                 </div>
                 <div className="form-group">
                   <input
                     type="checkbox"
-                    name="agree-term"
+                    name="agreeTerm"
                     id="agree-term"
                     className="agree-term"
+                    {...LoginForm.getFieldProps("agreeTerm")}
                   />
                   <label htmlFor="agree-term" className="label-agree-term">
                     <span>
@@ -232,6 +230,15 @@ function Login() {
                       Terms of service
                     </a>
                   </label>
+                  {LoginForm.touched.agreeTerm && LoginForm.errors.agreeTerm && (
+                    <div className="text-danger">{LoginForm.errors.agreeTerm}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <ReCAPTCHA
+                    sitekey="6LdjERUqAAAAAA3VukqzruuImsBySPPHcQb4Onu9"
+                    onChange={(token) => setCaptchaToken(token)}
+                  />
                 </div>
                 <div className="form-group form-button">
                   <input

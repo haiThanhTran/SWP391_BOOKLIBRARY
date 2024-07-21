@@ -25,8 +25,17 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private CaptchaService captchaService;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        // Verify CAPTCHA
+        boolean captchaVerified = captchaService.verifyCaptcha(loginRequest.getCaptchaToken());
+        if (!captchaVerified) {
+            return ResponseEntity.status(400).body("Captcha verification failed");
+        }
+
         Optional<User> userOptional = userRepository.findByUserMail(loginRequest.getUser_name());
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(401).body("Email not found");
@@ -39,21 +48,13 @@ public class AuthController {
             return ResponseEntity.status(403).body("User not verified");
         }
 
-//        // Kiểm tra nếu là lần đăng nhập đầu tiên và role là Staff
-//        if (user.getRole().equals("STAFF") && user.isFirstLogin()) {
-//            return ResponseEntity.status(403).body("Please reset default password before logging in.");
-//        }
-
-        // Kiểm tra nếu là lần đăng nhập đầu tiên và role là Staff
         if (user.getRole().getRoleID() == 2 && user.isFirstLogin()) {
             return ResponseEntity.status(403).body("Please reset default password before logging in.");
         }
 
-//        CustomUserDetails userDetails = new CustomUserDetails(user); // Đảm bảo bạn có lớp này
         String token = jwtUtil.generateToken(user);
 
         return ResponseEntity.ok(new AuthResponse(token, user));
-
     }
 
     @GetMapping("/validate-token")
@@ -73,35 +74,10 @@ public class AuthController {
         return ResponseEntity.ok(userOptional.get());
     }
 
-//    static class AuthResponse {
-//        private String token;
-//        private User user;
-//
-//        public AuthResponse(String token, User user) {
-//            this.token = token;
-//            this.user = user;
-//        }
-//
-//        public String getToken() {
-//            return token;
-//        }
-//
-//        public void setToken(String token) {
-//            this.token = token;
-//        }
-//
-//        public User getUser() {
-//            return user;
-//        }
-//
-//        public void setUser(User user) {
-//            this.user = user;
-//        }
-//    }
-
     static class LoginRequest {
         private String user_name;
         private String user_pass;
+        private String captchaToken;
 
         public String getUser_name() {
             return user_name;
@@ -117,6 +93,14 @@ public class AuthController {
 
         public void setUser_pass(String user_pass) {
             this.user_pass = user_pass;
+        }
+
+        public String getCaptchaToken() {
+            return captchaToken;
+        }
+
+        public void setCaptchaToken(String captchaToken) {
+            this.captchaToken = captchaToken;
         }
     }
 }

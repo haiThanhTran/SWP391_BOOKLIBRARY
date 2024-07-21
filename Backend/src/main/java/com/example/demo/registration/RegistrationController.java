@@ -1,5 +1,6 @@
 package com.example.demo.registration;
 
+import com.example.demo.auth.CaptchaService;
 import com.example.demo.event.RegistrationCompleteEvent;
 import com.example.demo.event.listener.RegistrationCompleteEventListener;
 import com.example.demo.registration.token.VerificationToken;
@@ -28,9 +29,16 @@ public class RegistrationController {
 
     private final RegistrationCompleteEventListener eventListener;
     private final HttpServletRequest servletRequest;
+    private final CaptchaService captchaService;
 
     @PostMapping
     public String registerUser(@RequestBody RegistrationRequest registrationRequest, final HttpServletRequest request){
+        // Xác thực CAPTCHA
+        boolean captchaVerified = captchaService.verifyCaptcha(registrationRequest.captchaToken());
+        if (!captchaVerified) {
+            return "Captcha verification failed";
+        }
+
         User user = userService.registerUser(registrationRequest);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
         return "Success! Please, check your email to complete your registration";

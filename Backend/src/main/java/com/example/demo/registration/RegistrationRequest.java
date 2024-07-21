@@ -12,6 +12,7 @@ public record RegistrationRequest(
         String userName,
         String userMail,
         String userPass,
+        String captchaToken, // Thêm trường captchaToken
 //        String role){
 //}
         Long role) {
