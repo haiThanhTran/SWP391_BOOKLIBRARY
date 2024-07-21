@@ -182,6 +182,27 @@ public class OrderDetailController {
         }
     }
 
+    @PutMapping("/{orderID}/cancel")
+    public ResponseEntity<OrderDetail> cancelOrder(@PathVariable Long orderID) {
+        try {
+            Optional<OrderDetail> optionalOrder = bookOrderService.findById(orderID);
+            if (optionalOrder.isPresent()) {
+                OrderDetail order = optionalOrder.get();
+                if ("Pending".equals(order.getStatus())) {
+                    bookOrderService.cancelOrder(order);
+                    return ResponseEntity.ok(order);
+                } else {
+                    return ResponseEntity.badRequest().body(null);
+                }
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            logger.error("Error while canceling order ID: {}", orderID, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     //DASHBOARD
 
 

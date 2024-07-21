@@ -215,7 +215,7 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
                   <div>
                     {isAllBooksIncoming ? null : isTopBorrow ? (
                       <>
-                        <button style={{ backgroundColor: "#28A745" }}>
+                        <button style={{ backgroundColor: "#28A745",textDecoration:"none" }}>
                           {book[4]} Đã Mượn <MdAssignmentTurnedIn />
                         </button>
                       </>

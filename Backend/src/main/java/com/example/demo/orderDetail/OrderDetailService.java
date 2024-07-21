@@ -93,6 +93,20 @@ public class OrderDetailService {
         logger.warn("Order ID {} not found for update", orderID);
         return null;
     }
+    public Optional<OrderDetail> findById(Long orderID) {
+        return bookOrderRepository.findById(orderID);
+    }
+
+    @Transactional
+    public void cancelOrder(OrderDetail order) {
+        order.setStatus("Cancelled");
+
+        Book book = order.getBook();
+        book.setBookQuantity(book.getBookQuantity() + order.getQuantity());
+        bookService.updateBook(book.getBookID(), book);
+
+        bookOrderRepository.save(order);
+    }
 
     @Scheduled(fixedRate = 1000) // Phương thức này sẽ được thực thi mỗi giây một lần
     @Transactional // Đánh dấu phương thức này để được thực thi trong một giao dịch

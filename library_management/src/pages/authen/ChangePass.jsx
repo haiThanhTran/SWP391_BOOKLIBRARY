@@ -3,6 +3,7 @@ import "./UIConfig/css/ChangePass.css";
 import { blue } from "@mui/material/colors";
 import { UserContext } from "../../ultils/userContext";
 import { useNavigate } from "react-router-dom";
+import Header from "../../pages/nav-bar/Header";
 /**
  * ChangePass component for handling password change form.
  * @returns {JSX.Element} - JSX element representing the password change form.
@@ -80,6 +81,7 @@ function ChangePass() {
   // JSX return statement for rendering the password change form.
   return (
     <div className="mainDiv">
+      <Header/>
       <div className="cardStyle">
         <form onSubmit={handleSubmit} name="signupForm" id="signupForm">
           <img

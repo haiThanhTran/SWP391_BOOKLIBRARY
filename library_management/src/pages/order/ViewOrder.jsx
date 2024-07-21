@@ -66,6 +66,28 @@ function ViewOrder() {
     return null;
   };
 
+  const cancelOrder = async (orderID) => {
+    const confirmCancel = window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này?");
+    if (!confirmCancel) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+
+    try {
+      await axios.put(`http://localhost:9191/api/orders/${orderID}/cancel`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchOrders();
+    } catch (error) {
+      console.error("Error canceling order:", error);
+    }
+  };
+
   const renderOrders = (status) => {
     const groupedOrders = orders
       .filter((order) => order.status === status)
@@ -103,6 +125,14 @@ function ViewOrder() {
             <td>{new Date(order.returnDate).toLocaleString()}</td>
             <td>
               <Countdown date={getCountdownDate(order)} renderer={renderer} />
+              {order.status === "Pending" && (
+                <button
+                  className="btn btn-danger mt-2"
+                  onClick={() => cancelOrder(order.orderDetailID)}
+                >
+                  Hủy đặt sách
+                </button>
+              )}
             </td>
           </tr>
         ))}
