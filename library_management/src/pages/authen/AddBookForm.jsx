@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import "./UIConfig/css/AddBookForm.css";
+import { useNavigate } from "react-router-dom";
 
 const AddBookForm = ({ onClose }) => {
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
   const [bookStatus, setBookStatus] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -194,7 +203,7 @@ const AddBookForm = ({ onClose }) => {
   };
 
   const navigateToHome = () => {
-    window.location.href = "/managebook";
+    window.location.href = "/adminfunction/managebook";
   };
 
   return (

@@ -6,11 +6,22 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Header from "../nav-bar/Header";
 import Footer from "../footer/Footer";
-import "./UIConfig/css/ManageBook.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./UIConfig/css/ManageBook.css";
 
 const ManageBook = () => {
+  const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
+
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -18,7 +29,6 @@ const ManageBook = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOption, setSearchOption] = useState("All");
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const getAllBooks = async () => {
@@ -157,7 +167,7 @@ const ManageBook = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="manage-book-page-managebook">
         <div className="sidebar-managebook">
           <div className="search-bar-managebook">
@@ -181,13 +191,13 @@ const ManageBook = () => {
           <div className="book-actions-managebook">
             <div className="book-actions-top-managebook">
               <button
-                className="btn-add-managebook"
+                className="btn btn-primary"
                 onClick={() => navigate("/addbookform")}
               >
                 Thêm <FaBookmark />
               </button>
               <button
-                className="btn-detail-managebook"
+                className="btn btn-success"
                 onClick={() => navigate(`/bookdetail/${selectedBook?.bookID}`)}
                 disabled={!selectedBook}
               >
@@ -196,14 +206,14 @@ const ManageBook = () => {
             </div>
             <div className="book-actions-bottom-managebook">
               <button
-                className="btn-edit-managebook"
+                className="btn btn-warning"
                 onClick={handleEditClick}
                 disabled={!selectedBook}
               >
                 Sửa <FaRegEdit />
               </button>
               <button
-                className="btn-delete-managebook"
+                className="btn btn-danger"
                 onClick={handleDeleteClick}
                 disabled={!selectedBook}
               >
@@ -256,21 +266,21 @@ const ManageBook = () => {
               {selectedBook === book && (
                 <div className="book-item-actions">
                   <button
-                    className="btn-detail-managebook"
+                    className="btn btn-success"
                     onClick={() => navigate(`/bookdetail/${selectedBook?.bookID}`)}
                     disabled={!selectedBook}
                   >
                     Detail <IoInformationCircle />
                   </button>
                   <button
-                    className="btn-edit-managebook"
+                    className="btn btn-warning"
                     onClick={handleEditClick}
                     disabled={!selectedBook}
                   >
                     Edit <FaRegEdit />
                   </button>
                   <button
-                    className="btn-delete-managebook"
+                    className="btn btn-danger"
                     onClick={handleDeleteClick}
                     disabled={!selectedBook}
                   >

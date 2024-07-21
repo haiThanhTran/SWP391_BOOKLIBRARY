@@ -23,9 +23,8 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
   const [categoryName, setCategoryName] = useState("");
 
   const navigate = useNavigate();
-  //
   const [categories, setCategories] = useState([]);
-  //
+
   useEffect(() => {
     axios
       .get("http://localhost:9191/api/categories")
@@ -155,13 +154,15 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
           </div>
         )}
         {isTopBorrow ? (
-          <div className="header" >
-            <a style={{color: "red"}} href="#">Top Borrowed Books</a>
+          <div className="header">
+            <a style={{ color: "red" }} href="#">
+              Xếp Hạng Sách Mượn Nhiều Nhất
+            </a>
           </div>
         ) : (
           <div className="header">
             <a href="#" onClick={handleCategoryClick}>
-              {isAllBooksIncoming ? "Incoming Book" : categoryName}
+              {isAllBooksIncoming ? "Sách Chuẩn Bị Nhập" : categoryName}
             </a>
           </div>
         )}
@@ -212,24 +213,15 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
                     </div>
                   )}
                   <div>
-                    {isAllBooksIncoming ? (
-                      <button>
-                        Detail <IoInformationCircle />
-                      </button>
-                    ) : isTopBorrow ? (
+                    {isAllBooksIncoming ? null : isTopBorrow ? (
                       <>
-                        <button
-                          style={{ backgroundColor: "#28A745"}}
-                        >
-                          {book[4]} Borrowed <MdAssignmentTurnedIn />
-                        </button>
-                        <button>
-                          Borrow <IoInformationCircle />
+                        <button style={{ backgroundColor: "#28A745",textDecoration:"none" }}>
+                          {book[4]} Đã Mượn <MdAssignmentTurnedIn />
                         </button>
                       </>
                     ) : (
                       <button>
-                        Borrow <IoInformationCircle />
+                        Chi Tiết <IoInformationCircle />
                       </button>
                     )}
                   </div>
@@ -266,7 +258,7 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
                           }}
                           disabled={votes[book.bookID]}
                         >
-                          Vote
+                          Đánh giá
                         </button>
                       </>
                     )}

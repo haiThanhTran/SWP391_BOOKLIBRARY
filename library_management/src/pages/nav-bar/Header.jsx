@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-owl-carousel2/lib/styles.css";
 import "react-owl-carousel2/src/owl.carousel.css";
 import SlideShow from "../SlideShow";
 import { UserContext } from "../../ultils/userContext";
-
-import Notification from "../notification/bell";
+import Bell from "../notification/Bell";
 import CategoryDropdown from "../category/CategoryDropdown";
 
 function Header() {
   const { user, handleLogout } = useContext(UserContext);
+
   const navigate = useNavigate();
   console.log("userDetail", user);
 
@@ -48,7 +48,13 @@ function Header() {
   const handleProfileClick = () => {
     navigate("/viewprofile"); //viewprofile
   };
+  const handleViewOrderClick = () => {
+    navigate("/vieworder"); //vieworder
+  };
 
+  const handleDashboardClick = () => {
+    navigate("/adminfunction/*"); //vieworder
+  };
   const SearchForm = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchOption, setSearchOption] = useState("All");
@@ -463,13 +469,13 @@ function Header() {
                         </div>
                       </li> */}
                       <div>
-                          <li className="nav-item">
-                            <a className="nav-link" href="/">
-                              Trang chủ
-                            </a>
-                          </li>
+                        <li className="nav-item">
+                          <a className="nav-link" href="/">
+                            Trang chủ
+                          </a>
+                        </li>
                       </div>
-                      <div>
+                      {/* <div>
                         {user && user.role === "ADMIN" && (
                           <li className="nav-item">
                             <a className="nav-link" href="/dashboard">
@@ -477,7 +483,7 @@ function Header() {
                             </a>
                           </li>
                         )}
-                      </div>
+                      </div> */}
                       <li className="nav-item dropdown position-relative">
                         <CategoryDropdown />
                       </li>
@@ -900,21 +906,24 @@ function Header() {
                   </li>
 
                   <li className="d-inline-block mini-menu-card">
-                    <Notification />
+                    <Bell />
                   </li>
 
-                  <li className="d-inline-block mini-menu-card">
-                    <a className="nav-link" id="add_cart_box" href="#">
+                  {/* <li className="d-inline-block mini-menu-card">
+                    <a className="d-inline-block sidemenu_btn d-block" id="add_cart_box" href="" onClick={handleWishListClick}>
                       <i className="lni lni-shopping-basket"></i>
                     </a>
-                  </li>
+                  </li> */}
                   <a
-                    href="#"
+                    href=""
                     className="d-inline-block sidemenu_btn d-block"
                     id="sidemenu_toggle"
                     onClick={handleWishListClick}
+                    style={{
+                      textDecoration: "none",
+                    }}
                   >
-                    <i className="lni lni-menu"></i>
+                    <i className="lni lni-shopping-basket"></i>
                   </a>
 
                   <div>
@@ -928,17 +937,15 @@ function Header() {
                           />
                         </button>
                         <div className="dropdown-content">
-                          <a href="" onClick={handleChangePasswordClick}>
-                            Change Password
-                          </a>
-                          <a href="" onClick={handleProfileClick}>
-                            Your Profile
-                          </a>
                           {user.role == "ADMIN" ? (
                             <>
-                              <a href="" onClick={handleManageCustomerClick}>
+                              <a href="" onClick={handleDashboardClick}>
+                                Bảng Điều Khiển
+                              </a>
+                              {/* <a href="" onClick={handleManageCustomerClick}>
                                 Manage Customer
                               </a>
+
                               <a href="" onClick={handleManageStaffClick}>
                                 Manage Staff
                               </a>
@@ -948,29 +955,38 @@ function Header() {
                               <a href="" onClick={handlecategoryClick}>
                                 Manager Category
                               </a>
-                              <a href="/managebook">Manage Book</a>
+                              <a href="/managebook">Manage Book</a> */}
                             </>
                           ) : (
                             <p></p>
                           )}
+                          <a href="" onClick={handleChangePasswordClick}>
+                            Đổi Mật Khẩu
+                          </a>
+                          <a href="" onClick={handleProfileClick}>
+                            Hồ Sơ
+                          </a>
+                          <a href="" onClick={handleViewOrderClick}>
+                            Đơn Hàng
+                          </a>
 
                           {user.role == "STAFF" ? (
                             <>
                               <a href="" onClick={handleManageBorowClick}>
-                                Manage Borrow
+                                Quản Lý Mượn-Trả
                               </a>
                             </>
                           ) : (
                             <p></p>
                           )}
 
-                          <a href="/" onClick={handleLogout}>
-                            Log out
+                          <a href="" onClick={handleLogout}>
+                            Đăng Xuất
                           </a>
                         </div>
                       </div>
                     ) : (
-                      <button onClick={handleLoginClick}>Sign In</button>
+                      <button onClick={handleLoginClick}>Đăng Nhập</button>
                     )}
                   </div>
                 </ul>

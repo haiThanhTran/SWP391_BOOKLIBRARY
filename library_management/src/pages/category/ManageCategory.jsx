@@ -1,204 +1,254 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { IconButton, TextField, Button, List, ListItem, ListItemText, ListItemSecondaryAction } from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  IconButton,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import { Add, Edit, Delete, FileCopy } from "@mui/icons-material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
+const ManagementCategory = () => {
+  const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
 
-function App() {
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [newCategory, setNewCategory] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
-    const token = localStorage.getItem("token");
+  useEffect(() => {
+    if (!userStaffCategory || userStaffCategory.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [userStaffCategory, navigate]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [newCategory, setNewCategory] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const token = localStorage.getItem("token");
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:9191/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
-    const fetchCategories = async () => {
-        try {
-            const response = await axios.get('http://localhost:9191/api/categories');
-            setCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
+  const isCategoryNameValid = (name) => {
+    const regex = /^[a-zA-Z0-9\s]*$/;
+    return name.trim() !== "" && regex.test(name);
+  };
+
+  const createCategory = async () => {
+    if (!isCategoryNameValid(newCategory)) {
+      toast.error(
+        "Invalid category name. Only letters, numbers, and spaces are allowed."
+      );
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:9191/api/categories",
+        { categoryName: newCategory },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    };
+      );
+      setCategories([...categories, response.data]);
+      setNewCategory("");
+      setOpenAdd(false);
+      toast.success("Category added successfully!");
+    } catch (error) {
+      console.error("Error creating category:", error);
+      toast.error("Failed to add category.");
+    }
+  };
 
+  const updateCategory = async (id, updatedName) => {
+    if (!isCategoryNameValid(updatedName)) {
+      toast.error(
+        "Invalid category name. Only letters, numbers, and spaces are allowed."
+      );
+      return;
+    }
 
-    const createCategory = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.post(
-            'http://localhost:9191/api/categories',
-            { categoryName: newCategory },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setCategories([...categories, response.data]);
-          setNewCategory('');
-        } catch (error) {
-          console.error('Error creating category:', error);
+    try {
+      const response = await axios.put(
+        `http://localhost:9191/api/categories/${id}`,
+        { categoryName: updatedName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      };
-      
-      const updateCategory = async (id, updatedName) => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.put(
-            `http://localhost:9191/api/categories/${id}`,
-            { categoryName: updatedName },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setCategories(categories.map(cat => (cat.categoryID === id ? response.data : cat)));
-          setSelectedCategory(null);
-        } catch (error) {
-          console.error('Error updating category:', error);
-        }
-      };
-      
-      const deleteCategory = async (id) => {
-        const confirmDelete = window.confirm('Bạn có chắc chắn xóa không? Nếu xóa thư mục này sẽ xóa các sách liên quan đến thư mục này');
-        if (!confirmDelete) return;
-      
-        try {
-          const token = localStorage.getItem("token");
-          await axios.delete(`http://localhost:9191/api/categories/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setCategories(categories.filter(cat => cat.categoryID !== id));
-          setSelectedCategory(null);
-        } catch (error) {
-          console.error('Error deleting category:', error);
-        }
-      };
-      
+      );
+      setCategories(
+        categories.map((cat) => (cat.categoryID === id ? response.data : cat))
+      );
+      setSelectedCategory(null);
+      setOpenEdit(false);
+      toast.success("Category updated successfully!");
+    } catch (error) {
+      console.error("Error updating category:", error);
+      toast.error("Failed to update category.");
+    }
+  };
 
-
-    const filteredCategories = categories.filter(category =>
-        category.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
+  const deleteCategory = async (id) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn xóa không? Nếu xóa thư mục này sẽ xóa các sách liên quan đến thư mục này"
     );
+    if (!confirmDelete) return;
 
+    try {
+      await axios.delete(`http://localhost:9191/api/categories/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCategories(categories.filter((cat) => cat.categoryID !== id));
+      setSelectedCategory(null);
+      toast.success("Category deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category.");
+    }
+  };
 
-    return (
-        <div>
-            <style>{`
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f4;
-                    margin: 0;
-                    padding: 0;
-                }
+  const handleCopyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.info("Copied to clipboard!");
+  };
 
+  const filteredCategories = categories.filter((category) =>
+    category.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-                .container {
-                    display: flex;
-                    justify-content: space-between;
-                    max-width: 1200px;
-                    margin: 20px auto;
-                    padding: 20px;
-                    background-color: #fff;
-                    border-radius: 5px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
+  return (
+    <div style={{ padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "5px" }}>
+      <ToastContainer />
+      <h1>Categories</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenAdd(true)}
+          startIcon={<Add />}
+        >
+          Add new
+        </Button>
+        <TextField
+          label="Search Categories"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ marginLeft: "20px", flex: 1 }}
+        />
+      </div>
+      <List style={{ backgroundColor: "#fff", borderRadius: "5px" }}>
+        {filteredCategories.map((category) => (
+          <ListItem key={category.categoryID} style={{ borderBottom: "1px solid #ccc" }}>
+            <ListItemText primary={category.categoryName} />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                aria-label="edit"
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setOpenEdit(true);
+                }}
+              >
+                <Edit />
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => deleteCategory(category.categoryID)}
+              >
+                <Delete />
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="copy"
+                onClick={() => handleCopyToClipboard(category.categoryName)}
+              >
+                <FileCopy />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+      <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
+        <DialogTitle>Add New Category</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Category Name"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAdd(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={createCategory} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {selectedCategory && (
+        <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
+          <DialogTitle>Edit Category</DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              label="Category Name"
+              value={selectedCategory.categoryName}
+              onChange={(e) =>
+                setSelectedCategory({
+                  ...selectedCategory,
+                  categoryName: e.target.value,
+                })
+              }
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenEdit(false)} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() =>
+                updateCategory(
+                  selectedCategory.categoryID,
+                  selectedCategory.categoryName
+                )
+              }
+              color="primary"
+            >
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </div>
+  );
+};
 
-
-                .categories {
-                    width: 30%;
-                }
-
-
-                .details {
-                    width: 65%;
-                }
-
-
-                h1 {
-                    text-align: center;
-                    color: #333;
-                    margin-top: 20px;
-                }
-
-
-                .actions {
-                    display: flex;
-                    align-items: center;
-                }
-
-
-                .iconButton {
-                    margin-left: 5px;
-                }
-            `}</style>
-
-
-            <h1>Categories</h1>
-            <div className="container">
-                <div className="categories">
-                    <TextField
-                        fullWidth
-                        label="Search Categories"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                    />
-                    <List>
-                        {filteredCategories.map(category => (
-                            <ListItem key={category.categoryID} button onClick={() => setSelectedCategory(category)}>
-                                <ListItemText primary={category.categoryName} />
-                                <ListItemSecondaryAction className="actions">
-                                    <IconButton edge="end" aria-label="edit" onClick={() => setSelectedCategory(category)}>
-                                        <Edit />
-                                    </IconButton>
-                                    <IconButton edge="end" aria-label="delete" onClick={() => deleteCategory(category.categoryID)}>
-                                        <Delete />
-                                    </IconButton>
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                        ))}
-                    </List>
-                    <div className="actions">
-                        <TextField
-                            fullWidth
-                            label="New Category"
-                            value={newCategory}
-                            onChange={e => setNewCategory(e.target.value)}
-                        />
-                        <IconButton color="primary" className="iconButton" onClick={createCategory}>
-                            <Add />
-                        </IconButton>
-                    </div>
-                </div>
-                <div className="details">
-                    {selectedCategory && (
-                        <>
-                            <h2>{selectedCategory.categoryName}</h2>
-                            <TextField
-                                fullWidth
-                                value={selectedCategory.categoryName}
-                                onChange={e => setSelectedCategory({ ...selectedCategory, categoryName: e.target.value })}
-                            />
-                            <Button color="primary" variant="contained" onClick={() => updateCategory(selectedCategory.categoryID, selectedCategory.categoryName)}>
-                                Update
-                            </Button>
-                            <Button color="secondary" variant="contained" onClick={() => deleteCategory(selectedCategory.categoryID)} style={{ marginLeft: '10px' }}>
-                                Delete
-                            </Button>
-                        </>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-}
-
-
-export default App;
+export default ManagementCategory;

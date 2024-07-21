@@ -4,11 +4,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { TiTick } from "react-icons/ti";
 import Header from "../nav-bar/Header";
 import Footer from "../footer/Footer";
+import { useNavigate } from "react-router-dom";
 
 const ManageCustomer = () => {
   const [users, setUsers] = useState([]);
   const [updatedUsers, setUpdatedUsers] = useState({});
   const token = localStorage.getItem("token");
+
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
 
   const fetchUsers = async () => {
     try {
@@ -18,7 +28,7 @@ const ManageCustomer = () => {
         },
       });
       // Filter out users who are not customers
-       const customers = response.data.filter(
+      const customers = response.data.filter(
         (user) => user.role && user.role.role === "CUSTOMER"
       );
 
@@ -71,17 +81,17 @@ const ManageCustomer = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="container mt-12">
-        <h1>Manage Customer</h1>
+        <h1>Quản Lý Khách Hàng</h1>
         <table className="table table-striped">
           <thead>
             <tr>
-              <th>User Name</th>
+              <th>Tên Khách Hàng</th>
               <th>Email</th>
-              <th>Phone</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th>Số Điện Thoại</th>
+              <th>Trạng Thái</th>
+              <th>Xác Nhận</th>
             </tr>
           </thead>
           <tbody>
@@ -90,7 +100,12 @@ const ManageCustomer = () => {
                 <td>{user.userName}</td>
                 <td>{user.userMail}</td>
                 <td>{user.userPhone}</td>
-                <td>
+                <td className="d-flex align-items-center">
+                  <div
+                    className={`status-indicator ${
+                      user.enabled ? "enabled" : "disabled"
+                    }`}
+                  ></div>
                   <select
                     className="form-select"
                     defaultValue={user.enabled ? "Enabled" : "Disabled"}
@@ -112,8 +127,7 @@ const ManageCustomer = () => {
                     onClick={() => handleSubmit(user.id)}
                   >
                     <TiTick />
-
-                    Submit
+                    Xác Nhận
                   </button>
                 </td>
               </tr>

@@ -1,0 +1,39 @@
+/* .management-category {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.categories {
+  width: 30%;
+}
+
+.details {
+  width: 65%;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-top: 20px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.iconButton {
+  margin-left: 5px;
+} */

@@ -6,6 +6,7 @@
   .borrower-orders-table h2 {
     text-align: center;
     margin-bottom: 20px;
+    font-weight: 600;
   }
   
   .borrower-orders-table table {

@@ -1,0 +1,187 @@
+/* Dashboard.module.css */
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  background-color: #2a3f54; /* Dark Blue */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+  overflow-y: auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo h2 {
+  font-size: 1em;
+  margin: 0;
+}
+
+.goHome {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2em;
+  position: relative;
+}
+
+.goHome:hover::after {
+  content: "Go to home";
+  position: absolute;
+  left: 50%;
+  bottom: -25px;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.nav {
+  width: 100%;
+}
+
+.nav h4 {
+  color: #ffffff; /* Medium Gray */
+  margin: 20px 0 10px;
+  font-size: 0.9em;
+  font-weight: bold; /* Đậm hơn */
+  padding: 10px; /* Căn lề trái */
+  text-align: left;
+}
+
+.nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.nav li {
+  width: 100%;
+}
+
+.nav li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px; /* Added padding for top and bottom */
+  color: #b0b0b0; /* Medium Gray */
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+  font-weight: 600;
+  font-size: 0.75em; /* Reduced font size */
+}
+
+.nav li a:hover,
+.nav li a.active {
+  background-color: #1f1f1f; /* Dark Gray */
+  color: #fff;
+  border-radius: 5px;
+}
+
+.nav li a i {
+  margin-right: 10px;
+}
+
+.main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.navbar {
+  background-color: #fff;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.breadcrumb {
+  font-size: 1em;
+  color: #333;
+}
+
+.breadcrumb span {
+  cursor: pointer;
+  color: #4b84fe; /* Blue */
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.dropdownIcon {
+  font-size: 0.8em;
+  color: #333;
+}
+
+.userName {
+  font-size: 1em;
+  color: #333;
+}
+
+.dropdown {
+  margin-top: 10px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  padding: 10px;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.logoutButton i {
+  margin-right: 10px;
+}
+
+.logoutButton:hover {
+  background-color: #f0f0f0;
+}

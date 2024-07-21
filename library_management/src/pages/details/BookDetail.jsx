@@ -1,3 +1,4 @@
+// BookDetail.jsx
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { WishlistContext } from "../wishlist/WishlistContext";
@@ -6,16 +7,14 @@ import "./BookDetail.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-
+import Comment from "./Comment";
 
 function BookDetail() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const { addToWishlist } = useContext(WishlistContext);
-
+  const { addToWishlist, wishlist } = useContext(WishlistContext);
 
   const [books, setBooks] = useState([]);
-
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -30,27 +29,28 @@ function BookDetail() {
     fetchBooks();
   }, []);
 
-
   useEffect(() => {
     if (books.length > 0) {
       const foundBook = books.find((book) => book.bookID === parseInt(id));
       setBook(foundBook);
     }
+    console.log("book", book);
   }, [books, id]);
-
 
   // Hàm xử lý việc mượn sách
   const handleBorrow = () => {
     const token = localStorage.getItem("token"); // Lấy token từ local storage
-    if (!token) {
+    if (book.status.statusID == "1" || book.bookQuantity == "0") {
+      toast.error("Bạn không thể mượn sách này");
+    } else if (!token) {
       // Nếu không có token, hiển thị thông báo yêu cầu đăng nhập
       toast.error("Vui lòng đăng nhập trước khi mượn sách");
     } else {
-      // Nếu có token, thực hiện hành động mượn sách
       addToWishlist(book);
     }
   };
 
+  console.log("wishlist", wishlist);
 
   return (
     <>
@@ -69,15 +69,18 @@ function BookDetail() {
                       className="img-fluid mb-3"
                     />
                     <div className="rating">
-                      <span>Rating:</span>
-                      <span className="stars">★★★☆☆</span>{" "}
-                      {/* Sample static stars */}
+                      <span>Luợt đánh giá:</span>
+                      <span className="stars">{book.bookStar}★</span>
+                    </div>
+                    <div className="rating">
+                      <span>Số sách còn lại:</span>
+                      <span className="stars">{book.bookQuantity}📖</span>
                     </div>
                     <button
                       className="btn btn-outline-secondary mt-2 w-100"
-                      onClick={handleBorrow} // Sử dụng handleBorrow để xử lý khi nhấn nút Borrow
+                      onClick={handleBorrow}
                     >
-                      Borrow
+                      Mượn sách
                     </button>
                   </>
                 )}
@@ -89,56 +92,35 @@ function BookDetail() {
                   <>
                     <h1>{book.bookName}</h1>
                     <p>
-                      Author: {book.bookAuthor ? book.bookAuthor : "Unknown"}
+                      Tác giả: {book.bookAuthor ? book.bookAuthor : "Unknown"}
                     </p>
-                    <p className="detailBook">{book.bookDescription}</p>
-                    <p className="detailBook">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Fusce in lacus non libero dapibus dapibus. Proin auctor
-                      nisl at orci scelerisque, non viverra erat interdum. Lorem
-                      ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                      in lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum. Lorem ipsum
-                      dolor sit amet, consectetur adipiscing elit. Fusce in
-                      lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum. Lorem ipsum
-                      dolor sit amet, consectetur adipiscing elit. Fusce in
-                      lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum. Lorem ipsum
-                      dolor sit amet, consectetur adipiscing elit. Fusce in
-                      lacus non libero dapibus dapibus. Proin auctor nisl at
-                      orci scelerisque, non viverra erat interdum.
-                    </p>
+                    <p className="detailBook">{book.description}</p>
                     <div className="book-info-buttons">
                       <button className="btn btn-outline-secondary m-1">
-                        Category:
+                        Phân loại:
                         <br />
                         {book.category.categoryName || "None"}
                       </button>
                       <button className="btn btn-outline-secondary m-1">
-                        Maturity Rating:
-                        <br />
-                        {book.bookStart || "11"}
-                      </button>
-                      <button className="btn btn-outline-secondary m-1">
-                        Publisher:
+                        Nhà xuất bản:
                         <br />
                         {book.publisher.publisherName || "None"}
                       </button>
                       <button className="btn btn-outline-secondary m-1">
-                        Language:
+                        Ngôn ngữ:
                         <br />
                         {book.language}
                       </button>
                       <button className="btn btn-outline-secondary m-1">
-                        Pages:
+                        Số trang:
                         <br />
                         {book.page}
                       </button>
                     </div>
+                    <Comment bookId={id} book={book} /> {/* Thêm dòng này */}
                   </>
                 ) : (
-                  <h1>Loading...</h1>
+                  <h1>Đợi chút...</h1>
                 )}
               </div>
             </div>
@@ -148,6 +130,5 @@ function BookDetail() {
     </>
   );
 }
-
 
 export default BookDetail;

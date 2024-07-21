@@ -23,8 +23,8 @@ function Signin() {
   };
 
   const validationSchema = yup.object({
-    your_name: yup.string().required("Your email is required"),
-    your_pass: yup.string().required("Password is required"),
+    your_name: yup.string().required("Email Không Được Để Trống"),
+    your_pass: yup.string().required("Mật Khẩu Không Được Để Trống"),
   });
 
   const formik = useFormik({
@@ -87,12 +87,12 @@ function Signin() {
                 onClick={handleSignUpClick}
                 className="signup-image-link routeAuthen-around"
               >
-                Create an account
+                Tạo Tài Khoản Mới
               </a>
             </div>
 
             <div className="signin-form">
-              <h2 className="form-title">Sign in</h2>
+              <h2 className="form-title">Đăng Nhập</h2>
               <form
                 method="POST"
                 className="register-form"
@@ -107,7 +107,7 @@ function Signin() {
                     type="email"
                     name="your_name"
                     id="your_name"
-                    placeholder="Your Email"
+                    placeholder="Email"
                     {...formik.getFieldProps("your_name")}
                   />
                   {formik.touched.your_name && formik.errors.your_name ? (
@@ -122,7 +122,7 @@ function Signin() {
                     type="password"
                     name="your_pass"
                     id="your_pass"
-                    placeholder="Password"
+                    placeholder="Mật Khẩu"
                     {...formik.getFieldProps("your_pass")}
                   />
                   {formik.touched.your_pass && formik.errors.your_pass ? (
@@ -132,7 +132,7 @@ function Signin() {
 
                 <div className="form-group">
                   <p className="forgot" onClick={forgotForm}>
-                    Forgot password
+                    Quên Mật Khẩu
                   </p>
                 </div>
 
@@ -154,7 +154,7 @@ function Signin() {
                     <span>
                       <span></span>
                     </span>
-                    Remember me
+                    Ghi Nhớ Đăng Nhập
                   </label>
                 </div>
                 <div className="form-group form-button">
@@ -163,13 +163,13 @@ function Signin() {
                     name="signin"
                     id="signin"
                     className="form-submit"
-                    value="Log in"
+                    value="Đăng Nhập"
                   />
                 </div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
               </form>
 
-              <div className="social-login">
+              {/* <div className="social-login">
                 <span className="social-label">Or login with</span>
                 <ul className="socials">
                   <li>
@@ -188,7 +188,7 @@ function Signin() {
                     </a>
                   </li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

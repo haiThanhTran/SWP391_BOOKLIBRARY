@@ -24,43 +24,35 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private Long orderDetailID;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     @JsonBackReference("book-order")
     private Book book;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference("user-order")
     private User user;
 
-
     @Transient
     private Long userID;
-
 
     @Column(name = "quantity")
     private Integer quantity;
 
-
     @Column(name = "total_price")
     private Double totalPrice;
-
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-
     @Column(name = "return_date")
     private LocalDateTime returnDate;
-
 
     @Column(name = "status")
     private String status;
 
-
     @Column(name = "search_id")
     private String searchID;
 }
+

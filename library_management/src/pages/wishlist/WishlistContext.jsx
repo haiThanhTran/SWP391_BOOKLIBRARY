@@ -12,8 +12,8 @@ export const WishlistProvider = ({ children }) => {
 
 
   useEffect(() => {
-    if (user && user.user && user.user.id) {
-      const storedWishlist = localStorage.getItem(`wishlist_${user.user.id}`);
+    if (user && user?.id) {
+      const storedWishlist = localStorage.getItem(`wishlist_${user?.id}`);
       if (storedWishlist) {
         setWishlist(JSON.parse(storedWishlist));
       } else {
@@ -26,9 +26,9 @@ export const WishlistProvider = ({ children }) => {
 
 
   useEffect(() => {
-    if (user && user.user && user.user.id) {
+    if (user && user?.id) {
       localStorage.setItem(
-        `wishlist_${user.user.id}`,
+        `wishlist_${user?.id}`,
         JSON.stringify(wishlist)
       );
     }
@@ -56,7 +56,6 @@ export const WishlistProvider = ({ children }) => {
     );
     toast.success("Sách đã được xóa khỏi wishlist");
   };
-  console.log("wishlist", wishlist);
   const clearWishlist = () => {
     setWishlist([]);
   };

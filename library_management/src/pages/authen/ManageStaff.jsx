@@ -5,8 +5,17 @@ import Header from "../nav-bar/Header";
 import Footer from "../footer/Footer";
 import "./UIConfig/ManageStaff.css";
 import { TiTick } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
 
 const ManageStaff = () => {
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
   const [users, setUsers] = useState([]);
   const [updatedUsers, setUpdatedUsers] = useState({});
   const [newUser, setNewUser] = useState({
@@ -122,25 +131,25 @@ const ManageStaff = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="container mt-12">
-        <h1>Manage Staff</h1>
+        <h1>Quản Lý Nhân Viên</h1>
         <button
           className="btn btn-primary mb-3"
           onClick={() => setShowModal(true)}
         >
-          Add Account Staff
+          Tạo Tài Khoản Nhân Viên
         </button>
         <table className="table table-striped">
           <thead>
             <tr>
-              <th>User Name</th>
+              <th>Tên</th>
               <th>Email</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th>SĐT</th>
+              <th>Địa Chỉ</th>
+              <th>Chức vụ</th>
+              <th>Trạng Thái</th>
+              <th>Xác Nhận</th>
             </tr>
           </thead>
           <tbody>
@@ -151,35 +160,40 @@ const ManageStaff = () => {
                 <td>{user.userPhone}</td>
                 <td>{user.userAddress}</td>
                 <td>
-                <select
-                  className="form-select"
-                  defaultValue={user.role.role}
-                  onChange={(e) =>
-                    handleInputChange(user.id, "role", e.target.value)
-                  }
-                  disabled={
-                    user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
-                  }
-                >
-                  <option value="ADMIN">Admin</option>
-                  <option value="STAFF">Staff</option>
-                </select>
-              </td>
-                <td>
-                <select
-                  className="form-select"
-                  defaultValue={user.enabled ? "Enabled" : "Disabled"}
-                  onChange={(e) =>
-                    handleInputChange(
-                      user.id,
-                      "enabled",
-                      e.target.value === "Enabled"
-                    )
-                  }
-                  disabled={
-                    user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
-                  }
-                >
+                  <select
+                    className="form-select"
+                    defaultValue={user.role.role}
+                    onChange={(e) =>
+                      handleInputChange(user.id, "role", e.target.value)
+                    }
+                    disabled={
+                      user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
+                    }
+                  >
+                    <option value="ADMIN">Admin</option>
+                    <option value="STAFF">Staff</option>
+                  </select>
+                </td>
+                <td className="d-flex align-items-center">
+                  <div
+                    className={`status-indicator ${
+                      user.enabled ? "enabled" : "disabled"
+                    }`}
+                  ></div>
+                  <select
+                    className="form-select"
+                    defaultValue={user.enabled ? "Enabled" : "Disabled"}
+                    onChange={(e) =>
+                      handleInputChange(
+                        user.id,
+                        "enabled",
+                        e.target.value === "Enabled"
+                      )
+                    }
+                    disabled={
+                      user.firstLogin && user.role.role === "STAFF" // Disable if firstLogin and STAFF
+                    }
+                  >
                     <option value="Enabled">Enabled</option>
                     <option value="Disabled">Disabled</option>
                   </select>
@@ -190,7 +204,7 @@ const ManageStaff = () => {
                     onClick={() => handleSubmit(user.id)}
                   >
                     <TiTick />
-                    Submit
+                    Xác Nhận
                   </button>
                 </td>
               </tr>
@@ -206,7 +220,7 @@ const ManageStaff = () => {
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Add New Staff</h5>
+                <h5 className="modal-title">Thêm nhân viên</h5>
                 <button
                   type="button"
                   className="close"
@@ -217,7 +231,7 @@ const ManageStaff = () => {
               </div>
               <div className="modal-body">
                 <div className="form-group">
-                  <label>User Name</label>
+                  <label>Tên</label>
                   <input
                     type="text"
                     className="form-control"
@@ -239,7 +253,7 @@ const ManageStaff = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Phone</label>
+                  <label>SĐT</label>
                   <input
                     type="text"
                     className="form-control"
@@ -250,7 +264,7 @@ const ManageStaff = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Address</label>
+                  <label>Địa Chỉ</label>
                   <input
                     type="text"
                     className="form-control"
@@ -261,7 +275,7 @@ const ManageStaff = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Password</label>
+                  <label>Mật Khẩu</label>
                   <input
                     type="password"
                     className="form-control"
@@ -278,21 +292,21 @@ const ManageStaff = () => {
                   className="btn btn-primary"
                   onClick={addUser}
                 >
-                  Add
+                  Thêm
                 </button>
                 <button
                   type="button"
                   className="btn btn-secondary"
                   onClick={() => setShowModal(false)}
                 >
-                  Cancel
+                  Hủy
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

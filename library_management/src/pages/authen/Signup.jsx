@@ -75,21 +75,20 @@ function Login() {
   };
 
   const vScheme = {
-    userName: yup.string().required("required"),
-    userMail: yup.string().required("required").email("invalid Email"),
+    userName: yup.string().required("Họ và tên không được để trống"),
+    userMail: yup.string().required().email("Email không được để trống"),
     userPass: yup
       .string()
-      .required("required")
-      .matches(/.{8,}/, "Mật khẩu phải có ít nhất 8 ký tự"),
-    confPassword: yup
-      .string()
-      .required("required")
-      .oneOf([yup.ref("userPass"), null], "Mật khẩu không khớp"),
+      .required("Mật khẩu không thể trống")
+      .matches(/[a-zA-Z0-9]{8,}$/, "Vui lòng đặt đúng định dạng mật khẩu"),
+    confPassword: yup.string().required("required"),
     userPhone: yup
-      .string()
-      .required("A userPhone number is required")
-      .matches(/^[0-9]{8,}$/, "Invalid phone number"),
-    agreeTerm: yup.bool().oneOf([true], "You must accept the terms and conditions"),
+      .number()
+      .typeError("That doesn't look like a userPhone number")
+      .positive("A userPhone number can't start with a minus")
+      .integer("A userPhone number can't include a decimal point")
+      .min(8)
+      .required("SĐT không được để trống"),
   };
 
   const LoginForm = useFormik({
@@ -144,7 +143,7 @@ function Login() {
                     type="text"
                     name="userName"
                     id="name"
-                    placeholder="Your Name"
+                    placeholder="Họ & Tên"
                     {...LoginForm.getFieldProps("userName")}
                   />
                   {LoginForm.touched.userName && LoginForm.errors.userName && (
@@ -159,7 +158,7 @@ function Login() {
                     type="email"
                     name="userMail"
                     id="email"
-                    placeholder="Your Email"
+                    placeholder="Email"
                     {...LoginForm.getFieldProps("userMail")}
                   />
                   {LoginForm.touched.userMail && LoginForm.errors.userMail && (
@@ -174,7 +173,7 @@ function Login() {
                     type="text"
                     name="userPhone"
                     id="userPhone"
-                    placeholder="Your Phone"
+                    placeholder="Điện Thoại"
                     {...LoginForm.getFieldProps("userPhone")}
                   />
                   {LoginForm.touched.userPhone && LoginForm.errors.userPhone && (
@@ -189,7 +188,7 @@ function Login() {
                     type="password"
                     name="userPass"
                     id="pass"
-                    placeholder="Password"
+                    placeholder="Mật Khẩu"
                     onKeyUp={setPassword}
                     {...LoginForm.getFieldProps("userPass")}
                   />
@@ -205,12 +204,14 @@ function Login() {
                     type="password"
                     name="confPassword"
                     id="re_pass"
-                    placeholder="Repeat your Password"
+                    placeholder="Nhập Lại Mật Khẩu"
                     onKeyUp={checkConfirm}
                     {...LoginForm.getFieldProps("confPassword")}
                   />
-                  {LoginForm.touched.confPassword && !confirmFlag && (
-                    <div className="text-danger">Passwords do not match</div>
+                  {LoginForm.touched.confPassword && confirmFlag === false && (
+                    <div className="text-danger">
+                      Mật khẩu nhập lại không đúng
+                    </div>
                   )}
                 </div>
                 <div className="form-group">
@@ -225,9 +226,9 @@ function Login() {
                     <span>
                       <span></span>
                     </span>
-                    I agree all statements in{" "}
+                    Tôi đồng ý với tất cả{" "}
                     <a href="#" className="term-service">
-                      Terms of service
+                      Điều Khoản
                     </a>
                   </label>
                   {LoginForm.touched.agreeTerm && LoginForm.errors.agreeTerm && (
@@ -246,7 +247,7 @@ function Login() {
                     name="signup"
                     id="signup"
                     className="form-submit"
-                    value="Register"
+                    value="Đăng Ký"
                   />
                 </div>
               </form>

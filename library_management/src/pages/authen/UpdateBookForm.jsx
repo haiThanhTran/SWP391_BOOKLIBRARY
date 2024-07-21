@@ -3,8 +3,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./UIConfig/css/AddBookForm.css";
 
 const UpdateBookForm = () => {
-  const { id } = useParams();
+  const user = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN") {
+      navigate("/signin");
+    }
+  }, [user, navigate]);
+  const { id } = useParams();
   const [bookStatus, setBookStatus] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -229,7 +236,7 @@ const UpdateBookForm = () => {
   };
 
   const navigateToHome = () => {
-    navigate("/managebook");
+    navigate("/adminfunction/managebook");
   };
 
   return (

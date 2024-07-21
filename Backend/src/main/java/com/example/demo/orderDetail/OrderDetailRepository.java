@@ -1,6 +1,7 @@
 package com.example.demo.orderDetail;
 
 
+import com.example.demo.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,8 +11,10 @@ import java.util.List;
 
 
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
-    List<OrderDetail> findByOrderDetailID(Long orderDetailID);
+    List<OrderDetail> findByUser(User user);
     List<OrderDetail> findBySearchID(String searchID);
+    List<OrderDetail> findByStatus(String status); // Thêm phương thức tìm kiếm theo trạng thái
+    List<OrderDetail> findByOrderDetailID(Long orderDetailID);
 
     long countByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
