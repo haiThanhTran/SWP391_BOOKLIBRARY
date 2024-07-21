@@ -34,11 +34,12 @@ public class RegistrationController {
     @PostMapping
     public String registerUser(@RequestBody RegistrationRequest registrationRequest, final HttpServletRequest request){
         // Xác thực CAPTCHA
-        boolean captchaVerified = captchaService.verifyCaptcha(registrationRequest.captchaToken());
-        if (!captchaVerified) {
-            return "Captcha verification failed";
+        if(registrationRequest.flag() != null){
+            boolean captchaVerified = captchaService.verifyCaptcha(registrationRequest.captchaToken());
+            if (!captchaVerified) {
+                return "Captcha verification failed";
+            }
         }
-
         User user = userService.registerUser(registrationRequest);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
         return "Success! Please, check your email to complete your registration";

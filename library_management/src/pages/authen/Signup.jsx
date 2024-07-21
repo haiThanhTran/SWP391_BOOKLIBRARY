@@ -42,7 +42,7 @@ function Login() {
   const onSub = async (values) => {
     // Map role string to role ID
     const roleID = roleMapping[values.role];
-    const payload = { ...values, role: roleID, captchaToken };
+    const payload = { ...values, role: roleID, captchaToken, flag: initialvalues.flag }; // Thêm flag vào payload
 
     if (!captchaToken) {
       setError("Please complete the reCAPTCHA");
@@ -72,6 +72,7 @@ function Login() {
     confPassword: "",
     role: "CUSTOMER",
     agreeTerm: false,
+    flag: 1, // Giá trị mặc định cho flag
   };
 
   const vScheme = {

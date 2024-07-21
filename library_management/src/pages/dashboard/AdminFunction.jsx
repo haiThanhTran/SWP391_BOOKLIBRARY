@@ -76,7 +76,7 @@ const AdminFunction = () => {
             src="https://th.bing.com/th/id/OIP.NnDnfxfuDA8i1Nfl8M8RfgHaHa?w=3333&h=3333&rs=1&pid=ImgDetMain&fbclid=IwZXh0bgNhZW0CMTAAAR1OXUMon_0p53E1O13A-Bv8eWQT4VoJMTEHvXkhpy8o9zWNogktlBwKN5Q_aem_Acod6jbhDhrpUBXRJgKuU3uONuPi2VdRtWtUNMejqUEwwnFIJih9m-S1vrAl_WkTWuhqchOOsRD09dQAmOSBeLL2"
             alt="Library Logo"
           />
-          <h2>Dashboard</h2>
+          <h2>Bảng điều khiển</h2>
           <Link to="/" className={styles.goHome} title="Go Home">
             <i className="fas fa-book"></i>
           </Link>
@@ -175,7 +175,7 @@ const AdminFunction = () => {
               </Link>
             </li>
           </ul>
-          <h4>User</h4>
+          <h4>Người dùng</h4>
           <ul>
             <li>
               <Link
@@ -188,7 +188,7 @@ const AdminFunction = () => {
                 onClick={() => handleLinkClick("/adminfunction/viewprofile")}
               >
                 <i className="fas fa-user-circle"></i>
-                Your Profile
+                Thông tin cá nhân
               </Link>
             </li>
           </ul>
