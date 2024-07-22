@@ -138,7 +138,7 @@ function Signin() {
 
                 <div className="form-group">
                   <ReCAPTCHA
-                    sitekey="6LdjERUqAAAAAA3VukqzruuImsBySPPHcQb4Onu9"
+                    sitekey="6Ldy9xUqAAAAACYI4VgVgSMXQJyUlxjyvuj1uT9h"
                     onChange={(token) => setCaptchaToken(token)}
                   />
                 </div>
