@@ -15,6 +15,14 @@ const Comment = ({ bookId, book }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+  }, []);
+
+  const isAdmin = user && user.role === "ADMIN"; // Giả sử rằng vai trò của người dùng được lưu trong thuộc tính 'role'
+  const userId = user && user.id;
+
+  useEffect(() => {
+    console.log("User truyền qua prop", userId);
+    console.log("User ở phần comment", user && user.id);
     const fetchComments = async () => {
       try {
         const response = await axios.get(
@@ -30,7 +38,7 @@ const Comment = ({ bookId, book }) => {
       }
     };
     fetchComments();
-  }, [bookId]);
+  }, [bookId, isAdmin, userId]);
 
   const handleCommentSubmit = async () => {
     const token = localStorage.getItem("token");
@@ -68,19 +76,20 @@ const Comment = ({ bookId, book }) => {
     }
 
     try {
-      await axios.delete(`http://localhost:9191/api/books/${bookId}/comments/${commentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `http://localhost:9191/api/books/${bookId}/comments/${commentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      setComments(comments.filter(comment => comment.id !== commentId));
+      setComments(comments.filter((comment) => comment.id !== commentId));
       toast.success("Bình luận đã được xóa");
     } catch (error) {
       console.error("Delete comment failed:", error);
       toast.error("Xóa bình luận thất bại");
     }
   };
-
-  const isAdmin = user && user.role === "ADMIN"; // Giả sử rằng vai trò của người dùng được lưu trong thuộc tính 'role'
 
   return (
     <>
@@ -102,14 +111,22 @@ const Comment = ({ bookId, book }) => {
             <li key={comment.id} className="comment-item">
               <img
                 className="comment-avatar"
-                src={comment.user && comment.user.avatar ? `http://localhost:9191/api/users/user-image/${comment.user.avatar}` : "default-avatar.png"}
-                alt={`${comment.user ? comment.user.userName : "Unknown"}'s Avatar`}
+                src={
+                  comment.user && comment.user.avatar
+                    ? `http://localhost:9191/api/users/user-image/${comment.user.avatar}`
+                    : "default-avatar.png"
+                }
+                alt={`${
+                  comment.user ? comment.user.userName : "Unknown"
+                }'s Avatar`}
               />
               <div className="comment-content">
                 <div className="comment-header">
-                  <strong>{comment.user ? comment.user.userName : "Unknown User"}</strong>
+                  <strong>
+                    {comment.user ? comment.user.userName : "Unknown User"}
+                  </strong>
                   <span>{new Date(comment.createdAt).toLocaleString()}</span>
-                  {isAdmin && (
+                  {(isAdmin || userId == comment.user.id) && (
                     <button
                       onClick={() => handleCommentDelete(comment.id)}
                       className="delete-comment"
@@ -118,7 +135,15 @@ const Comment = ({ bookId, book }) => {
                     </button>
                   )}
                 </div>
-                <p style={{ backgroundColor: "#EEEEEE", borderRadius: "5px", padding: "15px", fontWeight: "500", textAlign: "left" }}>
+                <p
+                  style={{
+                    backgroundColor: "#EEEEEE",
+                    borderRadius: "5px",
+                    padding: "15px",
+                    fontWeight: "500",
+                    textAlign: "left",
+                  }}
+                >
                   {comment.text}
                 </p>
               </div>

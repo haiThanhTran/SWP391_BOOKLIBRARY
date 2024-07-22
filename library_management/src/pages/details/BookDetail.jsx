@@ -9,6 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 import Comment from "./Comment";
 
 function BookDetail() {
+  const user = JSON.parse(localStorage.getItem("user"));
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const { addToWishlist, wishlist } = useContext(WishlistContext);
@@ -116,7 +117,7 @@ function BookDetail() {
                         {book.page}
                       </button>
                     </div>
-                    <Comment bookId={id} book={book} /> {/* Thêm dòng này */}
+                    <Comment bookId={id} book={book} userLocal={user}/> {/* Thêm dòng này */}
                     {/* <button
                       className="btn btn-outline-primary mt-3"
                       onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSe8k9So7BrP4EI3Pvy0zdPghxHzkr9WMbOMDZFl-kLe73AoNg/viewform?usp=sf_link", "_blank")}
