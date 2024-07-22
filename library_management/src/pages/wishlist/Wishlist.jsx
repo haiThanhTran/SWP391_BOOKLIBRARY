@@ -8,7 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "../../../node_modules/react-toastify/dist/ReactToastify.css";
 import empty_state from "../../assets/empty_state.png"; // Đảm bảo đường dẫn đúng tới hình ảnh của bạn
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Wishlist() {
   const { wishlist, removeFromWishlist, clearWishlist } =
@@ -17,15 +17,13 @@ function Wishlist() {
   const [quantities, setQuantities] = useState({});
   const token = localStorage.getItem("token");
 
-
   const { user } = useContext(UserContext);
-
+  const navigate = useNavigate(); // Sử dụng useNavigate
 
   const handleRemoveFromWishlist = (bookID) => {
     removeFromWishlist(bookID);
     toast.success("Book removed from wishlist");
   };
-
 
   const handleQuantityChange = (bookID, quantity) => {
     setQuantities((prevQuantities) => ({
@@ -34,14 +32,11 @@ function Wishlist() {
     }));
   };
 
-
   const handleBorrowBooks = async () => {
-    // if (!user || !user.user) {
-      if (!user) {
+    if (!user) {
       toast.error("Bạn phải đăng nhập để mượn sách");
       return;
     }
-
 
     try {
       const getLocalTime = () => {
@@ -50,11 +45,9 @@ function Wishlist() {
         return localTime;
       };
 
-
       const orders = wishlist.map((book) => {
         const localTime = getLocalTime();
         return {
-          // userID: user.user.id,
           userID: user.id,
           book: {
             bookID: book.bookID,
@@ -65,7 +58,7 @@ function Wishlist() {
             categoryName: book.categoryName,
             publisherName: book.publisherName,
           },
-          quantity: quantities[book.bookID] || 1, // Default to 1 if quantity is not set
+          quantity: quantities[book.bookID] || 1,
           totalPrice: (book.bookPrice || 0) * (quantities[book.bookID] || 1),
           orderDate: localTime.toISOString(),
           returnDate: new Date(
@@ -75,29 +68,21 @@ function Wishlist() {
         };
       });
 
-
-      // Calculate the total quantity
       const totalQuantity = orders.reduce((total, order) => {
         return total + parseInt(order.quantity);
       }, 0);
 
-
-      // Check if the total quantity exceeds 5
       if (totalQuantity > 5) {
         toast.error("Số lượng sách mượn không được vượt quá 5 cuốn");
         return;
       }
 
-
-      // Check if the number of different books exceeds 5
       if (orders.length > 5) {
         toast.error("Không được mượn quá 5 đầu sách trong 1 đơn hàng");
         return;
       }
 
-
       console.log("Orders to be sent:", orders);
-
 
       const response = await axios.post(
         "http://localhost:9191/api/orders",
@@ -110,18 +95,19 @@ function Wishlist() {
         }
       );
 
-
       const orderNumber = response.data.searchID;
       toast.success(
         `Yêu cầu mượn sách thành công! Mã đơn hàng của bạn là: ${orderNumber}`
       );
       clearWishlist();
       setOrderID(orderNumber);
+      setTimeout(() => {
+        navigate("/feedback"); // Điều hướng sau khi thông báo thành công hiển thị
+      }, 3000); // Trì hoãn 3 giây trước khi điều hướng
     } catch (error) {
       toast.error(`Yêu cầu mượn sách thất bại: ${error.message}`);
     }
   };
-
 
   return (
     <>
@@ -132,7 +118,7 @@ function Wishlist() {
         style={{
           padding: "40px 0 20px 0",
           backgroundColor: "#E1DCC5",
-          height: "100%"
+          height: "100%",
         }}
       >
         <div className="container mt-4">
@@ -213,6 +199,5 @@ function Wishlist() {
     </>
   );
 }
-
 
 export default Wishlist;
