@@ -30,6 +30,7 @@ import { NotificationProvider } from "./pages/notification/NotificationContext";
 import AggregatedOrdersTable from "./pages/dashboard/viewAllOrder/AggregatedOrdersTable";
 import BorrowerOrdersTable from "./pages/dashboard/viewAllBorrower/BorrowerOrdersTable";
 import MoneyDashboard from "./pages/dashboard/viewAllImport/MoneyDashboard";
+import Feedback from "./pages/wishlist/Feedback"; // Import trang Feedback
 
 const App = () => {
   return (
@@ -61,6 +62,7 @@ const App = () => {
               <Route path="/adminfunction/*" element={<AdminFunction />} />{" "}
               <Route path="/dashboard/*" element={<Dashboard />} />
               <Route path="/vieworder/:orderId" element={<ViewOrder />} />
+              <Route path="/feedback" element={<Feedback />} /> {/* Thêm tuyến đường cho Feedback */}
             </Routes>
           </Router>
         </WishlistProvider>

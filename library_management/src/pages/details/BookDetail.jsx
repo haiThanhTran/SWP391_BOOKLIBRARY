@@ -1,4 +1,3 @@
-// BookDetail.jsx
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { WishlistContext } from "../wishlist/WishlistContext";
@@ -118,6 +117,12 @@ function BookDetail() {
                       </button>
                     </div>
                     <Comment bookId={id} book={book} /> {/* Thêm dòng này */}
+                    {/* <button
+                      className="btn btn-outline-primary mt-3"
+                      onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSe8k9So7BrP4EI3Pvy0zdPghxHzkr9WMbOMDZFl-kLe73AoNg/viewform?usp=sf_link", "_blank")}
+                    >
+                      Gửi đánh giá
+                    </button> */}
                   </>
                 ) : (
                   <h1>Đợi chút...</h1>
