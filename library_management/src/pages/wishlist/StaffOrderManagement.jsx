@@ -32,6 +32,7 @@ function StaffOrderManagement() {
   const [orders, setOrders] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [originalStatus, setOriginalStatus] = useState({});
   const token = localStorage.getItem("token");
   const { user } = useContext(UserContext);
 
@@ -46,6 +47,10 @@ function StaffOrderManagement() {
         }
       );
       setOrders(response.data);
+      setOriginalStatus(response.data.reduce((acc, order) => {
+        acc[order.orderDetailID] = order.status;
+        return acc;
+      }, {}));
       toast.success("Orders found");
     } catch (error) {
       toast.error("Order not found");
@@ -263,19 +268,22 @@ function StaffOrderManagement() {
                         Đền sách
                       </option>
                     </select>
-                    <button
-                      className="btn btn-danger btn-sm mt-2"
-                      onClick={() => openModal(order)}
-                      disabled={[
-                        "Compensated by Money",
-                        "Compensated by Book",
-                        "Overdue",
-                        "Pending",
-                        "Cancelled",
-                      ].includes(order.status)}
-                    >
-                      Xử lý mất sách
-                    </button>
+                    {originalStatus[order.orderDetailID] === "Borrowed"  && (
+                      <button
+                        className="btn btn-danger btn-sm mt-2"
+                        onClick={() => openModal(order)}
+                        disabled={[
+                          "Compensated by Money",
+                          "Compensated by Book",
+                          "Overdue",
+                          "Pending",
+                          "Cancelled",
+                          "Returned",
+                        ].includes(order.status)}
+                      >
+                        Xử lý mất sách
+                      </button>
+                    )}
                   </td>
                   <td>
                     <input

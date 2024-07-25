@@ -69,7 +69,7 @@ function BookDetail() {
                       className="img-fluid mb-3"
                     />
                     <div className="rating">
-                      <span>Luợt đánh giá:</span>
+                      <span>Lượt đánh giá:</span>
                       <span className="stars">{book.bookStar}★</span>
                     </div>
                     <div className="rating">
