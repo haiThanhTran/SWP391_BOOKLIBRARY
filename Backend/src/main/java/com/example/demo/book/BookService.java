@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +33,6 @@ public class BookService {
         List<Book> books = bookRepository.findAll();
         return books;
     }
-
-
 
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
@@ -132,14 +132,5 @@ public void updateBookStars(Long bookID, Long userID, Integer stars) {
 
 
     bookRepository.save(book);
-}
-
-//return most voted book
-public List<Book> getMostVotedBook() {
-    List<Book> books = bookRepository.findTopByBookStarAndStatus();
-    if (books.isEmpty()) {
-        throw new ResourceNotFoundException("No book with status_id = 1 found");
-    }
-    return books;
 }
 }

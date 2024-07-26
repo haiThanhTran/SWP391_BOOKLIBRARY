@@ -73,7 +73,7 @@ function ResetPasswordForm() {
           <h2 className="formTitle">Please enter your new password</h2>
           <div className="inputDiv">
             <label className="inputLabel" htmlFor="password">
-              Password
+              Mật khẩu
             </label>
             <input
               type="password"
@@ -96,7 +96,7 @@ function ResetPasswordForm() {
               }}
               disabled={!validatePassword(password)}
             >
-              Reset Password
+              Đặt lại mật khẩu
             </button>
             <button
               type="button"
@@ -107,11 +107,11 @@ function ResetPasswordForm() {
               onClick={handleCancel}
             >
               {/* Change the button text based on the state */}
-              Cancel
+              Hủy
             </button>
           </div>
         </form>
-        {isLoading ? <p>Loading...</p> : message && <p>{message}</p>}
+        {isLoading ? <p>Chờ chút...</p> : message && <p>{message}</p>}
       </div>
     </div>
   );

@@ -81,7 +81,7 @@ function ForgotPasswordForm() {
               }}
               disabled={!validateEmail(email)}
             >
-              Send Reset Link
+              Gửi link reset mật khẩu
             </button>
             <button
               type="button"
@@ -91,7 +91,7 @@ function ForgotPasswordForm() {
               }}
               onClick={() => (window.location.href = "/signin")}
             >
-              Cancel
+              Hủy
             </button>
           </div>
         </form>

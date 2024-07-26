@@ -79,16 +79,15 @@ public class BookController {
         createdBook.setBookImage(imageFilename);
         bookService.updateBook(createdBook.getBookID(), createdBook);
 
-        if(book.getStatus().getStatusID() == 2){
-            // Create a new ImportBook record
-            ImportBook importBook = new ImportBook();
-            importBook.setImportDate(new Date()); // Set current date
-            importBook.setImportQuantity(book.getBookQuantity()); // Set quantity from book
-            importBook.setBook(createdBook); // Set the associated book
+        // Create a new ImportBook record
+        ImportBook importBook = new ImportBook();
+        importBook.setImportDate(new Date()); // Set current date
+        importBook.setImportQuantity(book.getBookQuantity()); // Set quantity from book
+        importBook.setBook(createdBook); // Set the associated book
 
-            // Save the import book record
-            importBookService.createImportBook(importBook);
-        }
+        // Save the import book record
+        importBookService.createImportBook(importBook);
+
         return ResponseEntity.ok(createdBook);
     }
 
@@ -195,12 +194,5 @@ public class BookController {
     @PostMapping("/vote")
     public void voteBook(@RequestParam Long bookID, @RequestParam Long userID, @RequestParam Integer stars) {
         bookService.updateBookStars(bookID, userID, stars);
-    }
-
-    //most book vote
-    @GetMapping("/most-voted-book")
-    public ResponseEntity<?> getMostVotedBook() {
-        List<Book> mostVotedBook = bookService.getMostVotedBook();
-        return ResponseEntity.ok(mostVotedBook);
     }
 }

@@ -26,4 +26,5 @@ public class OrderDetailDTO {
     private String status;
     private String userName;
     private String userEmail;
+    private String evidenceImagePath;
 }

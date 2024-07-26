@@ -4,16 +4,29 @@ package com.example.demo.orderDetail;
 
 import com.example.demo.book.Book;
 import com.example.demo.book.BookService;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.user.UserService;
 import com.example.demo.user.User;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,7 +73,8 @@ public class OrderDetailController {
                     order.getReturnDate(),
                     order.getStatus(),
                     (order.getUser() != null) ? order.getUser().getUserName() : null,
-                    (order.getUser() != null) ? order.getUser().getUserMail() : null
+                    (order.getUser() != null) ? order.getUser().getUserMail() : null,
+                    order.getEvidenceImagePath()
             )).collect(Collectors.toList());
 
             if (dtoList.isEmpty()) {
@@ -93,7 +107,8 @@ public class OrderDetailController {
                     order.getReturnDate(),
                     order.getStatus(),
                     (order.getUser() != null) ? order.getUser().getUserName() : null,
-                    (order.getUser() != null) ? order.getUser().getUserMail() : null
+                    (order.getUser() != null) ? order.getUser().getUserMail() : null,
+                    order.getEvidenceImagePath()
             )).collect(Collectors.toList());
 
             if (dtoList.isEmpty()) {
@@ -165,22 +180,80 @@ public class OrderDetailController {
         return ResponseEntity.ok(response);
     }
 
+
     @PutMapping("/{orderID}/return")
     @PreAuthorize("hasRole('STAFF')")
-    public ResponseEntity<OrderDetail> updateReturnDate(@PathVariable Long orderID, @RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> updateOrder(
+            @PathVariable Long orderID,
+            @RequestPart(value = "payload", required = false) String payloadString,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            String status = (String) payload.get("status");
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            LocalDateTime returnDate = LocalDateTime.parse((String) payload.get("returnDate"), formatter);
-            OrderDetail updatedOrder = bookOrderService.updateOrder(orderID, status, returnDate);
+            String status = null;
+            LocalDateTime returnDate = null;
+            String evidenceImagePath = null;
+
+            // Xử lý JSON từ chuỗi payload
+            if (payloadString != null) {
+                Map<String, Object> payload = new ObjectMapper().readValue(payloadString, Map.class);
+                status = (String) payload.get("status");
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                returnDate = status.equals("Returned") ? LocalDateTime.now() : LocalDateTime.parse((String) payload.get("returnDate"), formatter);
+            }
+
+            // Xử lý tải lên hình ảnh chứng cứ
+            if (file != null && !file.isEmpty()) {
+                String fileName = saveEvidenceImage(file);
+                if (fileName == null) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save image.");
+                }
+                evidenceImagePath = fileName;
+            }
+
+            OrderDetail updatedOrder = bookOrderService.updateOrder(orderID, status, returnDate, evidenceImagePath);
             if (updatedOrder == null) {
                 return ResponseEntity.notFound().build();
             }
+
             return ResponseEntity.ok(updatedOrder);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not process the request. Error: " + e.getMessage());
         }
     }
+
+
+
+
+
+    private String saveEvidenceImage(MultipartFile file) throws IOException {
+        System.out.println("saveEvidenceImage called");
+        String folderPath = "evidence_images/";
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path path = Paths.get(folderPath + fileName);
+        try {
+            Files.copy(file.getInputStream(), path);
+            System.out.println("File saved successfully: " + path.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Failed to save file: " + e.getMessage());
+            throw e;
+        }
+        return fileName;
+    }
+
+    @GetMapping(value = "/evidence/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getEvidenceImage(@PathVariable String filename) throws IOException {
+        Path imagePath = Paths.get("evidence_images/" + filename);
+        if (!Files.exists(imagePath)) {
+            return ResponseEntity.notFound().build();
+        }
+        byte[] imageBytes = Files.readAllBytes(imagePath);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+    }
+
+
 
     @PutMapping("/{orderID}/cancel")
     public ResponseEntity<OrderDetail> cancelOrder(@PathVariable Long orderID) {
@@ -358,41 +431,4 @@ public class OrderDetailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    //get compensated money in current month
-    @GetMapping("/totalCompensationForCurrentMonth")
-//    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Double> getTotalCompensationForCurrentMonth() {
-        double totalCompensation = bookOrderService.getTotalCompensationForCurrentMonth();
-        return ResponseEntity.ok(totalCompensation);
-    }
-
-    // API to get compensated money in current month with percentage change from previous month
-    @GetMapping("/totalCompensation")
-//    @PreAuthorize("hasRole('ADMIN')") // Uncomment this line if you want to restrict access
-    public ResponseEntity<Map<String, Object>> getTotalCompensation() {
-        double currentMonthCompensation = bookOrderService.getTotalCompensationForCurrentMonth();
-        double previousMonthCompensation = bookOrderService.getTotalCompensationForPreviousMonth();
-
-        double percentageChange = 0;
-        if (previousMonthCompensation != 0) {
-            percentageChange = ((currentMonthCompensation - previousMonthCompensation) / previousMonthCompensation) * 100;
-        } else if (currentMonthCompensation != 0) {
-            percentageChange = 100; // 100% increase if starting from zero
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("currentMonthCompensation", currentMonthCompensation);
-        response.put("previousMonthCompensation", previousMonthCompensation);
-        response.put("percentageChange", percentageChange);
-
-        return ResponseEntity.ok(response);
-    }
-
-
-    @GetMapping("/compensated")
-    public ResponseEntity<List<Map<String, Object>>> getCompensatedOrders() {
-        return ResponseEntity.ok(bookOrderService.getCompensatedOrderDetails());
-    }
-
 }
