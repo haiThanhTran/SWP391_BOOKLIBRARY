@@ -40,8 +40,10 @@ const SearchResults = () => {
   const [itemsPerPage] = useState(3);
   const [bookList, setBookList] = useState(initialBooks || []);
   const offset = currentPage * itemsPerPage;
-  const currentPageData = Array.isArray(bookList) ? bookList.slice(offset, offset + itemsPerPage) : [];
-  const pageCount = Math.ceil(bookList.length / itemsPerPage);
+  const currentPageData = Array.isArray(bookList)
+    ? bookList.filter((book) => book.status.statusID === 2).slice(offset, offset + itemsPerPage)
+    : [];
+  const pageCount = Math.ceil(bookList.filter((book) => book.status.statusID === 2).length / itemsPerPage);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -59,7 +61,7 @@ const SearchResults = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setBookList(data);
+          setBookList(data.filter((book) => book.status.statusID === 2));
         } else {
           setBookList([]);
           console.error("Error fetching books:", response.statusText);
@@ -118,16 +120,14 @@ const SearchResults = () => {
                       <p className="detail book-name">{book.bookName}</p>
                       <p className="detail book-author">by {book.bookAuthor}</p>
                       <p className="detail book-published">
-                        First published in {book.publishedYear}
+                        Publisher: {book.publisher.publisherName}
                       </p>
                       <p
                         className={`detail book-quantity ${
                           book.bookQuantity > 0 ? "available" : "unavailable"
                         }`}
                       >
-                        {book.bookQuantity > 0
-                          ? `${book.bookQuantity}`
-                          : "Unavailable"}
+                        {book.bookQuantity > 0 ? `${book.bookQuantity}` : "Unavailable"}
                       </p>
                       <p className="detail book-category">
                         Category: {book.category.categoryName}

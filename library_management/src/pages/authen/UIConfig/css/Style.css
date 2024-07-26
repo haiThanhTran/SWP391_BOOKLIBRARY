@@ -320,6 +320,7 @@ figure {
   width: 100%; }
 
 .form-group {
+  width: 100%;
   padding: 5px 0;
   position: relative;
   margin-bottom: 15px }
@@ -533,8 +534,9 @@ label.valid {
   background: #e72734; }
 
 .signin-form {
-  margin-right: 90px;
-  margin-left: 80px; }
+  margin-right: 70px;
+  margin-left: 70px;
+}
 
 .signin-image {
   margin-left: 110px;

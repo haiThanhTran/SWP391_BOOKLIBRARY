@@ -195,7 +195,7 @@ const ManagementCategory = () => {
         ))}
       </List>
       <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
-        <DialogTitle>Add New Category</DialogTitle>
+        <DialogTitle>Thêm hạng mục</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth

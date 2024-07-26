@@ -358,4 +358,41 @@ public class OrderDetailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    //get compensated money in current month
+    @GetMapping("/totalCompensationForCurrentMonth")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Double> getTotalCompensationForCurrentMonth() {
+        double totalCompensation = bookOrderService.getTotalCompensationForCurrentMonth();
+        return ResponseEntity.ok(totalCompensation);
+    }
+
+    // API to get compensated money in current month with percentage change from previous month
+    @GetMapping("/totalCompensation")
+//    @PreAuthorize("hasRole('ADMIN')") // Uncomment this line if you want to restrict access
+    public ResponseEntity<Map<String, Object>> getTotalCompensation() {
+        double currentMonthCompensation = bookOrderService.getTotalCompensationForCurrentMonth();
+        double previousMonthCompensation = bookOrderService.getTotalCompensationForPreviousMonth();
+
+        double percentageChange = 0;
+        if (previousMonthCompensation != 0) {
+            percentageChange = ((currentMonthCompensation - previousMonthCompensation) / previousMonthCompensation) * 100;
+        } else if (currentMonthCompensation != 0) {
+            percentageChange = 100; // 100% increase if starting from zero
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentMonthCompensation", currentMonthCompensation);
+        response.put("previousMonthCompensation", previousMonthCompensation);
+        response.put("percentageChange", percentageChange);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/compensated")
+    public ResponseEntity<List<Map<String, Object>>> getCompensatedOrders() {
+        return ResponseEntity.ok(bookOrderService.getCompensatedOrderDetails());
+    }
+
 }

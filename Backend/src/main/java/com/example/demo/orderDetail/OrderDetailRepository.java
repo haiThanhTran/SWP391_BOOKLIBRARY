@@ -49,4 +49,19 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             "LIMIT 5", nativeQuery = true)
     List<Object[]> findTop5MostBorrowedBooks();
 
+    //get compensated money in current month
+    @Query("SELECT o FROM OrderDetail o WHERE o.status = :status AND o.orderDate BETWEEN :startOfMonth AND :endOfMonth")
+    List<OrderDetail> findByStatusAndOrderDateBetween(
+            @Param("status") String status,
+            @Param("startOfMonth") LocalDateTime startOfMonth,
+            @Param("endOfMonth") LocalDateTime endOfMonth
+    );
+    //All compensated
+    @Query("SELECT o.searchID, o.status, o.totalPrice * CASE WHEN o.status = 'Compensated by Money' THEN 3 ELSE 0 END AS adjustedPrice, b.bookImage, u.avatar, u.userName " +
+            "FROM OrderDetail o " +
+            "JOIN o.book b " +
+            "JOIN o.user u " +
+            "WHERE o.status IN ('Compensated by Money', 'Compensated by Book')")
+    List<Object[]> findCompensatedOrderDetails();
+
 }

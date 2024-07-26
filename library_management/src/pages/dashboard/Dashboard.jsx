@@ -4,29 +4,60 @@ import { useNavigate, Routes, Route } from "react-router-dom";
 import AggregatedOrdersTable from "./viewAllOrder/AggregatedOrdersTable";
 import BorrowerOrdersTable from "./viewAllBorrower/BorrowerOrdersTable";
 import MoneyDashboard from "./viewAllImport/MoneyDashboard";
+import Compensated from "./viewAllCompensated/Compensated";
 import borrow from "../../assets/borrow.png";
 import customer from "../../assets/customer.png";
 import moneyBook from "../../assets/moneyBook.png";
+import star from "../../assets/star.png";
+import returnMoney from "../../assets/money_return.png";
 import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
 import { UserContext } from "../../ultils/userContext";
 import OrderChart from "./orderChart/OrderChart";
 import UserChart from "./userChart/UserChart"; // Ensure you have created and imported UserChart
 
 const Dashboard = () => {
+  const [mostVotedBook, setMostVotedBook] = useState([]);
+
+  const monthNamesVietnamese = [
+    "Tháng Một",
+    "Tháng Hai",
+    "Tháng Ba",
+    "Tháng Tư",
+    "Tháng Năm",
+    "Tháng Sáu",
+    "Tháng Bảy",
+    "Tháng Tám",
+    "Tháng Chín",
+    "Tháng Mười",
+    "Tháng Mười Một",
+    "Tháng Mười Hai",
+  ];
   const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
   const navigate = useNavigate();
+
+  const handleEditClick = (book) => {
+    // Pass the book object as an argument
+    navigate(`/updatebookform/${book.bookID}`, {
+      state: { book },
+    });
+  };
 
   useEffect(() => {
     if (!userStaffCategory || userStaffCategory.role !== "ADMIN") {
       navigate("/signin");
     }
+    const now = new Date();
+    const monthIndex = now.getMonth(); // 0 (Tháng Một) to 11 (Tháng Mười Hai)
+    const year = now.getFullYear();
+    setCurrentMonthYear(`${monthNamesVietnamese[monthIndex]} ${year}`);
   }, [userStaffCategory, navigate]);
   const [orderCount, setOrderCount] = useState(0);
   const [percentageChange, setPercentageChange] = useState(0);
   const [isPositiveChange, setIsPositiveChange] = useState(true);
   const [uniqueBorrowersCount, setUniqueBorrowersCount] = useState(0);
   const [uniqueBorrowersChange, setUniqueBorrowersChange] = useState(0);
-  const [isUniqueBorrowersChangePositive, setIsUniqueBorrowersChangePositive] =useState(true);
+  const [isUniqueBorrowersChangePositive, setIsUniqueBorrowersChangePositive] =
+    useState(true);
   const [currentMonthYear, setCurrentMonthYear] = useState("");
   const [importedMoney, setImportedMoney] = useState(0);
   const [importExpenseChange, setImportExpenseChange] = useState(0);
@@ -34,6 +65,8 @@ const Dashboard = () => {
   const [monthlyUniqueBorrowers, setMonthlyUniqueBorrowers] = useState([]); // New state for unique borrowers
   const { user, handleLogout } = useContext(UserContext);
   const [topBooks, setTopBooks] = useState([]);
+  const [totalCompensation, setTotalCompensation] = useState(0);
+  const [compensationChange, setCompensationChange] = useState(0);
 
   useEffect(() => {
     if (user && user.role !== "ADMIN") {
@@ -42,9 +75,37 @@ const Dashboard = () => {
 
     const token = localStorage.getItem("token");
 
+    const now = new Date();
+    const monthIndex = now.getMonth();
+    const year = now.getFullYear();
+    setCurrentMonthYear(`${monthNamesVietnamese[monthIndex]} ${year}`);
+
     const fetchData = async () => {
       if (token) {
         try {
+          const response = await fetch(
+            "http://localhost:9191/api/books/most-voted-book",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          setMostVotedBook(data);
+        } catch (error) {
+          console.error("Error fetching most voted book:", error);
+          setMostVotedBook([]);
+        }
+
+        try {
+          
+
           let response = await fetch(
             "http://localhost:9191/api/orders/currentMonthOrderCount",
             {
@@ -59,6 +120,25 @@ const Dashboard = () => {
             throw new Error(`HTTP error! status: ${response.status}`);
           let data = await response.json();
           setOrderCount(data);
+
+          response = await fetch(
+            "http://localhost:9191/api/orders/totalCompensation",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          data = await response.json();
+          setTotalCompensation(data.currentMonthCompensation);
+          setCompensationChange(data.percentageChange);
 
           response = await fetch(
             "http://localhost:9191/api/orders/currentMonthPercentageChange",
@@ -202,18 +282,10 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <Routes>
-        <Route
-          path="dashboardorder"
-          element={<AggregatedOrdersTable />}
-        />
-        <Route
-          path="dashboardborrower"
-          element={<BorrowerOrdersTable />}
-        />
-        <Route
-          path="moneydashboard"
-          element={<MoneyDashboard />}
-        />
+        <Route path="dashboardorder" element={<AggregatedOrdersTable />} />
+        <Route path="dashboardborrower" element={<BorrowerOrdersTable />} />
+        <Route path="moneydashboard" element={<MoneyDashboard />} />
+        <Route path="compensated" element={<Compensated />} />
         <Route
           path="/"
           element={
@@ -245,12 +317,18 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="metric">
-                  <img src={customer} alt="customer icon" className="metric-icon" />
+                  <img
+                    src={customer}
+                    alt="customer icon"
+                    className="metric-icon"
+                  />
                   <div className="metric-info">
                     <div className="metric-title">
                       Số người mượn trong tháng {currentMonthYear}
                     </div>
-                    <div className="metric-value">{uniqueBorrowersCount} người</div>
+                    <div className="metric-value">
+                      {uniqueBorrowersCount} người
+                    </div>
                     <div
                       className={`metric-change ${
                         isUniqueBorrowersChangePositive
@@ -276,9 +354,15 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="metric">
-                  <img src={moneyBook} alt="import icon" className="metric-icon" />
+                  <img
+                    src={moneyBook}
+                    alt="import icon"
+                    className="metric-icon"
+                  />
                   <div className="metric-info">
-                    <div className="metric-title">Giá sách nhập vào</div>
+                    <div className="metric-title">
+                      Giá sách nhập vào {currentMonthYear}
+                    </div>
                     <div className="metric-value">
                       {Intl.NumberFormat().format(importedMoney.toFixed(0))} VND
                     </div>
@@ -307,13 +391,120 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="bottom-metrics">
+                <div className="metric">
+                  <img
+                    src={returnMoney}
+                    alt="import icon"
+                    className="metric-icon return_money"
+                  />
+                  <div className="metric-info">
+                        <div className="metric-title">
+                            Tiền đền bù sách {currentMonthYear}
+                        </div>
+                        <div className="metric-value">
+                            {Intl.NumberFormat().format(totalCompensation.toFixed(0))} VND
+                        </div>
+                        <div 
+                            className={`metric-change ${
+                                compensationChange >= 0 ? "positive-change" : "negative-change"
+                            }`}
+                        >
+                            {compensationChange >= 0 ? <FiTrendingUp /> : <FiTrendingDown />} 
+                            {compensationChange.toFixed(2)}% với tháng trước
+                        </div>
+                    </div>
+                  <div className="metric-view">
+                    <button
+                      className="view-btn"
+                      onClick={() => navigate("compensated")}
+                    >
+                      Xem
+                    </button>
+                  </div>
+                </div>
+
+                <div className="metric">
+                  <div className="metric-info">
+                    <div className="metric-title">
+                      Sách được bình chọn cao nhất tháng {currentMonthYear}{" "}
+                      <img
+                        src={star}
+                        alt="import icon"
+                        className="metric-icon starIcon"
+                      />
+                    </div>
+                    {mostVotedBook.length > 0 ? (
+                      mostVotedBook.map((book) => (
+                        <div
+                          key={book.bookID}
+                          className="most-voted-book-details"
+                        >
+                          {/* <div className="book-details-container"> */}
+                          <div className="book-image-container">
+                            <img
+                              src={`http://localhost:9191/api/books/images/${book.bookImage}`}
+                              alt={book.bookName}
+                              className="book-image"
+                            />
+                            <div className="book-voted">
+                              {book.bookStar}
+                              <img
+                                src={star}
+                                alt="star icon"
+                                className="star-icon"
+                              />
+                            </div>
+                          </div>
+                          <div className="book-details">
+                            <div className="book-name">{book.bookName}</div>
+                            <div className="book-publisher">
+                              Nhà xuất bản: {book.publisher.publisherName}
+                            </div>
+                            <div className="book-category">
+                              Phân loại: {book.category.categoryName}
+                            </div>
+                          </div>
+                          {/* </div> */}
+
+                          {/* Add Update Button for Each Book */}
+                          <div className="metric-view update-btn">
+                            <button
+                              className="view-btn"
+                              onClick={() => handleEditClick(book)} // Call with book
+                            >
+                              Cập nhật
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Loading most voted books...</p>
+                    )}
+                  </div>
+
+                  {/* Remove the Overall Update Button */}
+                </div>
+              </div>
+
               <div className="products-and-customers">
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 2, gap: '20px' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 2,
+                    gap: "20px",
+                  }}
+                >
                   <div className="chart-container">
                     <OrderChart className="chart" data={monthlyBorrowings} />
                   </div>
                   <div className="new-chart-container">
-                    <UserChart className="chart" data={monthlyUniqueBorrowers} />
+                    <UserChart
+                      className="chart"
+                      data={monthlyUniqueBorrowers}
+                    />
                   </div>
                 </div>
                 <div className="top-selling-products">
