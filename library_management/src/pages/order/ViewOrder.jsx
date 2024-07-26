@@ -5,9 +5,10 @@ import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import { UserContext } from "../../ultils/userContext";
 import Header from "../../pages/nav-bar/Header";
 import { useNavigate, useParams } from "react-router-dom";
+import Modal from "react-modal"; // Import thư viện react-modal
 
 function ViewOrder() {
-  const userOrder = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const userOrder = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const { orderId } = useParams();
 
@@ -18,6 +19,8 @@ function ViewOrder() {
   }, [userOrder, navigate]);
 
   const [orders, setOrders] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const { user } = useContext(UserContext);
 
   useEffect(() => {
@@ -34,11 +37,16 @@ function ViewOrder() {
     }
 
     try {
-      const response = await axios.get("http://localhost:9191/api/orders/user", {
+      const response = await axios.get(
+        "http://localhost:9191/api/orders/user",
+        {
         params: { userID: user.id },
         headers: { Authorization: `Bearer ${token}` },
-      });
-      const sortedOrders = response.data.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+        }
+      );
+      const sortedOrders = response.data.sort(
+        (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
+      );
       setOrders(sortedOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -67,7 +75,9 @@ function ViewOrder() {
   };
 
   const cancelOrder = async (orderID) => {
-    const confirmCancel = window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này?");
+    const confirmCancel = window.confirm(
+      "Bạn có chắc chắn muốn hủy đơn hàng này?"
+    );
     if (!confirmCancel) {
       return;
     }
@@ -79,19 +89,36 @@ function ViewOrder() {
     }
 
     try {
-      await axios.put(`http://localhost:9191/api/orders/${orderID}/cancel`, null, {
+      await axios.put(
+        `http://localhost:9191/api/orders/${orderID}/cancel`,
+        null,
+        {
         headers: { Authorization: `Bearer ${token}` },
-      });
+        }
+      );
       fetchOrders();
     } catch (error) {
       console.error("Error canceling order:", error);
     }
   };
 
+  const openImageModal = (imagePath) => {
+    setSelectedImage(imagePath);
+    setModalIsOpen(true);
+  };
+
   const renderOrders = (status) => {
-    const groupedOrders = orders
-      .filter((order) => order.status === status)
-      .reduce((acc, order) => {
+    const filteredOrders = orders.filter((order) => {
+      if (status === "Compensated") {
+        return (
+          order.status === "Compensated by Book" ||
+          order.status === "Compensated by Money"
+        );
+      }
+      return order.status === status;
+    });
+
+    const groupedOrders = filteredOrders.reduce((acc, order) => {
         if (!acc[order.searchID]) {
           acc[order.searchID] = [];
         }
@@ -123,8 +150,39 @@ function ViewOrder() {
             <td>{new Date(order.orderDate).toLocaleString()}</td>
             <td>{order.status}</td>
             <td>{new Date(order.returnDate).toLocaleString()}</td>
-            <td>
-              <Countdown date={getCountdownDate(order)} renderer={renderer} />
+            {order.status !== "Cancelled" &&
+            order.status !== "Returned" &&
+            order.status !== "Overdue" ? (
+              <td>
+                {order.status === "Compensated by Book" ||
+                order.status === "Compensated by Money" ? (
+                  <img
+                    src={`http://localhost:9191/api/orders/evidence/${order.evidenceImagePath}`}
+                    alt="Evidence"
+                    className="img-fluid"
+                    style={{
+                      maxWidth: "100px",
+                      transition: "transform 0.3s ease, border 0.3s ease",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => openImageModal(order.evidenceImagePath)}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.02)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.border = "2px solid blue")
+                    }
+                    onMouseOut={(e) => (e.currentTarget.style.border = "none")}
+                  />
+                ) : (
+                  <Countdown
+                    date={getCountdownDate(order)}
+                    renderer={renderer}
+                  />
+                )}
               {order.status === "Pending" && (
                 <button
                   className="btn btn-danger mt-2"
@@ -134,6 +192,7 @@ function ViewOrder() {
                 </button>
               )}
             </td>
+            ) : null}
           </tr>
         ))}
       </tbody>
@@ -218,6 +277,19 @@ function ViewOrder() {
               Quá hạn
             </a>
           </li>
+          <li className="nav-item">
+            <a
+              className="nav-link"
+              id="compensated-tab"
+              data-toggle="tab"
+              href="#compensated"
+              role="tab"
+              aria-controls="compensated"
+              aria-selected="false"
+            >
+              Đền bù
+            </a>
+          </li>
         </ul>
         <div className="tab-content" id="myTabContent">
           <div
@@ -237,7 +309,7 @@ function ViewOrder() {
                   <th>Order Date</th>
                   <th>Status</th>
                   <th>Return Date</th>
-                  <th>Time to Pickup</th>
+                  <th>Deadline nhận sách</th>
                 </tr>
               </thead>
               {renderOrders("Pending")}
@@ -252,15 +324,15 @@ function ViewOrder() {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Order ID</th>
-                  <th>Book Image</th>
-                  <th>Book Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Order Date</th>
-                  <th>Status</th>
-                  <th>Return Date</th>
-                  <th>Time to Pickup</th>
+                  <th>Mã đơn</th>
+                  <th>Ảnh sách</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng</th>
+                  <th>Giá sách</th>
+                  <th>Ngày đặt đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày trả đơn</th>
+                  <th>Deadline nhận sách</th>
                 </tr>
               </thead>
               {renderOrders("Pending")}
@@ -275,15 +347,15 @@ function ViewOrder() {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Order ID</th>
-                  <th>Book Image</th>
-                  <th>Book Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Order Date</th>
-                  <th>Status</th>
-                  <th>Return Date</th>
-                  <th>Time to Return</th>
+                  <th>Mã đơn</th>
+                  <th>Ảnh sách</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng</th>
+                  <th>Giá sách</th>
+                  <th>Ngày đặt đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày trả đơn</th>
+                  <th>Ngày phải trả sách</th>
                 </tr>
               </thead>
               {renderOrders("Borrowed")}
@@ -298,15 +370,14 @@ function ViewOrder() {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Order ID</th>
-                  <th>Book Image</th>
-                  <th>Book Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Order Date</th>
-                  <th>Status</th>
-                  <th>Return Date</th>
-                  <th>Time to Pickup</th>
+                  <th>Mã đơn</th>
+                  <th>Ảnh sách</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng</th>
+                  <th>Giá sách</th>
+                  <th>Ngày đặt đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày đã trả đơn</th>
                 </tr>
               </thead>
               {renderOrders("Cancelled")}
@@ -321,15 +392,14 @@ function ViewOrder() {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Order ID</th>
-                  <th>Book Image</th>
-                  <th>Book Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Order Date</th>
-                  <th>Status</th>
-                  <th>Return Date</th>
-                  <th>Time to Pickup</th>
+                  <th>Mã đơn</th>
+                  <th>Ảnh sách</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng</th>
+                  <th>Giá sách</th>
+                  <th>Ngày đặt đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày đã trả đơn</th>
                 </tr>
               </thead>
               {renderOrders("Returned")}
@@ -344,21 +414,66 @@ function ViewOrder() {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Order ID</th>
-                  <th>Book Image</th>
-                  <th>Book Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Order Date</th>
-                  <th>Status</th>
-                  <th>Return Date</th>
-                  <th>Time to Pickup</th>
+                  <th>Mã đơn</th>
+                  <th>Ảnh sách</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng </th>
+                  <th>Giá sách</th>
+                  <th>Ngày đặt đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày phải trả sách</th>
                 </tr>
               </thead>
               {renderOrders("Overdue")}
             </table>
           </div>
+          <div
+            className="tab-pane fade"
+            id="compensated"
+            role="tabpanel"
+            aria-labelledby="compensated-tab"
+          >
+            <table className="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Ảnh sách</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng</th>
+                  <th>Giá sách</th>
+                  <th>Ngày đặt đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày đền bù</th>
+                  <th>Hình ảnh đền bù</th>
+                </tr>
+              </thead>
+              {renderOrders("Compensated")}
+            </table>
+          </div>
         </div>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setModalIsOpen(false)}
+          contentLabel="Preview Image"
+          style={{
+            content: {
+              top: "50%",
+              left: "50%",
+              right: "auto",
+              bottom: "auto",
+              marginRight: "-50%",
+              transform: "translate(-50%, -50%)",
+              width: "60%",
+              height: "auto",
+            },
+          }}
+        >
+          <img
+            src={`http://localhost:9191/api/orders/evidence/${selectedImage}`}
+            alt="Preview"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </Modal>
       </div>
     </>
   );

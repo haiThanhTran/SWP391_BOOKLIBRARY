@@ -54,5 +54,9 @@ public class OrderDetail {
 
     @Column(name = "search_id")
     private String searchID;
+
+    @Column(name = "evidence_image_path")
+    private String evidenceImagePath;
+
 }
 

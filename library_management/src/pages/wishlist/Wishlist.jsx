@@ -68,7 +68,7 @@ function Wishlist() {
             categoryName: book.categoryName,
             publisherName: book.publisherName,
           },
-          quantity: quantities[book.bookID] || 1, // Default to 1 if quantity is not set
+          quantity: quantities[book.bookID] || 1,
           totalPrice: (book.bookPrice || 0) * (quantities[book.bookID] || 1),
           orderDate: localTime.toISOString(),
           returnDate: new Date(
@@ -101,6 +101,9 @@ function Wishlist() {
 
       // Increment notification count
       incrementNotificationCount();
+      setTimeout(() => {
+        navigate("/feedback"); // Điều hướng sau khi thông báo thành công hiển thị
+      }, 3000); // Trì hoãn 3 giây trước khi điều hướng
     } catch (error) {
       toast.error(`Yêu cầu mượn sách thất bại: ${error.message}`);
     }

@@ -27,6 +27,7 @@ const ManagementCategory = () => {
       navigate("/signin");
     }
   }, [userStaffCategory, navigate]);
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [newCategory, setNewCategory] = useState("");
@@ -44,7 +45,7 @@ const ManagementCategory = () => {
       const response = await axios.get("http://localhost:9191/api/categories");
       setCategories(response.data);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Lỗi khi tải danh mục:", error);
     }
   };
 
@@ -55,9 +56,7 @@ const ManagementCategory = () => {
 
   const createCategory = async () => {
     if (!isCategoryNameValid(newCategory)) {
-      toast.error(
-        "Invalid category name. Only letters, numbers, and spaces are allowed."
-      );
+      toast.error("Tên danh mục không hợp lệ. Chỉ cho phép chữ cái, số và khoảng trắng.");
       return;
     }
 
@@ -74,20 +73,18 @@ const ManagementCategory = () => {
       setCategories([...categories, response.data]);
       setNewCategory("");
       setOpenAdd(false);
-      toast.success("Category added successfully!");
+      toast.success("Đã thêm danh mục thành công!");
     } catch (error) {
-      console.error("Error creating category:", error);
-      toast.error("Failed to add category.");
+      console.error("Lỗi khi thêm danh mục:", error);
+      toast.error("Thêm danh mục thất bại.");
     }
   };
 
   const updateCategory = async (id, updatedName) => {
-    if (!isCategoryNameValid(updatedName)) {
-      toast.error(
-        "Invalid category name. Only letters, numbers, and spaces are allowed."
-      );
-      return;
-    }
+    // if (!isCategoryNameValid(updatedName)) {
+    //   toast.error("Tên danh mục không hợp lệ. Chỉ cho phép chữ cái, số và khoảng trắng.");
+    //   return;
+    // }
 
     try {
       const response = await axios.put(
@@ -104,16 +101,37 @@ const ManagementCategory = () => {
       );
       setSelectedCategory(null);
       setOpenEdit(false);
-      toast.success("Category updated successfully!");
+      toast.success("Cập nhật danh mục thành công!");
     } catch (error) {
-      console.error("Error updating category:", error);
-      toast.error("Failed to update category.");
+      console.error("Lỗi khi cập nhật danh mục:", error);
+      toast.error("Cập nhật danh mục thất bại.");
     }
   };
 
   const deleteCategory = async (id) => {
+    // Fetch all books
+    let books;
+    try {
+      const response = await axios.get("http://localhost:9191/api/books");
+      books = response.data;
+    } catch (error) {
+      console.error("Lỗi khi tải sách:", error);
+      toast.error("Tải sách thất bại.");
+      return;
+    }
+
+    // Check if there are any books with the category ID to be deleted
+    const booksInCategory = books.some(
+      (book) => book.category.categoryID === id
+    );
+
+    if (booksInCategory) {
+      toast.error("Không thể xóa danh mục này vì vẫn còn sách trong danh mục.");
+      return;
+    }
+
     const confirmDelete = window.confirm(
-      "Bạn có chắc chắn xóa không? Nếu xóa thư mục này sẽ xóa các sách liên quan đến thư mục này"
+      "Bạn có chắc chắn muốn xóa không? Việc xóa danh mục này sẽ xóa tất cả sách liên quan."
     );
     if (!confirmDelete) return;
 
@@ -125,16 +143,16 @@ const ManagementCategory = () => {
       });
       setCategories(categories.filter((cat) => cat.categoryID !== id));
       setSelectedCategory(null);
-      toast.success("Category deleted successfully!");
+      toast.success("Xóa danh mục thành công!");
     } catch (error) {
-      console.error("Error deleting category:", error);
-      toast.error("Failed to delete category.");
+      console.error("Lỗi khi xóa danh mục:", error);
+      toast.error("Xóa danh mục thất bại.");
     }
   };
 
   const handleCopyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    toast.info("Copied to clipboard!");
+    toast.info("Đã sao chép vào clipboard!");
   };
 
   const filteredCategories = categories.filter((category) =>
@@ -142,20 +160,32 @@ const ManagementCategory = () => {
   );
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "5px" }}>
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "5px",
+      }}
+    >
       <ToastContainer />
-      <h1>Categories</h1>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+      <h1>Quản lý danh mục</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "20px",
+        }}
+      >
         <Button
           variant="contained"
           color="primary"
           onClick={() => setOpenAdd(true)}
           startIcon={<Add />}
         >
-          Add new
+          Thêm mới
         </Button>
         <TextField
-          label="Search Categories"
+          label="Tìm kiếm danh mục"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{ marginLeft: "20px", flex: 1 }}
@@ -163,7 +193,10 @@ const ManagementCategory = () => {
       </div>
       <List style={{ backgroundColor: "#fff", borderRadius: "5px" }}>
         {filteredCategories.map((category) => (
-          <ListItem key={category.categoryID} style={{ borderBottom: "1px solid #ccc" }}>
+          <ListItem
+            key={category.categoryID}
+            style={{ borderBottom: "1px solid #ccc" }}
+          >
             <ListItemText primary={category.categoryName} />
             <ListItemSecondaryAction>
               <IconButton
@@ -195,31 +228,31 @@ const ManagementCategory = () => {
         ))}
       </List>
       <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
-        <DialogTitle>Thêm hạng mục</DialogTitle>
+        <DialogTitle>Thêm danh mục mới</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
-            label="Category Name"
+            label="Tên danh mục"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAdd(false)} color="primary">
-            Cancel
+            Hủy
           </Button>
           <Button onClick={createCategory} color="primary">
-            Add
+            Thêm
           </Button>
         </DialogActions>
       </Dialog>
       {selectedCategory && (
         <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
-          <DialogTitle>Edit Category</DialogTitle>
+          <DialogTitle>Chỉnh sửa danh mục</DialogTitle>
           <DialogContent>
             <TextField
               fullWidth
-              label="Category Name"
+              label="Tên danh mục"
               value={selectedCategory.categoryName}
               onChange={(e) =>
                 setSelectedCategory({
@@ -231,7 +264,7 @@ const ManagementCategory = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenEdit(false)} color="primary">
-              Cancel
+              Hủy
             </Button>
             <Button
               onClick={() =>
@@ -242,7 +275,7 @@ const ManagementCategory = () => {
               }
               color="primary"
             >
-              Update
+              Cập nhật
             </Button>
           </DialogActions>
         </Dialog>

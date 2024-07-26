@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 @Service // Đánh dấu lớp này là một service trong Spring
 public class OrderDetailService {
@@ -52,11 +54,11 @@ public class OrderDetailService {
         return bookOrderRepository.saveAll(bookOrders); // Lưu tất cả các đơn hàng vào cơ sở dữ liệu
     }
 
-    public OrderDetail updateOrder(Long orderID, String status, LocalDateTime returnDate) {
+    public OrderDetail updateOrder(Long orderID, String status, LocalDateTime returnDate, String evidenceImagePath) {
         Optional<OrderDetail> bookOrder = bookOrderRepository.findById(orderID);
         if (bookOrder.isPresent()) {
             OrderDetail order = bookOrder.get();
-            logger.info("Updating order ID {}: status={}, returnDate={}", orderID, status, returnDate);
+            logger.info("Updating order ID {}: status={}, returnDate={},evidenceImagePath={}", orderID, status, returnDate,evidenceImagePath);
 
             switch (status) {
                 case "Borrowed":
@@ -75,18 +77,23 @@ public class OrderDetailService {
                     break;
                 case "Compensated by Book":
                     order.setStatus("Compensated by Book");
+                    order.setEvidenceImagePath(evidenceImagePath);
                     Book compensatedBook = order.getBook();
                     compensatedBook.setBookQuantity(compensatedBook.getBookQuantity() + order.getQuantity());
                     bookService.updateBook(compensatedBook.getBookID(), compensatedBook);
                     break;
                 case "Compensated by Money":
                     order.setStatus("Compensated by Money");
+                    order.setEvidenceImagePath(evidenceImagePath);
                     break;
                 default:
                     order.setStatus(status);
                     break;
             }
             order.setReturnDate(returnDate);
+            if (evidenceImagePath != null && !evidenceImagePath.isEmpty()) {
+                order.setEvidenceImagePath(evidenceImagePath);
+            }
             bookOrderRepository.save(order);
             return order;
         }

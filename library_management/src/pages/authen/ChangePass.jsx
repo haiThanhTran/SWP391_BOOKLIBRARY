@@ -89,11 +89,11 @@ function ChangePass() {
             alt="Signup Logo"
             id="signupLogo"
           />
-          <h2 className="formTitle">Please enter new password</h2>
+          <h2 className="formTitle">Vui lòng nhập mật khẩu mới</h2>
           {/* //input old password */}
           <div className="inputDiv">
             <label className="inputLabel" htmlFor="oldPassword">
-              Old Password
+              Mật khẩu cũ
             </label>
             <input
               type="password"
@@ -110,7 +110,7 @@ function ChangePass() {
           {/* //input new password */}
           <div className="inputDiv">
             <label className="inputLabel" htmlFor="password">
-              New Password
+              Mật khẩu mới
             </label>
             <input
               type="password"
@@ -124,7 +124,7 @@ function ChangePass() {
           </div>
           <div className="inputDiv">
             <label className="inputLabel" htmlFor="confirmPassword">
-              Confirm Password
+              Nhập lại mật khẩu
             </label>
             <input
               type="password"
@@ -147,7 +147,7 @@ function ChangePass() {
                 color: "#fff",
               }}
             >
-              Submit
+              Xác nhận
             </button>
             <button
               type="button"
@@ -157,7 +157,7 @@ function ChangePass() {
               }}
               onClick={() => (window.location.href = "http://localhost:5173/")}
             >
-              Cancel
+              Hủy
             </button>
           </div>
         </form>

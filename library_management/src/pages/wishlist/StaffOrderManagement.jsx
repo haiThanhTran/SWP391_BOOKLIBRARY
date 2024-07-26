@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,17 +6,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./StaffOrderManagement.css";
 import Header from "../../pages/nav-bar/Header";
 import empty_state from "../../assets/empty_state.png";
-import logo from "../../assets/logo.jpg";
 import { FaSearch } from "react-icons/fa";
 import { UserContext } from "../../ultils/userContext";
 import Modal from "react-modal";
-import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
+import Webcam from "react-webcam";
+import { Button } from "react-bootstrap";
 
 Modal.setAppElement("#root");
 
 function StaffOrderManagement() {
-  const userStaffOrder = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
+  const userStaffOrder = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,44 +28,81 @@ function StaffOrderManagement() {
       navigate("/signin");
     }
   }, [userStaffOrder, navigate]);
+
   const [orderID, setOrderID] = useState("");
   const [orders, setOrders] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [originalStatus, setOriginalStatus] = useState({});
   const token = localStorage.getItem("token");
   const { user } = useContext(UserContext);
 
-  const handleSearchOrder = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:9191/api/orders/search/${orderID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setOrders(response.data);
-      toast.success("Orders found");
-    } catch (error) {
-      toast.error("Order not found");
-      setOrders([]);
+  // State for file and preview
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewURL, setPreviewURL] = useState(null);
+  const [webcamOpen, setWebcamOpen] = useState(false);
+  const [webcamImage, setWebcamImage] = useState(null);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
+  const webcamRef = useRef(null);
+
+  const handleFileChange = (e, orderID) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile({ file, orderID });
+      const previewURL = URL.createObjectURL(file);
+      setPreviewURL(previewURL);
     }
+  };
+
+  const handleCapture = () => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setWebcamImage(imageSrc);
+    setWebcamOpen(false);
+    setSelectedFile({
+      file: dataURLtoFile(imageSrc, "webcam.jpg"),
+      orderID: selectedOrder.orderDetailID,
+    });
+    setPreviewURL(imageSrc);
+  };
+
+  const dataURLtoFile = (dataurl, filename) => {
+    const arr = dataurl.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
   };
 
   const handleUpdateOrder = async (orderID, status, returnDate) => {
     try {
-      const response = await axios.put(
+      if (status === "Returned") {
+        returnDate = new Date().toISOString();
+      } else if (status === "Borrowed" && new Date(returnDate) < new Date()) {
+        toast.error("Không thể chọn thời gian trong quá khứ");
+        return;
+      }
+
+      const formData = new FormData();
+      const payload = { status, returnDate };
+      formData.append("payload", JSON.stringify(payload));
+
+      await axios.put(
         `http://localhost:9191/api/orders/${orderID}/return`,
-        { status, returnDate: new Date(returnDate).toISOString() },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      toast.success("Order updated successfully");
 
+      toast.success("Order updated successfully");
       const updatedOrders = orders.map((order) =>
         order.orderDetailID === orderID
           ? { ...order, status, returnDate }
@@ -77,8 +114,44 @@ function StaffOrderManagement() {
     }
   };
 
+  const handleFileUpload = async (orderID, status) => {
+    if (!selectedFile) return;
+
+    // Lấy thời gian hiện tại theo múi giờ Việt Nam
+    const localDate = new Date();
+    const returnDate = new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    ).toISOString();
+
+    // Tạo payload và chuyển đổi thành chuỗi JSON
+    const payload = JSON.stringify({ status, returnDate });
+
+    const formData = new FormData();
+    formData.append("payload", payload); // Thêm payload dưới dạng chuỗi JSON
+    formData.append("file", selectedFile.file); // Thêm tệp hình ảnh
+
+    try {
+      await axios.put(
+        `http://localhost:9191/api/orders/${orderID}/return`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      toast.success("Tải lên thành công !");
+      setSelectedFile(null);
+      setPreviewURL(null);
+      handleSearchOrder();
+    } catch (error) {
+      toast.error("Failed to update order and upload file");
+    }
+  };
+
   const handleCompensateOrder = async (orderID, compensationType) => {
-    const confirmMessage = `Bạn đã chắn chắn muôn thay đổi trạng thái thành đền ${
+    const confirmMessage = `Bạn đã chắn chắn muốn thay đổi trạng thái thành đền ${
       compensationType === "money" ? "tiền" : "sách"
     } không?`;
     if (window.confirm(confirmMessage)) {
@@ -87,12 +160,24 @@ function StaffOrderManagement() {
           compensationType === "money"
             ? "Compensated by Money"
             : "Compensated by Book";
-        const response = await axios.put(
+
+        const localDate = new Date();
+        const offset = localDate.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(localDate - offset)
+          .toISOString()
+          .slice(0, -1);
+
+        const formData = new FormData();
+        const payload = { status, returnDate: localISOTime };
+        formData.append("payload", JSON.stringify(payload));
+
+        await axios.put(
           `http://localhost:9191/api/orders/${orderID}/return`,
-          { status, returnDate: new Date().toISOString() },
+          formData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -103,11 +188,11 @@ function StaffOrderManagement() {
         );
 
         const updatedOrders = orders.map((order) =>
-          order.orderDetailID === orderID ? { ...order, status } : order
+          order.orderDetailID === orderID
+            ? { ...order, status, returnDate: localISOTime }
+            : order
         );
         setOrders(updatedOrders);
-
-        generateReport(selectedOrder, compensationType);
       } catch (error) {
         toast.error("Failed to compensate order");
       }
@@ -123,58 +208,38 @@ function StaffOrderManagement() {
     setModalIsOpen(false);
   };
 
-  const generateReport = (order, compensationType) => {
-    const reportContent = `
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; }
-            .header { text-align: center; margin-bottom: 20px; }
-            .header img { width: 10px; } /* Điều chỉnh kích thước logo */
-            .content { margin: 20px; }
-            .signature-table { width: 100%; margin-top: 50px; }
-            .signature-cell { width: 50%; text-align: center; vertical-align: top; }
-            .content p { line-height: 1.5; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h2>BIÊN BẢN ĐỀN BÙ</h2>
-            <p>Ngày: ${new Date().toLocaleDateString()}</p>
-          </div>
-          <div class="content">
-            <p><strong>Tên người mượn:</strong> ${order.userName}</p>
-            <p><strong>Thời gian mượn:</strong> ${new Date(
-              order.orderDate
-            ).toLocaleString()}</p>
-            <p><strong>Tên sách:</strong> ${order.bookName}</p>
-            <p><strong>Giá sách:</strong> ${order.totalPrice}</p>
-            <p><strong>Lý do:</strong>...................................</p>
-            <p><strong>Phương án đền:</strong> ${
-              compensationType === "money" ? "Đền tiền" : "Đền sách"
-            }</p>
-            <p><strong>Cam Kết:</strong> Bên đền bù đã đền bù tổn thất cho phía thư viện cũng như bên thư viện đã xác nhận phương thức đền bù bằng ${
-              compensationType === "money" ? "Đền tiền" : "Đền sách"
-            } của khách hàng.</p>
-          </div>
-          <table class="signature-table">
-            <tr>
-              <td class="signature-cell">
-                <p>Người Đền Bù</p>
-                <p>(Ký, họ tên)</p>
-              </td>
-              <td class="signature-cell">
-                <p>Người Xử Lý Đơn</p>
-                <p>(Ký, họ tên)</p>
-              </td>
-            </tr>
-          </table>
-        </body>
-      </html>
-    `;
+  const handleSearchOrder = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9191/api/orders/search/${orderID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setOrders(response.data);
+      setOriginalStatus(
+        response.data.reduce((acc, order) => {
+          acc[order.orderDetailID] = order.status;
+          return acc;
+        }, {})
+      );
+      toast.success("Kết quả thành công !");
+    } catch (error) {
+      toast.error("Không tìm thấy đơn hàng hợp lệ !");
+      setOrders([]);
+    }
+  };
 
-    const blob = new Blob([reportContent], { type: "application/msword" });
-    saveAs(blob, `BienBan_${order.orderDetailID}_${compensationType}.doc`);
+  const handleImageClick = (imagePath) => {
+    setCurrentImage(imagePath);
+    setImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setImageModalOpen(false);
+    setCurrentImage("");
   };
 
   return (
@@ -192,13 +257,10 @@ function StaffOrderManagement() {
             onChange={(e) => setOrderID(e.target.value)}
             placeholder="Vui lòng nhập mã đơn hàng"
           />
-          <button
-            className="btn btn-sm btn-primary"
-            onClick={handleSearchOrder}
-          >
+          <Button onClick={handleSearchOrder}>
             <FaSearch style={{ padding: "0 10px 0 0", fontSize: "170%" }} />
             Search
-          </button>
+          </Button>
         </div>
 
         {orders.length > 0 ? (
@@ -213,18 +275,23 @@ function StaffOrderManagement() {
                 <th>Thời Gian Mượn</th>
                 <th>Trạng Thái</th>
                 <th>Thời Gian Trả</th>
+                <th>Ảnh Biên Bản</th>
                 <th>Xác Nhận</th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {orders.map((order) => {
+                const localReturnDate = new Date(
+                  order.returnDate
+                ).toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" });
+                return (
                 <tr key={order.orderDetailID}>
                   <td>
                     <img
                       src={`http://localhost:9191/api/books/images/${order.bookImage}`}
                       alt={order.bookName}
                       className="img-fluid"
-                      style={{ maxWidth: "100px" }}
+                        style={{ maxWidth: "120px" }}
                     />
                   </td>
                   <td>{order.userName}</td>
@@ -237,9 +304,17 @@ function StaffOrderManagement() {
                       className="form-select"
                       value={order.status}
                       onChange={(e) => {
+                          const newStatus = e.target.value;
                         const updatedOrders = orders.map((o) =>
                           o.orderDetailID === order.orderDetailID
-                            ? { ...o, status: e.target.value }
+                              ? {
+                                  ...o,
+                                  status: newStatus,
+                                  returnDate:
+                                    newStatus === "Returned"
+                                      ? new Date().toISOString()
+                                      : o.returnDate,
+                                }
                             : o
                         );
                         setOrders(updatedOrders);
@@ -263,21 +338,29 @@ function StaffOrderManagement() {
                         Đền sách
                       </option>
                     </select>
-                    <button
-                      className="btn btn-danger btn-sm mt-2"
-                      onClick={() => openModal(order)}
-                      disabled={[
-                        "Compensated by Money",
-                        "Compensated by Book",
-                        "Overdue",
-                        "Pending",
-                        "Cancelled",
-                      ].includes(order.status)}
-                    >
-                      Xử lý mất sách
-                    </button>
+                      {originalStatus[order.orderDetailID] === "Borrowed" && (
+                      <button
+                        className="btn btn-danger btn-sm mt-2"
+                        onClick={() => openModal(order)}
+                        disabled={[
+                          "Compensated by Money",
+                          "Compensated by Book",
+                          "Overdue",
+                          "Pending",
+                          "Cancelled",
+                          "Returned",
+                        ].includes(order.status)}
+                      >
+                        Xử lý mất sách
+                      </button>
+                    )}
                   </td>
                   <td>
+                      {order.status === "Returned" ||
+                      order.status === "Compensated by Money" ||
+                      order.status === "Compensated by Book" ? (
+                        localReturnDate
+                      ) : (
                     <input
                       type="datetime-local"
                       className="form-control"
@@ -298,9 +381,98 @@ function StaffOrderManagement() {
                         "Overdue",
                         "Pending",
                         "Cancelled",
+                            "Returned",
                       ].includes(order.status)}
                     />
+                      )}
+                    </td>
+
+                    <td>
+                      {order.status === "Compensated by Money" ||
+                      order.status === "Compensated by Book" ? (
+                        <>
+                          <div
+                            className="image-container"
+                            onClick={() =>
+                              handleImageClick(order.evidenceImagePath)
+                            }
+                          >
+                            {previewURL ? (
+                              <img
+                                src={previewURL}
+                                alt="Preview"
+                                className="img-fluid mt-2"
+                                style={{ maxWidth: "100px" }}
+                              />
+                            ) : order.evidenceImagePath ? (
+                              <img
+                                src={`http://localhost:9191/api/orders/evidence/${order.evidenceImagePath}`}
+                                alt="Evidence"
+                                className="img-fluid mt-2"
+                                style={{
+                                  maxWidth: "130px",
+                                  borderRadius: "5px",
+                                  transition:
+                                    "transform 0.3s ease, border 0.3s ease",
+                                  cursor: "pointer",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.transform =
+                                    "scale(1.02)";
+                                  e.currentTarget.style.border =
+                                    "2px solid blue";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.transform = "scale(1)";
+                                  e.currentTarget.style.border = "none";
+                                }}
+                              />
+                            ) : (
+                              "N/A"
+                            )}
+                            <div className="overlay"></div>
+                            <div className="overlay">
+                              <span className="text">Xem rõ</span>
+                            </div>
+                          </div>
+                          <input
+                            type="file"
+                            id={`fileInput-${order.orderDetailID}`}
+                            style={{ display: "none" }}
+                            onChange={(e) =>
+                              handleFileChange(e, order.orderDetailID)
+                            }
+                          />
+
+                          <label
+                            htmlFor={`fileInput-${order.orderDetailID}`}
+                            className="btn btn-outline-primary mt-2"
+                            style={{ maxWidth: "50px" }}
+                          >
+                            <i
+                              className="fa fa-upload"
+                              style={{ marginRight: "5px" }}
+                            ></i>
+                            Chọn ảnh biên bản
+                          </label>
+                          {selectedFile &&
+                            selectedFile.orderID === order.orderDetailID && (
+                              <Button
+                                className="btn btn-success mt-2"
+                                onClick={() =>
+                                  handleFileUpload(
+                                    order.orderDetailID,
+                                    order.status
+                                  )
+                                }
+                              >
+                                Upload
+                              </Button>
+                            )}
+                        </>
+                      ) : null}
                   </td>
+
                   <td>
                     <button
                       className="btn btn-danger btn-sm"
@@ -323,7 +495,8 @@ function StaffOrderManagement() {
                     </button>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         ) : (
@@ -337,6 +510,7 @@ function StaffOrderManagement() {
           </div>
         )}
       </div>
+
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -349,10 +523,10 @@ function StaffOrderManagement() {
             bottom: "auto",
             marginRight: "-50%",
             transform: "translate(-50%, -50%)",
-            width: "50%", // Adjust the width to be 50% of the viewport width
-            minWidth: "800px", // Set a maximum width
-            height: "30%", // Adjust the height to be 30% of the viewport height
-            minHeight: "400px", // Set a maximum height
+            width: "50%",
+            minWidth: "800px",
+            height: "30%",
+            minHeight: "400px",
           },
         }}
       >
@@ -377,6 +551,73 @@ function StaffOrderManagement() {
         </div>
         <div className="d-flex justify-content-center">
           <button className="btn btn-danger mt-3" onClick={closeModal}>
+            Đóng
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={imageModalOpen}
+        onRequestClose={closeImageModal}
+        contentLabel="Xem ảnh"
+        style={{
+          content: {
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            width: "60%",
+            height: "auto",
+          },
+        }}
+      >
+        <img
+          src={`http://localhost:9191/api/orders/evidence/${currentImage}`}
+          alt="Full view"
+          style={{ width: "100%", height: "100%" }}
+        />
+        <button onClick={closeImageModal} className="btn btn-danger mt-2">
+          Đóng
+        </button>
+      </Modal>
+
+      <Modal
+        isOpen={webcamOpen}
+        onRequestClose={() => setWebcamOpen(false)}
+        contentLabel="Chụp ảnh bằng webcam"
+        style={{
+          content: {
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            width: "50%",
+            minWidth: "800px",
+            height: "30%",
+            minHeight: "400px",
+          },
+        }}
+      >
+        <h2>Chụp ảnh bằng webcam</h2>
+        <Webcam
+          audio={false}
+          screenshotFormat="image/jpeg"
+          width="100%"
+          ref={webcamRef}
+          style={{ marginBottom: "20px" }}
+        />
+        <div className="d-flex justify-content-center">
+          <button className="btn btn-primary m-2" onClick={handleCapture}>
+            Chụp ảnh
+          </button>
+          <button
+            className="btn btn-secondary m-2"
+            onClick={() => setWebcamOpen(false)}
+          >
             Đóng
           </button>
         </div>
