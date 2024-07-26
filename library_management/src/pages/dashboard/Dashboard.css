@@ -12,6 +12,18 @@
   gap: 20px;
 }
 
+.bottom-metrics {
+  display: flex; /* Arrange metrics horizontally */
+  gap: 20px;    /* Add space between metrics */
+}
+
+.bottom-metrics .metric { 
+  flex: 1;         /* Each metric takes 50% of the available width */
+  background: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+}
+
 .metric {
   justify-content: center;
   flex: 1;
@@ -28,6 +40,13 @@
   height: 70px;
 }
 
+.return_money{
+  background-color: navy;
+  border-radius: 10px;
+}
+
+
+
 .metric-info {
   display: flex;
   flex-direction: column;
@@ -35,7 +54,13 @@
 
 .metric-title {
   margin-bottom: 5px;
-  text-align: center;
+  /* Add these styles */
+  display: flex;         /* Make it a flex container */
+  align-items: center;   /* Vertically center items */
+  justify-content: center; /* Horizontally center items */
+  /* Keep the existing styles */
+  text-align: center;  
+  gap: 5px;        
 }
 
 .metric-value {
@@ -120,4 +145,67 @@
 .book-top5-image {
   width: 100px;
   height: 80px;
+}
+
+.most-voted-book-details {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;  /* Add some space between the image and details */
+  margin-bottom: 5px;
+}
+
+.book-image-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.book-image-container .book-image {
+  width: 81px;
+  height: 130px;
+  border-radius: 10px;
+}
+
+.book-voted {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+.star-icon {
+  width: 20px;
+  height: auto;
+}
+
+.starIcon{
+  width: 20px;
+  height: 20px;
+  background-color: lightslategray;
+  border-radius: 50%;
+}
+
+.book-name {
+  text-align: left;
+  flex-grow: 1;  
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.metric-view {
+  flex-shrink: 0; 
+}
+
+metric-view.update-btn {  
+  margin-left: auto;        /* Push the button to the right */
+}
+
+.book-details {
+  display: flex;
+  flex-direction: column; /* Arrange name and button vertically */
+  align-items: flex-start; /* Align items to the left */
+  min-width: 370px;
 }

@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service // Đánh dấu lớp này là một service trong Spring
 public class OrderDetailService {
@@ -185,5 +185,55 @@ public class OrderDetailService {
         public List<Object[]> getTop5MostBorrowedBooks () {
             return bookOrderRepository.findTop5MostBorrowedBooks();
         }
+
+        //get compensated money in current month
+        public double getTotalCompensationForCurrentMonth() {
+            YearMonth currentMonth = YearMonth.now();
+            LocalDateTime startOfMonth = currentMonth.atDay(1).atStartOfDay();
+            LocalDateTime endOfMonth = currentMonth.atEndOfMonth().atTime(23, 59, 59);
+
+            List<OrderDetail> orders = bookOrderRepository.findByStatusAndOrderDateBetween("Compensated by Money", startOfMonth, endOfMonth);
+            double totalCompensation = 0;
+
+            for (OrderDetail order : orders) {
+                double bookPrice = bookService.getBookById(order.getBook().getBookID()).getBookPrice();
+                totalCompensation += order.getQuantity() * bookPrice * 3;
+            }
+
+            return totalCompensation;
+        }
+
+    // New Method to calculate compensation for the previous month
+    public double getTotalCompensationForPreviousMonth() {
+        YearMonth previousMonth = YearMonth.now().minusMonths(1);
+        LocalDateTime startOfMonth = previousMonth.atDay(1).atStartOfDay();
+        LocalDateTime endOfMonth = previousMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        List<OrderDetail> orders = bookOrderRepository.findByStatusAndOrderDateBetween("Compensated by Money", startOfMonth, endOfMonth);
+
+        double totalCompensation = 0;
+        for (OrderDetail order : orders) {
+            double bookPrice = bookService.getBookById(order.getBook().getBookID()).getBookPrice();
+            totalCompensation += order.getQuantity() * bookPrice * 3;
+        }
+
+        return totalCompensation;
+    }
+
+    public List<Map<String, Object>> getCompensatedOrderDetails() {
+        List<Object[]> results = bookOrderRepository.findCompensatedOrderDetails();
+
+        return results.stream().map(result -> {
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("searchID", result[0]);
+            orderMap.put("status", result[1]);
+            orderMap.put("adjustedPrice", result[2]);
+            orderMap.put("bookImage", result[3]);
+            orderMap.put("avatar", result[4]);
+            orderMap.put("userName", result[5]);
+            return orderMap;
+        }).collect(Collectors.toList());
+    }
+
 
 }

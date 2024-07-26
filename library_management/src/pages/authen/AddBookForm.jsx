@@ -40,11 +40,12 @@ const AddBookForm = ({ onClose }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesResponse, publishersResponse, statusResponse] = await Promise.all([
-          fetch("http://localhost:9191/api/categories"),
-          fetch("http://localhost:9191/api/publishers"),
-          fetch("http://localhost:9191/api/status"),
-        ]);
+        const [categoriesResponse, publishersResponse, statusResponse] =
+          await Promise.all([
+            fetch("http://localhost:9191/api/categories"),
+            fetch("http://localhost:9191/api/publishers"),
+            fetch("http://localhost:9191/api/status"),
+          ]);
         const categoriesData = await categoriesResponse.json();
         const publishersData = await publishersResponse.json();
         const statusData = await statusResponse.json();
@@ -53,18 +54,21 @@ const AddBookForm = ({ onClose }) => {
         setPublishers(publishersData);
         setStatus(statusData);
 
-        setFormData((prevData) => ({
-          ...prevData,
-          category: {
-            categoryID: categoriesData.length > 0 ? categoriesData[0].categoryID : "",
-          },
-          publisher: {
-            publisherID: publishersData.length > 0 ? publishersData[0].publisherID : "",
-          },
-          status: {
-            statusID: statusData.length > 0 ? statusData[0].statusID : "",
-          },
-        }));
+        // Update the initial form data with empty selections
+        setFormData({
+          bookPrice: "",
+          bookName: "",
+          bookQuantity: "",
+          bookAuthor: "",
+          page: "",
+          language: "",
+          description: "",
+          category: { categoryID: "" }, // Set default to empty string
+          publisher: { publisherID: "" }, // Set default to empty string
+          status: { statusID: "" }, // Set default to empty string
+        });
+
+        // ... (rest of the fetch logic)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -73,8 +77,8 @@ const AddBookForm = ({ onClose }) => {
     fetchData();
   }, []);
 
-  //handle status change
 
+  //handle status change
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -85,6 +89,10 @@ const AddBookForm = ({ onClose }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    // If the book status is 1 and the user tries to change the quantity, prevent it
+    if (name === "bookQuantity" && formData.status.statusID === "1") {
+      return; // Do nothing, preventing the quantity from changing
+    }
     setFormData((prevData) => {
       const keys = name.split(".");
       if (keys.length > 1) {
@@ -105,22 +113,28 @@ const AddBookForm = ({ onClose }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
+  
+    if (formData.status.statusID !== "1" && !formData.bookQuantity) {
+      newErrors.bookQuantity = "Book quantity is required";
+    }
+  
     if (!formData.bookPrice) newErrors.bookPrice = "Book price is required";
     if (!formData.bookName) newErrors.bookName = "Book name is required";
-    if (!formData.bookQuantity) newErrors.bookQuantity = "Book quantity is required";
+    if (formData.status.statusID !== "1" && !formData.bookQuantity) {
+      newErrors.bookQuantity = "Book quantity is required";
+    }
     if (!formData.bookAuthor) newErrors.bookAuthor = "Book author is required";
     if (!formData.page) newErrors.page = "Book page is required";
     if (!formData.language) newErrors.language = "Book language is required";
     if (!formData.description) newErrors.description = "Description is required";
     if (!formData.category.categoryID) newErrors.categoryID = "Category is required";
     if (!formData.publisher.publisherID) newErrors.publisherID = "Publisher is required";
-    if (!formData.status.statusID) newErrors.statusID = "Status is required";
     if (!selectedImage) newErrors.selectedImage = "Book image is required";
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -132,11 +146,11 @@ const AddBookForm = ({ onClose }) => {
 
     const token = localStorage.getItem("token");
     const formToSubmit = new FormData();
-    
+
     const bookData = {
       bookPrice: formData.bookPrice,
       bookName: formData.bookName,
-      bookQuantity: formData.bookQuantity,
+      bookQuantity: formData.status.statusID !== "1" ? formData.bookQuantity : 0, // Set quantity to 0 if status is 1
       bookAuthor: formData.bookAuthor,
       page: formData.page,
       language: formData.language,
@@ -152,7 +166,6 @@ const AddBookForm = ({ onClose }) => {
         statusID: formData.status.statusID,
       },
     };
-
     formToSubmit.append("book", JSON.stringify(bookData));
     formToSubmit.append("image", selectedImage);
 
@@ -170,7 +183,9 @@ const AddBookForm = ({ onClose }) => {
         navigateToHome();
       } else {
         const errorData = await response.json();
-        alert(`Failed to add book. Error: ${errorData.message || "Unknown error"}`);
+        alert(
+          `Failed to add book. Error: ${errorData.message || "Unknown error"}`
+        );
       }
     } catch (error) {
       console.error("Error:", error);
@@ -206,6 +221,20 @@ const AddBookForm = ({ onClose }) => {
     window.location.href = "/adminfunction/managebook";
   };
 
+// If the book status is 1 (not available for borrowing), set quantity to 0
+useEffect(() => {
+if (formData.status.statusID === "1") {
+  setFormData((prevData) => ({
+    ...prevData,
+    bookQuantity: 0, // Set quantity to 0 immediately
+  }));
+  setErrors((prevErrors) => ({
+    ...prevErrors,
+    bookQuantity: null, // Clear any previous error for bookQuantity
+  }));
+} 
+}, [formData.status.statusID]);
+  
   return (
     <div className="formbold-main-wrapper">
       <div className="formbold-form-wrapper">
@@ -228,7 +257,9 @@ const AddBookForm = ({ onClose }) => {
                 value={formData.bookPrice}
                 onChange={handleChange}
               />
-              {errors.bookPrice && <p className="error-text">{errors.bookPrice}</p>}
+              {errors.bookPrice && (
+                <p className="error-text">{errors.bookPrice}</p>
+              )}
             </div>
 
             <div className="property-input">
@@ -243,7 +274,9 @@ const AddBookForm = ({ onClose }) => {
                 value={formData.bookName}
                 onChange={handleChange}
               />
-              {errors.bookName && <p className="error-text">{errors.bookName}</p>}
+              {errors.bookName && (
+                <p className="error-text">{errors.bookName}</p>
+              )}
             </div>
 
             <div className="property-input">
@@ -257,8 +290,11 @@ const AddBookForm = ({ onClose }) => {
                 className="formbold-form-input"
                 value={formData.bookQuantity}
                 onChange={handleChange}
+                disabled={formData.status.statusID === "1"}
               />
-              {errors.bookQuantity && <p className="error-text">{errors.bookQuantity}</p>}
+              {errors.bookQuantity && (
+                <p className="error-text">{errors.bookQuantity}</p>
+              )}
             </div>
           </div>
 
@@ -275,7 +311,9 @@ const AddBookForm = ({ onClose }) => {
                 value={formData.bookAuthor}
                 onChange={handleChange}
               />
-              {errors.bookAuthor && <p className="error-text">{errors.bookAuthor}</p>}
+              {errors.bookAuthor && (
+                <p className="error-text">{errors.bookAuthor}</p>
+              )}
             </div>
             <div className="property-input">
               <label htmlFor="page" className="formbold-form-label">
@@ -304,13 +342,18 @@ const AddBookForm = ({ onClose }) => {
                 value={formData.language}
                 onChange={handleChange}
               />
-              {errors.language && <p className="error-text">{errors.language}</p>}
+              {errors.language && (
+                <p className="error-text">{errors.language}</p>
+              )}
             </div>
           </div>
 
           <div className="formbold-input-flex">
             <div className="property-input">
-              <label htmlFor="category.categoryID" className="formbold-form-label">
+              <label
+                htmlFor="category.categoryID"
+                className="formbold-form-label"
+              >
                 Hạng mục sách
               </label>
               <select
@@ -327,11 +370,16 @@ const AddBookForm = ({ onClose }) => {
                   </option>
                 ))}
               </select>
-              {errors.categoryID && <p className="error-text">{errors.categoryID}</p>}
+              {errors.categoryID && (
+                <p className="error-text">{errors.categoryID}</p>
+              )}
             </div>
 
             <div className="property-input">
-              <label htmlFor="publisher.publisherID" className="formbold-form-label">
+              <label
+                htmlFor="publisher.publisherID"
+                className="formbold-form-label"
+              >
                 Nhà xuất bản
               </label>
               <select
@@ -343,12 +391,17 @@ const AddBookForm = ({ onClose }) => {
               >
                 <option value="">Select Publisher</option>
                 {publishers.map((publisher) => (
-                  <option key={publisher.publisherID} value={publisher.publisherID}>
+                  <option
+                    key={publisher.publisherID}
+                    value={publisher.publisherID}
+                  >
                     {publisher.publisherName}
                   </option>
                 ))}
               </select>
-              {errors.publisherID && <p className="error-text">{errors.publisherID}</p>}
+              {errors.publisherID && (
+                <p className="error-text">{errors.publisherID}</p>
+              )}
             </div>
 
             <div className="property-input">
@@ -369,7 +422,9 @@ const AddBookForm = ({ onClose }) => {
                   </option>
                 ))}
               </select>
-              {errors.statusID && <p className="error-text">{errors.statusID}</p>}
+              {errors.statusID && (
+                <p className="error-text">{errors.statusID}</p>
+              )}
             </div>
           </div>
 
@@ -386,7 +441,9 @@ const AddBookForm = ({ onClose }) => {
                 className="formbold-form-file"
                 onChange={handleImageChange}
               />
-              {errors.selectedImage && <p className="error-text">{errors.selectedImage}</p>}
+              {errors.selectedImage && (
+                <p className="error-text">{errors.selectedImage}</p>
+              )}
               <div className="formbold-mb-3">
                 <label htmlFor="description" className="description">
                   Miêu tả sách
@@ -399,7 +456,9 @@ const AddBookForm = ({ onClose }) => {
                   value={formData.description}
                   onChange={handleChange}
                 ></textarea>
-                {errors.description && <p className="error-text">{errors.description}</p>}
+                {errors.description && (
+                  <p className="error-text">{errors.description}</p>
+                )}
               </div>
             </div>
             {selectedImage && (
@@ -417,10 +476,18 @@ const AddBookForm = ({ onClose }) => {
             <button className="formbold-btn add" type="submit">
               Thêm
             </button>
-            <button className="formbold-btn cancel" type="button" onClick={navigateToHome}>
+            <button
+              className="formbold-btn cancel"
+              type="button"
+              onClick={navigateToHome}
+            >
               Hủy
             </button>
-            <button className="formbold-btn clear" type="button" onClick={handleClear}>
+            <button
+              className="formbold-btn clear"
+              type="button"
+              onClick={handleClear}
+            >
               Xóa ô nhập
             </button>
           </div>

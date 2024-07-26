@@ -270,21 +270,21 @@ const ManageBook = () => {
                     onClick={() => navigate(`/bookdetail/${selectedBook?.bookID}`)}
                     disabled={!selectedBook}
                   >
-                    Detail <IoInformationCircle />
+                    Chi tiết <IoInformationCircle />
                   </button>
                   <button
                     className="btn btn-warning"
                     onClick={handleEditClick}
                     disabled={!selectedBook}
                   >
-                    Edit <FaRegEdit />
+                    Sửa <FaRegEdit />
                   </button>
                   <button
                     className="btn btn-danger"
                     onClick={handleDeleteClick}
                     disabled={!selectedBook}
                   >
-                    Delete <MdDelete />
+                    Xóa <MdDelete />
                   </button>
                 </div>
               )}

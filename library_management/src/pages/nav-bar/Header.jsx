@@ -115,7 +115,7 @@ function Header() {
             <input
               id="search"
               type="text"
-              placeholder="Search"
+              placeholder="Tìm kiếm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
