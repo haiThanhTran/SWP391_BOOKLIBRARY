@@ -114,21 +114,11 @@ function StaffOrderManagement() {
     }
   };
 
-  const handleFileUpload = async (orderID, status) => {
+  const handleFileUpload = async (orderID) => {
     if (!selectedFile) return;
 
-    // Lấy thời gian hiện tại theo múi giờ Việt Nam
-    const localDate = new Date();
-    const returnDate = new Date(
-      localDate.getTime() - localDate.getTimezoneOffset() * 60000
-    ).toISOString();
-
-    // Tạo payload và chuyển đổi thành chuỗi JSON
-    const payload = JSON.stringify({ status, returnDate });
-
-    const formData = new FormData();
-    formData.append("payload", payload); // Thêm payload dưới dạng chuỗi JSON
-    formData.append("file", selectedFile.file); // Thêm tệp hình ảnh
+    const formData = new FormData(); // Tạo đối tượng để chứa dữ liệu file
+    formData.append("file", selectedFile.file); // Chỉ thêm tệp hình ảnh
 
     try {
       await axios.put(
@@ -137,7 +127,7 @@ function StaffOrderManagement() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data", //gửi kèm dữ liệu dạng multipart
           },
         }
       );
@@ -146,7 +136,7 @@ function StaffOrderManagement() {
       setPreviewURL(null);
       handleSearchOrder();
     } catch (error) {
-      toast.error("Failed to update order and upload file");
+      toast.error("Failed to upload file");
     }
   };
 
@@ -285,28 +275,28 @@ function StaffOrderManagement() {
                   order.returnDate
                 ).toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" });
                 return (
-                <tr key={order.orderDetailID}>
-                  <td>
-                    <img
-                      src={`http://localhost:9191/api/books/images/${order.bookImage}`}
-                      alt={order.bookName}
-                      className="img-fluid"
+                  <tr key={order.orderDetailID}>
+                    <td>
+                      <img
+                        src={`http://localhost:9191/api/books/images/${order.bookImage}`}
+                        alt={order.bookName}
+                        className="img-fluid"
                         style={{ maxWidth: "120px" }}
-                    />
-                  </td>
-                  <td>{order.userName}</td>
-                  <td>{order.quantity}</td>
-                  <td>{order.bookName}</td>
-                  <td>{order.totalPrice}</td>
-                  <td>{new Date(order.orderDate).toLocaleString()}</td>
-                  <td>
-                    <select
-                      className="form-select"
-                      value={order.status}
-                      onChange={(e) => {
+                      />
+                    </td>
+                    <td>{order.userName}</td>
+                    <td>{order.quantity}</td>
+                    <td>{order.bookName}</td>
+                    <td>{order.totalPrice}</td>
+                    <td>{new Date(order.orderDate).toLocaleString()}</td>
+                    <td>
+                      <select
+                        className="form-select"
+                        value={order.status}
+                        onChange={(e) => {
                           const newStatus = e.target.value;
-                        const updatedOrders = orders.map((o) =>
-                          o.orderDetailID === order.orderDetailID
+                          const updatedOrders = orders.map((o) =>
+                            o.orderDetailID === order.orderDetailID
                               ? {
                                   ...o,
                                   status: newStatus,
@@ -315,75 +305,75 @@ function StaffOrderManagement() {
                                       ? new Date().toISOString()
                                       : o.returnDate,
                                 }
-                            : o
-                        );
-                        setOrders(updatedOrders);
-                      }}
-                    >
-                      <option value="Pending" disabled>
-                        Đang chờ
-                      </option>
-                      <option value="Borrowed">Đang mượn</option>
-                      <option value="Returned">Đã trả</option>
-                      <option value="Overdue" disabled>
-                        Quá hạn
-                      </option>
-                      <option value="Cancelled" disabled>
-                        Bị hủy
-                      </option>
-                      <option value="Compensated by Money" disabled>
-                        Đền tiền sách
-                      </option>
-                      <option value="Compensated by Book" disabled>
-                        Đền sách
-                      </option>
-                    </select>
-                      {originalStatus[order.orderDetailID] === "Borrowed" && (
-                      <button
-                        className="btn btn-danger btn-sm mt-2"
-                        onClick={() => openModal(order)}
-                        disabled={[
-                          "Compensated by Money",
-                          "Compensated by Book",
-                          "Overdue",
-                          "Pending",
-                          "Cancelled",
-                          "Returned",
-                        ].includes(order.status)}
+                              : o
+                          );
+                          setOrders(updatedOrders);
+                        }}
                       >
-                        Xử lý mất sách
-                      </button>
-                    )}
-                  </td>
-                  <td>
+                        <option value="Pending" disabled>
+                          Đang chờ
+                        </option>
+                        <option value="Borrowed">Đang mượn</option>
+                        <option value="Returned">Đã trả</option>
+                        <option value="Overdue" disabled>
+                          Quá hạn
+                        </option>
+                        <option value="Cancelled" disabled>
+                          Bị hủy
+                        </option>
+                        <option value="Compensated by Money" disabled>
+                          Đền tiền sách
+                        </option>
+                        <option value="Compensated by Book" disabled>
+                          Đền sách
+                        </option>
+                      </select>
+                      {originalStatus[order.orderDetailID] === "Borrowed" && (
+                        <button
+                          className="btn btn-danger btn-sm mt-2"
+                          onClick={() => openModal(order)}
+                          disabled={[
+                            "Compensated by Money",
+                            "Compensated by Book",
+                            "Overdue",
+                            "Pending",
+                            "Cancelled",
+                            "Returned",
+                          ].includes(order.status)}
+                        >
+                          Xử lý mất sách
+                        </button>
+                      )}
+                    </td>
+                    <td>
                       {order.status === "Returned" ||
                       order.status === "Compensated by Money" ||
                       order.status === "Compensated by Book" ? (
                         localReturnDate
                       ) : (
-                    <input
-                      type="datetime-local"
-                      className="form-control"
-                      value={new Date(order.returnDate)
-                        .toISOString()
-                        .slice(0, 16)}
-                      onChange={(e) => {
-                        const updatedOrders = orders.map((o) =>
-                          o.orderDetailID === order.orderDetailID
-                            ? { ...o, returnDate: e.target.value }
-                            : o
-                        );
-                        setOrders(updatedOrders);
-                      }}
-                      disabled={[
-                        "Compensated by Money",
-                        "Compensated by Book",
-                        "Overdue",
-                        "Pending",
-                        "Cancelled",
+                        <input
+                          type="datetime-local"
+                          className="form-control"
+                          value={new Date(order.returnDate)
+                            .toISOString()
+                            .slice(0, 16)}
+                          onChange={(e) => {
+                            const updatedOrders = orders.map((o) =>
+                              o.orderDetailID === order.orderDetailID
+                                ? { ...o, returnDate: e.target.value }
+                                : o
+                            );
+                            setOrders(updatedOrders);
+                          }}
+                          disabled={[
+                            "Compensated by Money",
+                            "Compensated by Book",
+                            "Overdue",
+                            "Pending",
+                            "Cancelled",
                             "Returned",
-                      ].includes(order.status)}
-                    />
+                          ].includes(order.status)}
+                        />
                       )}
                     </td>
 
@@ -471,30 +461,30 @@ function StaffOrderManagement() {
                             )}
                         </>
                       ) : null}
-                  </td>
+                    </td>
 
-                  <td>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() =>
-                        handleUpdateOrder(
-                          order.orderDetailID,
-                          order.status,
-                          new Date(order.returnDate)
-                        )
-                      }
-                      disabled={[
-                        "Compensated by Money",
-                        "Compensated by Book",
-                        "Overdue",
-                        "Pending",
-                        "Cancelled",
-                      ].includes(order.status)}
-                    >
-                      Update
-                    </button>
-                  </td>
-                </tr>
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() =>
+                          handleUpdateOrder(
+                            order.orderDetailID,
+                            order.status,
+                            new Date(order.returnDate)
+                          )
+                        }
+                        disabled={[
+                          "Compensated by Money",
+                          "Compensated by Book",
+                          "Overdue",
+                          "Pending",
+                          "Cancelled",
+                        ].includes(order.status)}
+                      >
+                        Update
+                      </button>
+                    </td>
+                  </tr>
                 );
               })}
             </tbody>

@@ -231,7 +231,7 @@ public class OrderDetailController {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path path = Paths.get(folderPath + fileName);
         try {
-            Files.copy(file.getInputStream(), path);
+            Files.copy(file.getInputStream(), path); //sao chép dữ liệu từ input stream của file vào đường dẫn trên
             System.out.println("File saved successfully: " + path.toAbsolutePath());
         } catch (IOException e) {
             System.err.println("Failed to save file: " + e.getMessage());
@@ -246,10 +246,10 @@ public class OrderDetailController {
         if (!Files.exists(imagePath)) {
             return ResponseEntity.notFound().build();
         }
-        byte[] imageBytes = Files.readAllBytes(imagePath);
+        byte[] imageBytes = Files.readAllBytes(imagePath); // đọc toàn bộ dữ liệu từ file và chuyển đổi thành mảng byte
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentType(MediaType.IMAGE_JPEG); //thiết lập header content type để client biết được kiểu dữ liệu trả về
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
 

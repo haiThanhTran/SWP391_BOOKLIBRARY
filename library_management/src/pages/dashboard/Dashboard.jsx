@@ -30,7 +30,7 @@ const Dashboard = () => {
     "Tháng Chín",
     "Tháng Mười",
     "Tháng Mười Một",
-    "Tháng Mười Hai",
+    "Tháng Mười Hai"
   ];
   const userStaffCategory = JSON.parse(localStorage.getItem("user")); // Parse the user string to an object
   const navigate = useNavigate();

@@ -70,7 +70,7 @@ function ResetPasswordForm() {
             alt="Forgot Password Logo"
             id="forgotPassLogo"
           />
-          <h2 className="formTitle">Please enter your new password</h2>
+          <h2 className="formTitle">Vui lòng nhập mật khẩu mới</h2>
           <div className="inputDiv">
             <label className="inputLabel" htmlFor="password">
               Mật khẩu

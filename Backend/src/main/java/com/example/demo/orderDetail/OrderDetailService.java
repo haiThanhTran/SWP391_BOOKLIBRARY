@@ -58,41 +58,41 @@ public class OrderDetailService {
         Optional<OrderDetail> bookOrder = bookOrderRepository.findById(orderID);
         if (bookOrder.isPresent()) {
             OrderDetail order = bookOrder.get();
-            logger.info("Updating order ID {}: status={}, returnDate={},evidenceImagePath={}", orderID, status, returnDate,evidenceImagePath);
+            logger.info("Updating order ID {}: status={}, returnDate={},evidenceImagePath={}", orderID, status, returnDate, evidenceImagePath);
 
-            switch (status) {
-                case "Borrowed":
-                    order.setStatus("Borrowed");
-                    order.setReturnDate(returnDate);
-                    Book borrowedBook = order.getBook();
-                    borrowedBook.setBookQuantity(borrowedBook.getBookQuantity() - order.getQuantity());
-                    bookService.updateBook(borrowedBook.getBookID(), borrowedBook);
-                    break;
-                case "Returned":
-                    order.setStatus("Returned");
-                    order.setReturnDate(returnDate);
-                    Book returnedBook = order.getBook();
-                    returnedBook.setBookQuantity(returnedBook.getBookQuantity() + order.getQuantity());
-                    bookService.updateBook(returnedBook.getBookID(), returnedBook);
-                    break;
-                case "Compensated by Book":
-                    order.setStatus("Compensated by Book");
-                    order.setEvidenceImagePath(evidenceImagePath);
-                    Book compensatedBook = order.getBook();
-                    compensatedBook.setBookQuantity(compensatedBook.getBookQuantity() + order.getQuantity());
-                    bookService.updateBook(compensatedBook.getBookID(), compensatedBook);
-                    break;
-                case "Compensated by Money":
-                    order.setStatus("Compensated by Money");
-                    order.setEvidenceImagePath(evidenceImagePath);
-                    break;
-                default:
-                    order.setStatus(status);
-                    break;
-            }
-            order.setReturnDate(returnDate);
+            // Cập nhật ảnh chứng cứ mà không thay đổi trạng thái hoặc số lượng sách
             if (evidenceImagePath != null && !evidenceImagePath.isEmpty()) {
                 order.setEvidenceImagePath(evidenceImagePath);
+            } else {
+                switch (status) {
+                    case "Borrowed":
+                        order.setStatus("Borrowed");
+                        order.setReturnDate(returnDate);
+                        Book borrowedBook = order.getBook();
+                        borrowedBook.setBookQuantity(borrowedBook.getBookQuantity() - order.getQuantity());
+                        bookService.updateBook(borrowedBook.getBookID(), borrowedBook);
+                        break;
+                    case "Returned":
+                        order.setStatus("Returned");
+                        order.setReturnDate(returnDate);
+                        Book returnedBook = order.getBook();
+                        returnedBook.setBookQuantity(returnedBook.getBookQuantity() + order.getQuantity());
+                        bookService.updateBook(returnedBook.getBookID(), returnedBook);
+                        break;
+                    case "Compensated by Book":
+                        order.setStatus("Compensated by Book");
+                        Book compensatedBook = order.getBook();
+                        compensatedBook.setBookQuantity(compensatedBook.getBookQuantity() + order.getQuantity());
+                        bookService.updateBook(compensatedBook.getBookID(), compensatedBook);
+                        break;
+                    case "Compensated by Money":
+                        order.setStatus("Compensated by Money");
+                        break;
+                    default:
+                        order.setStatus(status);
+                        break;
+                }
+                order.setReturnDate(returnDate);
             }
             bookOrderRepository.save(order);
             return order;
@@ -100,6 +100,7 @@ public class OrderDetailService {
         logger.warn("Order ID {} not found for update", orderID);
         return null;
     }
+
     public Optional<OrderDetail> findById(Long orderID) {
         return bookOrderRepository.findById(orderID);
     }
