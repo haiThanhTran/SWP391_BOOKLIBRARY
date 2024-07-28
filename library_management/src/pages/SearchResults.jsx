@@ -118,19 +118,19 @@ const SearchResults = () => {
                   <div className="book-details">
                     <div className="detail book-description">
                       <p className="detail book-name">{book.bookName}</p>
-                      <p className="detail book-author">by {book.bookAuthor}</p>
+                      <p className="detail book-author">bởi {book.bookAuthor}</p>
                       <p className="detail book-published">
-                        Publisher: {book.publisher.publisherName}
+                        Nhà xuất bản: {book.publisher.publisherName}
                       </p>
                       <p
                         className={`detail book-quantity ${
-                          book.bookQuantity > 0 ? "available" : "unavailable"
+                          book.bookQuantity > 0 ? "Có sẵn" : "Không có sẵn"
                         }`}
                       >
-                        {book.bookQuantity > 0 ? `${book.bookQuantity}` : "Unavailable"}
+                        {book.bookQuantity > 0 ? `${book.bookQuantity}` : "Hết sách"}
                       </p>
                       <p className="detail book-category">
-                        Category: {book.category.categoryName}
+                        Danh mục: {book.category.categoryName}
                       </p>
                     </div>
                   </div>
@@ -140,7 +140,7 @@ const SearchResults = () => {
                         className="btn-detail"
                         onClick={() => navigate(`/BookDetail/${book.bookID}`)}
                       >
-                        See Detail <IoInformationCircle />
+                        Chi tiết <IoInformationCircle />
                       </button>
                     </div>
                   </div>

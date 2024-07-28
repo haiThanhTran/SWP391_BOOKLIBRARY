@@ -28,6 +28,10 @@ public class OrderDetailService {
     @Autowired // Tự động tiêm phụ thuộc OrderDetailRepository
     private OrderDetailRepository bookOrderRepository;
 
+    // Phương thức kiểm tra sự tồn tại của searchID
+    public boolean existsBySearchID(String searchID) {
+        return bookOrderRepository.existsBySearchID(searchID);
+    }
 
     @Autowired // Tự động tiêm phụ thuộc UserService
     private UserService userService;
@@ -69,7 +73,6 @@ public class OrderDetailService {
                         order.setStatus("Borrowed");
                         order.setReturnDate(returnDate);
                         Book borrowedBook = order.getBook();
-                        borrowedBook.setBookQuantity(borrowedBook.getBookQuantity() - order.getQuantity());
                         bookService.updateBook(borrowedBook.getBookID(), borrowedBook);
                         break;
                     case "Returned":

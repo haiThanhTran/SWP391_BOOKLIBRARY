@@ -52,16 +52,25 @@ const ManagementPublisher = () => {
     const regex = /^[a-zA-Z0-9\s\-\.,]*$/;
     return name.trim() !== "" && regex.test(name);
   };
-  
 
+  const isPublisherNameUnique = (name, id = null) => {
+    return publishers.every(
+      (publisher) =>
+        publisher.publisherID === id ||
+        publisher.publisherName.toLowerCase() !== name.toLowerCase()
+    );
+  };
   const createPublisher = async () => {
-    if (!isPublisherNameValid(newPublisher)) {
-      toast.error(
-        "Tên nhà xuất bản không hợp lệ. Chỉ cho phép chữ cái, số và khoảng trắng."
-      );
+    // if (!isPublisherNameValid(newPublisher)) {
+    //   toast.error(
+    //     "Tên nhà xuất bản không hợp lệ. Chỉ cho phép chữ cái, số và khoảng trắng."
+    //   );
+    //   return;
+    // }
+    if (!isPublisherNameUnique(newPublisher)) {
+      toast.error("Tên nhà xuất bản đã tồn tại. Vui lòng chọn tên khác.");
       return;
     }
-
     try {
       const response = await axios.post(
         "http://localhost:9191/api/publishers",
@@ -89,7 +98,10 @@ const ManagementPublisher = () => {
     //   );
     //   return;
     // }
-
+    if (!isPublisherNameUnique(updatedName, id)) {
+      toast.error("Tên nhà xuất bản đã tồn tại. Vui lòng chọn tên khác.");
+      return;
+    }
     try {
       const response = await axios.put(
         `http://localhost:9191/api/publishers/${id}`,

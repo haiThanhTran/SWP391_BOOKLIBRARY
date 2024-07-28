@@ -13,6 +13,53 @@
     text-align: center;
     margin-bottom: 20px;
   }
+  .custom-upload-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .custom-upload-button:hover {
+    background-color: #0056b3;
+  }
+  
+  
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-container .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+.image-container .text {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.btn-outline-primary {
+  max-width: 100px;
+  padding: 5px 10px;
+}
   
   
   option[disabled] {
@@ -106,4 +153,49 @@
     align-items: center;
     justify-content: center;
   }
+  
+
+  .image-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer; /* Đổi con trỏ thành pointer */
+    border-radius: 5px;
+  }
+  
+  .btn-outline-primary {
+    padding: 2px 5px; /* Giảm padding để nút nhỏ hơn */
+    font-size: 15px; /* Giảm kích thước chữ */
+    max-width: 100px; /* Điều chỉnh lại max-width */
+    white-space: nowrap; /* Ngăn chữ xuống dòng */
+    overflow: hidden; /* Ẩn chữ bị tràn */
+    text-overflow: ellipsis; /* Thêm dấu "..." nếu chữ bị tràn */
+  }
+  
+  .image-container .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .evidence_table{
+    display: table-caption;
+}
+  
+  .image-container:hover .overlay {
+    opacity: 1;
+  }
+  
+  .overlay .text {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
   

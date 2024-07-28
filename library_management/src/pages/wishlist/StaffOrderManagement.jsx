@@ -12,7 +12,7 @@ import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import { Button } from "react-bootstrap";
-
+import { saveAs } from "file-saver";
 Modal.setAppElement("#root");
 
 function StaffOrderManagement() {
@@ -140,6 +140,54 @@ function StaffOrderManagement() {
     }
   };
 
+  
+
+  const openModal = (order) => {
+    setSelectedOrder(order);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const handleSearchOrder = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9191/api/orders/search/${orderID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setOrders(response.data);
+      setOriginalStatus(
+        response.data.reduce((acc, order) => {
+          acc[order.orderDetailID] = order.status;
+          return acc;
+        }, {})
+      );
+      toast.success("Kết quả thành công !");
+    } catch (error) {
+      toast.error("Không tìm thấy đơn hàng hợp lệ !");
+      setOrders([]);
+    }
+  };
+
+
+  const handleImageClick = (imagePath) => {
+    setCurrentImage(imagePath);
+    setImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setImageModalOpen(false);
+    setCurrentImage("");
+  };
+
+
+
   const handleCompensateOrder = async (orderID, compensationType) => {
     const confirmMessage = `Bạn đã chắn chắn muốn thay đổi trạng thái thành đền ${
       compensationType === "money" ? "tiền" : "sách"
@@ -183,55 +231,66 @@ function StaffOrderManagement() {
             : order
         );
         setOrders(updatedOrders);
+        generateReport(selectedOrder, compensationType);
       } catch (error) {
         toast.error("Failed to compensate order");
       }
     }
   };
 
-  const openModal = (order) => {
-    setSelectedOrder(order);
-    setModalIsOpen(true);
-  };
+  const generateReport = (order, compensationType) => {
+    const reportContent = `
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .header img { width: 10px; } /* Điều chỉnh kích thước logo */
+            .content { margin: 20px; }
+            .signature-table { width: 100%; margin-top: 50px; }
+            .signature-cell { width: 50%; text-align: center; vertical-align: top; }
+            .content p { line-height: 1.5; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>BIÊN BẢN ĐỀN BÙ</h2>
+            <p>Ngày: ${new Date().toLocaleDateString()}</p>
+          </div>
+          <div class="content">
+            <p><strong>Tên người mượn:</strong> ${order.userName}</p>
+            <p><strong>Thời gian mượn:</strong> ${new Date(
+              order.orderDate
+            ).toLocaleString()}</p>
+            <p><strong>Tên sách:</strong> ${order.bookName}</p>
+            <p><strong>Giá sách:</strong> ${order.totalPrice}</p>
+            <p><strong>Lý do:</strong>...................................</p>
+            <p><strong>Phương án đền:</strong> ${
+              compensationType === "money" ? "Đền tiền" : "Đền sách"
+            }</p>
+            <p><strong>Cam Kết:</strong> Bên đền bù đã đền bù tổn thất cho phía thư viện cũng như bên thư viện đã xác nhận phương thức đền bù bằng ${
+              compensationType === "money" ? "Đền tiền" : "Đền sách"
+            } của khách hàng.</p>
+          </div>
+          <table class="signature-table">
+            <tr>
+              <td class="signature-cell">
+                <p>Người Đền Bù</p>
+                <p>(Ký, họ tên)</p>
+              </td>
+              <td class="signature-cell">
+                <p>Người Xử Lý Đơn</p>
+                <p>(Ký, họ tên)</p>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    `;
 
-  const closeModal = () => {
-    setModalIsOpen(false);
+    const blob = new Blob([reportContent], { type: "application/msword" });
+    saveAs(blob, `BienBan_${order.orderDetailID}_${compensationType}.doc`);
   };
-
-  const handleSearchOrder = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:9191/api/orders/search/${orderID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setOrders(response.data);
-      setOriginalStatus(
-        response.data.reduce((acc, order) => {
-          acc[order.orderDetailID] = order.status;
-          return acc;
-        }, {})
-      );
-      toast.success("Kết quả thành công !");
-    } catch (error) {
-      toast.error("Không tìm thấy đơn hàng hợp lệ !");
-      setOrders([]);
-    }
-  };
-
-  const handleImageClick = (imagePath) => {
-    setCurrentImage(imagePath);
-    setImageModalOpen(true);
-  };
-
-  const closeImageModal = () => {
-    setImageModalOpen(false);
-    setCurrentImage("");
-  };
-
   return (
     <>
       <Header />
@@ -377,7 +436,7 @@ function StaffOrderManagement() {
                       )}
                     </td>
 
-                    <td>
+                    <td className="evidence_table">
                       {order.status === "Compensated by Money" ||
                       order.status === "Compensated by Book" ? (
                         <>
@@ -448,7 +507,7 @@ function StaffOrderManagement() {
                           {selectedFile &&
                             selectedFile.orderID === order.orderDetailID && (
                               <Button
-                                className="btn btn-success mt-2"
+                                className="btn btn-success mt-2 upload_button"
                                 onClick={() =>
                                   handleFileUpload(
                                     order.orderDetailID,

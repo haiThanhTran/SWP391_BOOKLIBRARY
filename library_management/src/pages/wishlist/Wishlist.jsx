@@ -175,7 +175,7 @@ function Wishlist() {
                 className="btn btn-outline-primary"
                 onClick={handleBorrowBooks}
               >
-                Borrow Books
+                Xác nhận mượn sách
               </button>
             </>
           ) : (

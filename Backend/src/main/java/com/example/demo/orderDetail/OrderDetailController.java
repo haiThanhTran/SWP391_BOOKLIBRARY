@@ -126,21 +126,49 @@ public class OrderDetailController {
     private static final int LENGTH = 6;
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    public static String generateUniqueNumber() {
-        Set<Integer> numbers = new HashSet<>();
-        while (numbers.size() < LENGTH) {
-            numbers.add(RANDOM.nextInt(10));
-        }
-        StringBuilder sb = new StringBuilder(LENGTH);
-        for (Integer number : numbers) {
-            sb.append(number);
+//    public static String generateUniqueNumber() {
+//        Set<Integer> numbers = new HashSet<>();
+//        while (numbers.size() < LENGTH) {
+//            numbers.add(RANDOM.nextInt(10));
+//        }
+//        StringBuilder sb = new StringBuilder(LENGTH);
+//        for (Integer number : numbers) {
+//            sb.append(number);
+//        }
+//        return sb.toString();
+//    }
+
+    // Thay vì LENGTH, ta sẽ bắt đầu với độ dài mặc định của searchID
+    private String generateUniqueNumber(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(RANDOM.nextInt(10));
         }
         return sb.toString();
     }
 
+    private String generateUniqueSearchID(int initialLength) {
+        String searchID;
+        int attempts = 0;
+        int length = initialLength;
+
+        do {
+            searchID = generateUniqueNumber(length);
+            attempts++;
+
+            // Nếu vượt quá số lần thử, tăng độ dài của searchID
+            if (attempts >= 5) {
+                attempts = 0; // reset attempts
+                length++; // tăng độ dài của searchID
+            }
+        } while (bookOrderService.existsBySearchID(searchID));
+
+        return searchID;
+    }
+
     @PostMapping
     public ResponseEntity<Map<String, Object>> createBookOrders(@RequestBody List<OrderDetail> bookOrders) {
-        String searchID = generateUniqueNumber();
+        String searchID = generateUniqueSearchID(6); // Bắt đầu với 6 ký tự
         for (OrderDetail order : bookOrders) {
             if (order.getUserID() != null) {
                 User user = userService.findById(order.getUserID());
@@ -155,20 +183,11 @@ public class OrderDetailController {
             // Trừ quantity của sách
             Book book = bookService.getBookById(order.getBook().getBookID());
 
-            // Thêm dòng log để kiểm tra giá trị bookQuantity
-            System.out.println("Book ID: " + book.getBookID() + ", Book Quantity abc: " + book.getBookAuthor());
-
             if (book.getBookQuantity() < order.getQuantity()) {
-                System.out.println("Not enough quantity for book start: " + book.getBookStar());
-                System.out.println("Not enough quantity for book quantity: " + book.getBookQuantity());
-                System.out.println("Not enough quantity for book price: " + book.getBookPrice());
-                System.out.println("Not enough quantity for book name: " + book.getBookName());
-                System.out.println("Not enough quantity for book order: " + order.getQuantity());
                 return ResponseEntity.badRequest().body(Map.of("error", "Not enough quantity for book: " + book.getBookName()));
             }
 
             book.setBookQuantity(book.getBookQuantity() - order.getQuantity());
-            System.out.println("Updated Book Quantity: " + book.getBookQuantity());
             bookService.updateBook(book.getBookID(), book);
 
             order.setSearchID(searchID);

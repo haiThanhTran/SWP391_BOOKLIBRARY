@@ -3,6 +3,7 @@ package com.example.demo.book;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.importBook.ImportBook;
 import com.example.demo.importBook.ImportBookService;
+import com.example.demo.insertFakeData.UserInsertionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,11 @@ public class BookController {
 
     private final BookService bookService;
     private final ImportBookService importBookService;
+    private final UserInsertionService userInsertionService; // Thêm dòng này
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
+//        userInsertionService.insertUsers();
         List<Book> books = bookService.getAllBooks();
         return ResponseEntity.ok(books);
     }

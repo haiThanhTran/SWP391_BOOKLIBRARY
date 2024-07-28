@@ -54,9 +54,16 @@ const ManagementCategory = () => {
     return name.trim() !== "" && regex.test(name);
   };
 
+  const isCategoryNameUnique = (name, id = null) => {
+    // Kiểm tra trùng tên, bỏ qua kiểm tra cho danh mục đang chỉnh sửa
+    return categories.every((category) =>
+      category.categoryID === id || category.categoryName.toLowerCase() !== name.toLowerCase()
+    );
+  };
+
   const createCategory = async () => {
-    if (!isCategoryNameValid(newCategory)) {
-      toast.error("Tên danh mục không hợp lệ. Chỉ cho phép chữ cái, số và khoảng trắng.");
+    if (!isCategoryNameUnique(newCategory)) {
+      toast.error("Tên danh mục đã tồn tại. Vui lòng chọn tên khác.");
       return;
     }
 
@@ -85,7 +92,10 @@ const ManagementCategory = () => {
     //   toast.error("Tên danh mục không hợp lệ. Chỉ cho phép chữ cái, số và khoảng trắng.");
     //   return;
     // }
-
+    if (!isCategoryNameUnique(updatedName, id)) {
+      toast.error("Tên danh mục đã tồn tại. Vui lòng chọn tên khác.");
+      return;
+    }
     try {
       const response = await axios.put(
         `http://localhost:9191/api/categories/${id}`,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect,  } from "react";
+import React, { useState, useEffect } from "react";
 import StarRatingComponent from "react-star-rating-component";
 import "./Pages.css";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -136,6 +136,7 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
     ? false
     : books.every((book) => book.status.statusID === 1);
 
+  console.log("currentIndex", currentIndex);
   return (
     <>
       <ToastContainer position="bottom-left" />
@@ -215,7 +216,12 @@ const SlideShow = ({ books, categoryID, isTopBorrow }) => {
                   <div>
                     {isAllBooksIncoming ? null : isTopBorrow ? (
                       <>
-                        <button style={{ backgroundColor: "#28A745",textDecoration:"none" }}>
+                        <button
+                          style={{
+                            backgroundColor: "#28A745",
+                            textDecoration: "none",
+                          }}
+                        >
                           {book[4]} Đã Mượn <MdAssignmentTurnedIn />
                         </button>
                       </>

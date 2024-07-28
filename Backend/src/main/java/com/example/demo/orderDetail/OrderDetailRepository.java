@@ -15,7 +15,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
     List<OrderDetail> findBySearchID(String searchID);
     List<OrderDetail> findByStatus(String status); // Thêm phương thức tìm kiếm theo trạng thái
     List<OrderDetail> findByOrderDetailID(Long orderDetailID);
-
+    boolean existsBySearchID(String searchID);
     long countByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     //order

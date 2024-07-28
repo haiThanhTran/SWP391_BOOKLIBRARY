@@ -116,7 +116,7 @@ const Bell = () => {
         ))}
         {!showAll && orderDetails.length > 2 && (
           <Box textAlign="center" mt={2}>
-            <Button onClick={handleSeeAll}>See All</Button>
+            <Button onClick={handleSeeAll}>Xem tất cả</Button>
           </Box>
         )}
       </List>
